@@ -1,0 +1,34 @@
+.letter-paper {
+   width: 8.5in;
+   height: 11in;
+   background-color: #fff;
+   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+   margin: 30px auto;
+   position: relative;
+}
+
+@page {
+   size: auto;
+   margin: 0mm;
+}
+
+@media print {
+   body {
+      margin: 0;
+      padding: 0;
+   }
+   .letter-paper {
+      box-shadow: none;
+      border: none;
+      margin: 0;
+   }
+   .no-print {
+      display: none;
+   }
+}
+
+.no-select {
+   -webkit-user-select: none; /* Safari */
+   -ms-user-select: none; /* IE 10 and IE 11 */
+   user-select: none; /* Standard syntax */
+}
