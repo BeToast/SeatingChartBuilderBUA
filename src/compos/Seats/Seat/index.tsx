@@ -1,15 +1,37 @@
+import { useSelected, State } from "../../../context/SelectedContext";
 import "./style.css";
 
-interface SeatProps {
-   number: number;
+const Seat: React.FC<{
+   id: string;
    invis?: boolean;
-}
+}> = ({ id, invis = false }) => {
+   const { state, setSelected, setVacant } = useSelected();
+   const seatState = state[`Seat ${id}`];
 
-const Seat: React.FC<SeatProps> = ({ number, invis = false }) => {
+   const seatClass: string =
+      seatState == State.Selected
+         ? "selected"
+         : seatState == State.Assigned
+         ? "assigned"
+         : "vacant";
+
+   const onClickHandler = (id: string) => {
+      if (seatClass == "vacant") {
+         setSelected(id);
+      } else if (seatClass == "selected") {
+         setVacant(id);
+      }
+   };
+
    return (
-      <div className={`seat ${invis ? "invis" : ""}`}>
-         <div className="seat-number no-select">{number}</div>
-      </div>
+      <>
+         <div
+            className={`seat ${seatClass} ${invis ? "invis" : ""}`}
+            onClick={() => onClickHandler(`Seat ${id}`)}
+         >
+            <div className="seat-id no-select">{id.slice(1)}</div>
+         </div>
+      </>
    );
 };
 
