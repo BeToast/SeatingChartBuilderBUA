@@ -1,13 +1,12 @@
 import "./style.css";
 
 const AddSeat: React.FC<{
-   idLetter: "k" | "b";
-}> = ({ idLetter }) => {
+   addHandler: () => void;
+}> = ({ addHandler }) => {
    return (
       <>
-         <div className="add-seat no-print" onClick={() => {}}>
+         <div className="add-seat no-print" onClick={addHandler}>
             <img src="/plus.webp" width={"16px"} />
-            {/* <div className="add-seat-plus">+</div> */}
          </div>
       </>
    );

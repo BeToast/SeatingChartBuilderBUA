@@ -1,6 +1,6 @@
 .seat {
-   width: 0.4in;
-   height: 0.4in;
+   width: 0.35in;
+   height: 0.35in;
    border: 1px solid black;
    display: flex;
    justify-content: center;
