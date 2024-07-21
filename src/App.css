@@ -1,10 +1,19 @@
+.flexie {
+   display: flex;
+   justify-content: center;
+   align-items: start;
+   gap: 16px;
+   margin: 16px 0px;
+}
+
 .letter-paper {
    width: 8.5in;
    height: 11in;
-   background-color: #fff;
+   background-color: white;
    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-   margin: 30px auto;
    position: relative;
+   border-radius: 8px;
+   border: 1px solid #ccc;
 }
 
 @page {
@@ -21,9 +30,15 @@
       box-shadow: none;
       border: none;
       margin: 0;
+      border-radius: 0px;
+      border: 0px solid #ccc;
    }
    .no-print {
       display: none;
+   }
+
+   .flexie {
+      margin: 0px;
    }
 }
 

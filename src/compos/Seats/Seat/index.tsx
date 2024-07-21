@@ -4,6 +4,7 @@ import "./style.css";
 const Seat: React.FC<{
    id: string;
    invis?: boolean;
+   // extra: boolean;
 }> = ({ id, invis = false }) => {
    const { state, setSelected, setVacant } = useSelected();
    const seatState = state[`Seat ${id}`];

@@ -1,9 +1,12 @@
+import AddSeat from "./AddSeat";
 import Seat from "./Seat";
 import "./style.css";
 
 const Seats = () => {
    return (
       <div className="seat-col">
+         <AddSeat idLetter={"k"} />
+         <div style={{ height: "8px" }} />
          <Seat id={"k1"} />
          <Seat id={"k2"} />
          <Seat id={"k3"} />
@@ -22,6 +25,9 @@ const Seats = () => {
          <Seat id={"k16"} />
          <div className="seat-row">
             <Seat id={"nope"} invis={true} />
+            {/* <Seat id={"b17"} />
+            <Seat id={"b16"} />
+            <Seat id={"b15"} /> */}
             <Seat id={"b14"} />
             <Seat id={"b13"} />
             <Seat id={"b12"} />
@@ -36,6 +42,8 @@ const Seats = () => {
             <Seat id={"b3"} />
             <Seat id={"b2"} />
             <Seat id={"b1"} />
+            <div style={{ width: "8px" }} />
+            <AddSeat idLetter={"b"} />
          </div>
       </div>
    );

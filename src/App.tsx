@@ -10,11 +10,13 @@ function App() {
       <>
          <PrintButton />
          <SelectedProvider>
-            <InfoBox />
-            <main className="letter-paper">
-               <Tables />
-               <Seats />
-            </main>
+            <div className="flexie">
+               <main className="letter-paper">
+                  <Tables />
+                  <Seats />
+               </main>
+               <InfoBox />
+            </div>
          </SelectedProvider>
       </>
    );
