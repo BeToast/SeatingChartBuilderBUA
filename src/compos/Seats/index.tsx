@@ -3,14 +3,13 @@ import AddSeat from "./AddSeat";
 import Seat from "./Seat";
 import "./style.css";
 
-const [kSeats, setKSeats] = useState<Array<number>>(
-   Array.from({ length: 16 }, (_, i) => i + 1)
-);
-const [bSeats, setBSeats] = useState<Array<number>>(
-   Array.from({ length: 14 }, (_, i) => 14 - i)
-);
-
 const Seats = () => {
+   const [kSeats, setKSeats] = useState<Array<number>>(
+      Array.from({ length: 16 }, (_, i) => i + 1)
+   );
+   const [bSeats, setBSeats] = useState<Array<number>>(
+      Array.from({ length: 14 }, (_, i) => 14 - i)
+   );
    return (
       <div className="seat-col">
          <AddSeat
@@ -27,7 +26,7 @@ const Seats = () => {
             ))}
             <div style={{ width: "8px" }} />
             <AddSeat
-               addHandler={() => setBSeats([...bSeats, bSeats.length + 1])}
+               addHandler={() => setBSeats([bSeats.length + 1, ...bSeats])}
             />
          </div>
       </div>

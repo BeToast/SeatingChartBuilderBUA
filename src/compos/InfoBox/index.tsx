@@ -1,18 +1,42 @@
 import "./style.css";
 import { useSelected } from "../../context/SelectedContext";
 import { useState } from "react";
+import { getColour } from "../../utils/colours";
 
 const InfoBox: React.FC<{}> = ({}) => {
-   const { state } = useSelected();
-   const selectedIds = Object.keys(state).filter((id) => state[id]);
+   const { state, setVacant, setAssigned, removeAssigned } = useSelected();
+   const selectedIds = Object.keys(state).filter((id) => state[id].state);
 
    const [partyName, setPartyName] = useState<string>("");
    const [partyCount, setPartyCount] = useState<number>(1);
    const [parties, setParties] = useState<Array<string>>([]);
 
-   const addHandler = (name: string, count: number): void => {
+   const addPartyHandler = (name: string, count: number): void => {
+      // setParties((prevParties) => {
+      //    return [...prevParties, `${name} (${count})`];
+      // });
+      const newParties: Array<string> = [...parties, `${name} (${count})`];
+      const newColour: string | undefined =
+         newParties.length == 1 ? getColour() : undefined;
+      setPartyName(""); // Clear the input after adding
+      selectedIds.map((id) => {
+         setAssigned(id, newParties, newColour);
+      });
+      setParties(newParties);
+   };
+
+   const selectedRemoveHandler = (selectedId: string) => {
+      setVacant(selectedId);
+   };
+
+   const partyRemoveHandler = (party: string) => {
+      //update local state
       setParties((prevParties) => {
-         return [...prevParties, `${name} (${count})`];
+         return prevParties.filter((name) => name !== party);
+      });
+      //update Context
+      selectedIds.map((id) => {
+         removeAssigned(id, party);
       });
    };
 
@@ -26,14 +50,26 @@ const InfoBox: React.FC<{}> = ({}) => {
                      <>
                         <ul>
                            {selectedIds.map((id) => (
-                              <li key={id}>{id}</li>
+                              <li
+                                 onClick={() => selectedRemoveHandler(id)}
+                                 className="remove-hover selected-id"
+                                 key={id}
+                              >
+                                 {id}
+                              </li>
                            ))}
                         </ul>
                         <div>
                            <div className="heading">Parties at Selected</div>
                            <ul>
                               {parties.map((name, index) => (
-                                 <li key={index}>{name}</li>
+                                 <li
+                                    onClick={() => partyRemoveHandler(name)}
+                                    className="remove-hover"
+                                    key={index}
+                                 >
+                                    {name}
+                                 </li>
                               ))}
                            </ul>
                         </div>
@@ -44,17 +80,41 @@ const InfoBox: React.FC<{}> = ({}) => {
                               placeholder="Name"
                               value={partyName}
                               onChange={(e) => setPartyName(e.target.value)}
+                              onKeyDown={(e) => {
+                                 if (e.key === "Enter") {
+                                    e.preventDefault(); // Prevents form submission if within a form
+                                    const partySizeInput =
+                                       document.getElementById(
+                                          "party-size-input"
+                                       );
+                                    if (partySizeInput) {
+                                       partySizeInput.focus();
+                                    }
+                                 }
+                              }}
                            />
                            <input
                               type="number"
                               className="number-input"
+                              id="party-size-input"
                               placeholder="1"
+                              onChange={(e) => {
+                                 var parsedValue = parseInt(e.target.value);
+                                 if (isNaN(parsedValue)) {
+                                    parsedValue = 1;
+                                 }
+                                 setPartyCount(parsedValue);
+                              }}
+                              onKeyDown={(e) => {
+                                 if (e.key === "Enter") {
+                                    e.preventDefault(); // Prevents form submission if within a form
+                                    addPartyHandler(partyName, partyCount);
+                                 }
+                              }}
                            />
                            <button
                               onClick={() => {
-                                 addHandler(partyName, partyCount);
-                                 setPartyName(""); // Clear the input after adding
-                                 setPartyCount(1); // Reset the count to 1
+                                 addPartyHandler(partyName, partyCount);
                               }}
                               className="add-button"
                            >

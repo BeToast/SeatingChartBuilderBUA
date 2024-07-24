@@ -1,5 +1,6 @@
 import "./App.css";
 import InfoBox from "./compos/InfoBox";
+import InfoContext from "./compos/InfoContext";
 import PrintButton from "./compos/PrintButton";
 import Seats from "./compos/Seats";
 import Tables from "./compos/Tables";
@@ -16,6 +17,7 @@ function App() {
                   <Seats />
                </main>
                <InfoBox />
+               <InfoContext />
             </div>
          </SelectedProvider>
       </>

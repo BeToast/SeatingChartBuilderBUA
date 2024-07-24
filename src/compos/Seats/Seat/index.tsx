@@ -7,14 +7,21 @@ const Seat: React.FC<{
    // extra: boolean;
 }> = ({ id, invis = false }) => {
    const { state, setSelected, setVacant } = useSelected();
-   const seatState = state[`Seat ${id}`];
+   const seatId: string = `Seat ${id}`;
+   const seatState = state[seatId];
 
-   const seatClass: string =
-      seatState == State.Selected
-         ? "selected"
-         : seatState == State.Assigned
-         ? "assigned"
-         : "vacant";
+   var seatClass: string;
+   if (seatState) {
+      if (seatState.state == State.Selected) {
+         seatClass = "selected";
+      } else if (seatState.state == State.Assigned) {
+         seatClass = "assigned";
+      } else {
+         seatClass = "vacant";
+      }
+   } else {
+      seatClass = "vacant";
+   }
 
    const onClickHandler = (id: string) => {
       if (seatClass == "vacant") {
@@ -28,7 +35,12 @@ const Seat: React.FC<{
       <>
          <div
             className={`seat ${seatClass} ${invis ? "invis" : ""}`}
-            onClick={() => onClickHandler(`Seat ${id}`)}
+            style={
+               seatClass == "assigned"
+                  ? { backgroundColor: seatState.colour }
+                  : {}
+            }
+            onClick={() => onClickHandler(seatId)}
          >
             <div className="seat-id no-select">{id.slice(1)}</div>
          </div>

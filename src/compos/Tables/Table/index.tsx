@@ -7,12 +7,18 @@ const Table: React.FC<{
    const { state, setSelected, setVacant } = useSelected();
    const tableState = state[`Table ${id}`];
 
-   const tableClass: string =
-      tableState == State.Selected
-         ? "selected"
-         : tableState == State.Assigned
-         ? "assigned"
-         : "vacant";
+   var tableClass: string;
+   if (tableState) {
+      if (tableState.state == State.Selected) {
+         tableClass = "selected";
+      } else if (tableState.state == State.Assigned) {
+         tableClass = "assigned";
+      } else {
+         tableClass = "vacant";
+      }
+   } else {
+      tableClass = "vacant";
+   }
 
    const onClickHandler = (id: string) => {
       if (tableClass == "vacant") {
@@ -26,6 +32,11 @@ const Table: React.FC<{
       <>
          <div
             className={`table ${tableClass}`}
+            style={
+               tableClass == "assigned"
+                  ? { backgroundColor: tableState.colour }
+                  : {}
+            }
             onClick={() => onClickHandler(`Table ${id}`)}
          >
             <div className="table-id no-select">{id}</div>

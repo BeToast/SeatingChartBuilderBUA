@@ -1,11 +1,16 @@
 .seat {
    width: 0.35in;
    height: 0.35in;
-   border: 1px solid black;
+   border: 1px dashed black;
    display: flex;
    justify-content: center;
    align-items: center;
    margin: -0.5px;
+}
+.seat.selected,
+.seat.assigned {
+   border: 1px solid black;
+   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .seat-id {

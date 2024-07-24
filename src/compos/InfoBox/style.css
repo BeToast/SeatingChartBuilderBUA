@@ -70,3 +70,8 @@
    font-weight: 600;
    margin-bottom: -16px;
 }
+
+.remove-hover:hover {
+   color: rgb(174, 37, 37);
+   text-decoration: line-through;
+}

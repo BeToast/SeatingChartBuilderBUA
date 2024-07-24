@@ -49,10 +49,11 @@
 }
 
 .vacant {
-   background-color: rgb(133, 177, 137);
+   background-color: rgb(229, 229, 229);
 }
 .selected {
-   background-color: rgb(217, 120, 85);
+   background-color: rgb(255, 255, 255);
+   border: 2px solid black;
 }
 .assigned {
 }
