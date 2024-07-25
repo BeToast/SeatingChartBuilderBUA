@@ -4,8 +4,8 @@ import { useState } from "react";
 import { getColour } from "../../utils/colours";
 
 const InfoBox: React.FC<{}> = ({}) => {
-   const { state, setVacant, setAssigned, removeAssigned } = useSelected();
-   const selectedIds = Object.keys(state).filter((id) => state[id].state);
+   const { state, setSelected, setAssigned, removeAssigned } = useSelected();
+   const selectedIds = Object.keys(state).filter((id) => state[id].selected);
 
    const [partyName, setPartyName] = useState<string>("");
    const [partyCount, setPartyCount] = useState<number>(1);
@@ -26,7 +26,7 @@ const InfoBox: React.FC<{}> = ({}) => {
    };
 
    const selectedRemoveHandler = (selectedId: string) => {
-      setVacant(selectedId);
+      setSelected(selectedId, false);
    };
 
    const partyRemoveHandler = (party: string) => {

@@ -1,17 +1,17 @@
-import { State, useSelected } from "../../../context/SelectedContext";
+import { useSelected } from "../../../../context/SelectedContext";
 import "./style.css";
 
 const Table: React.FC<{
    id: number;
 }> = ({ id }) => {
-   const { state, setSelected, setVacant } = useSelected();
+   const { state, setSelected } = useSelected();
    const tableState = state[`Table ${id}`];
 
    var tableClass: string;
    if (tableState) {
-      if (tableState.state == State.Selected) {
+      if (tableState.selected) {
          tableClass = "selected";
-      } else if (tableState.state == State.Assigned) {
+      } else if (tableState.assigned.length > 0) {
          tableClass = "assigned";
       } else {
          tableClass = "vacant";
@@ -22,9 +22,9 @@ const Table: React.FC<{
 
    const onClickHandler = (id: string) => {
       if (tableClass == "vacant") {
-         setSelected(id);
+         setSelected(id, true);
       } else if (tableClass == "selected") {
-         setVacant(id);
+         setSelected(id, false);
       }
    };
 

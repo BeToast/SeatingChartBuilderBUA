@@ -1,4 +1,4 @@
-import { useSelected, State } from "../../../context/SelectedContext";
+import { useSelected } from "../../../../context/SelectedContext";
 import "./style.css";
 
 const Seat: React.FC<{
@@ -6,15 +6,15 @@ const Seat: React.FC<{
    invis?: boolean;
    // extra: boolean;
 }> = ({ id, invis = false }) => {
-   const { state, setSelected, setVacant } = useSelected();
+   const { state, setSelected } = useSelected();
    const seatId: string = `Seat ${id}`;
    const seatState = state[seatId];
 
    var seatClass: string;
    if (seatState) {
-      if (seatState.state == State.Selected) {
+      if (seatState.selected) {
          seatClass = "selected";
-      } else if (seatState.state == State.Assigned) {
+      } else if (seatState.assigned.length > 0) {
          seatClass = "assigned";
       } else {
          seatClass = "vacant";
@@ -25,9 +25,9 @@ const Seat: React.FC<{
 
    const onClickHandler = (id: string) => {
       if (seatClass == "vacant") {
-         setSelected(id);
+         setSelected(id, true);
       } else if (seatClass == "selected") {
-         setVacant(id);
+         setSelected(id, false);
       }
    };
 

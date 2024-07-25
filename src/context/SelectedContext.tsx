@@ -1,29 +1,24 @@
 import React, { createContext, useContext, useState, useCallback } from "react";
 import { readLastColour, returnColour } from "../utils/colours";
-export const enum State {
-   Vacant,
-   Selected,
-   Assigned,
-}
 
 interface recordValue {
    //todo add selected as boolean.
-   state: State;
+   selected: boolean;
    assigned: Array<string>;
    colour: string | undefined;
 }
 
 interface SelectedContextType {
    state: Record<string, recordValue>;
-   setVacant: (id: string) => void;
-   setSelected: (id: string) => void;
+   // setVacant: (id: string) => void;
+   setSelected: (id: string, selected: boolean) => void;
    setAssigned: (id: string, party: Array<string>, colour?: string) => void;
    removeAssigned: (id: string, party: string) => void;
 }
 
 const SelectedContext = createContext<SelectedContextType>({
    state: {},
-   setVacant: () => {},
+   // setVacant: () => {},
    setSelected: () => {},
    setAssigned: () => {},
    removeAssigned: () => {},
@@ -38,40 +33,41 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
 }) => {
    const [state, setState] = useState<Record<string, recordValue>>({});
 
-   const setVacant = useCallback((id: string) => {
-      setState((prev) => ({
-         ...prev,
-         [id]: { state: State.Vacant, assigned: [], colour: undefined },
-      }));
-   }, []);
+   // const setVacant = useCallback((id: string) => {
+   //    setState((prev) => ({
+   //       ...prev,
+   //       [id]: { state: State.Vacant, assigned: [], colour: undefined },
+   //    }));
+   // }, []);
 
-   const setSelected = useCallback((id: string) => {
+   //copies the currently selected assignments to the newly selected.
+   const setSelected = useCallback((id: string, selected: boolean) => {
       setState((prev) => {
-         const chungus = document.getElementsByClassName("selected-id");
-         var bingus: any = undefined;
-         if (chungus.length > 0) {
-            bingus = prev[chungus[0].innerHTML];
-            console.log(bingus);
+         const selectedIds = document.getElementsByClassName("selected-id");
+         var selectedRecord: recordValue | undefined = undefined;
+         if (selectedIds.length > 0) {
+            selectedRecord = prev[selectedIds[0].innerHTML];
          }
+         console.log(selectedRecord);
 
-         console.log(bingus);
          return {
             ...prev,
             [id]: {
-               state: bingus?.state || State.Selected,
-               assigned: bingus?.assigned || [],
-               colour: bingus?.colour || undefined,
+               selected: selected,
+               assigned: selectedRecord?.assigned || [],
+               colour: selectedRecord?.colour || undefined,
             },
          };
       });
    }, []);
 
+   //sets the assigned value to the party array. and maybe a colour
    const setAssigned = useCallback(
       (id: string, party: Array<string>, newColour?: string) => {
          setState((prev) => ({
             ...prev,
             [id]: {
-               state: State.Assigned,
+               selected: prev[id].selected,
                assigned: [...party],
                colour: newColour ? newColour : prev[id].colour,
             },
@@ -80,16 +76,16 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
       []
    );
 
+   //remove party from the assigned array.
    const removeAssigned = useCallback((id: string, partyToRemove: string) => {
-      setState((prevState) => {
-         const currentItem = prevState[id];
+      setState((prev) => {
+         const currentItem = prev[id];
          const remainingAssigned = currentItem.assigned.filter(
             (party) => party !== partyToRemove
          );
 
          // Determine new state and color based on remaining assigned parties
-         const isStillAssigned = remainingAssigned.length > 0;
-         const newState = isStillAssigned ? State.Assigned : State.Selected;
+         const isStillAssigned: boolean = remainingAssigned.length > 0;
          const newColour = isStillAssigned ? currentItem.colour : undefined;
 
          // Handle color management
@@ -103,9 +99,9 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
 
          // Return updated state
          return {
-            ...prevState,
+            ...prev,
             [id]: {
-               state: newState,
+               selected: prev[id].selected,
                assigned: remainingAssigned,
                colour: newColour,
             },
@@ -115,7 +111,7 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
 
    const value: SelectedContextType = {
       state,
-      setVacant,
+      // setVacant,
       setSelected,
       setAssigned,
       removeAssigned,
