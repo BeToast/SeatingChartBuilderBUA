@@ -1,50 +1,34 @@
+import React from "react";
 import { useSelected } from "../../../../context/SelectedContext";
+import {
+   getElementClass,
+   handleElementClick,
+   getElementStyle,
+} from "./../../utils";
 import "./style.css";
 
-const Seat: React.FC<{
+interface SeatProps {
    id: string;
    invis?: boolean;
-   // extra: boolean;
-}> = ({ id, invis = false }) => {
-   const { state, setSelected } = useSelected();
-   const seatId: string = `Seat ${id}`;
+}
+
+const Seat: React.FC<SeatProps> = ({ id, invis = false }) => {
+   const { state, setSelected, setAssigned } = useSelected();
+   const seatId = `Seat ${id}`;
    const seatState = state[seatId];
 
-   var seatClass: string;
-   if (seatState) {
-      if (seatState.selected) {
-         seatClass = "selected";
-      } else if (seatState.assigned.length > 0) {
-         seatClass = "assigned";
-      } else {
-         seatClass = "vacant";
-      }
-   } else {
-      seatClass = "vacant";
-   }
-
-   const onClickHandler = (id: string) => {
-      if (seatClass == "vacant") {
-         setSelected(id, true);
-      } else if (seatClass == "selected") {
-         setSelected(id, false);
-      }
-   };
+   const seatClass = getElementClass(seatState);
 
    return (
-      <>
-         <div
-            className={`seat ${seatClass} ${invis ? "invis" : ""}`}
-            style={
-               seatClass == "assigned"
-                  ? { backgroundColor: seatState.colour }
-                  : {}
-            }
-            onClick={() => onClickHandler(seatId)}
-         >
-            <div className="seat-id no-select">{id.slice(1)}</div>
-         </div>
-      </>
+      <div
+         className={`seat ${seatClass} ${invis ? "invis" : ""}`}
+         style={getElementStyle(seatState?.colour)}
+         onClick={() =>
+            handleElementClick(seatClass, seatId, setSelected, setAssigned)
+         }
+      >
+         <div className="seat-id no-select">{id.slice(1)}</div>
+      </div>
    );
 };
 

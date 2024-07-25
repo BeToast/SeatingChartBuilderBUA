@@ -12,9 +12,6 @@ const InfoBox: React.FC<{}> = ({}) => {
    const [parties, setParties] = useState<Array<string>>([]);
 
    const addPartyHandler = (name: string, count: number): void => {
-      // setParties((prevParties) => {
-      //    return [...prevParties, `${name} (${count})`];
-      // });
       const newParties: Array<string> = [...parties, `${name} (${count})`];
       const newColour: string | undefined =
          newParties.length == 1 ? getColour() : undefined;
@@ -30,14 +27,17 @@ const InfoBox: React.FC<{}> = ({}) => {
    };
 
    const partyRemoveHandler = (party: string) => {
-      //update local state
       setParties((prevParties) => {
          return prevParties.filter((name) => name !== party);
       });
-      //update Context
       selectedIds.map((id) => {
          removeAssigned(id, party);
       });
+   };
+
+   const deselectHandler = () => {
+      setParties([]);
+      selectedIds.map((id) => setSelected(id, false));
    };
 
    return (
@@ -82,7 +82,7 @@ const InfoBox: React.FC<{}> = ({}) => {
                               onChange={(e) => setPartyName(e.target.value)}
                               onKeyDown={(e) => {
                                  if (e.key === "Enter") {
-                                    e.preventDefault(); // Prevents form submission if within a form
+                                    e.preventDefault();
                                     const partySizeInput =
                                        document.getElementById(
                                           "party-size-input"
@@ -107,7 +107,7 @@ const InfoBox: React.FC<{}> = ({}) => {
                               }}
                               onKeyDown={(e) => {
                                  if (e.key === "Enter") {
-                                    e.preventDefault(); // Prevents form submission if within a form
+                                    e.preventDefault();
                                     addPartyHandler(partyName, partyCount);
                                  }
                               }}
@@ -121,6 +121,12 @@ const InfoBox: React.FC<{}> = ({}) => {
                               Add
                            </button>
                         </div>
+                        <button
+                           onClick={deselectHandler}
+                           className="deselect-button"
+                        >
+                           Deselect All
+                        </button>
                      </>
                   ) : (
                      <p>None selected</p>

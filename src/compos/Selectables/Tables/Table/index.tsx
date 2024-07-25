@@ -1,47 +1,33 @@
+import React from "react";
 import { useSelected } from "../../../../context/SelectedContext";
+import {
+   getElementClass,
+   handleElementClick,
+   getElementStyle,
+} from "./../../utils";
 import "./style.css";
 
-const Table: React.FC<{
+interface TableProps {
    id: number;
-}> = ({ id }) => {
-   const { state, setSelected } = useSelected();
-   const tableState = state[`Table ${id}`];
+}
 
-   var tableClass: string;
-   if (tableState) {
-      if (tableState.selected) {
-         tableClass = "selected";
-      } else if (tableState.assigned.length > 0) {
-         tableClass = "assigned";
-      } else {
-         tableClass = "vacant";
-      }
-   } else {
-      tableClass = "vacant";
-   }
+const Table: React.FC<TableProps> = ({ id }) => {
+   const { state, setSelected, setAssigned } = useSelected();
+   const tableId = `Table ${id}`;
+   const tableState = state[tableId];
 
-   const onClickHandler = (id: string) => {
-      if (tableClass == "vacant") {
-         setSelected(id, true);
-      } else if (tableClass == "selected") {
-         setSelected(id, false);
-      }
-   };
+   const tableClass = getElementClass(tableState);
 
    return (
-      <>
-         <div
-            className={`table ${tableClass}`}
-            style={
-               tableClass == "assigned"
-                  ? { backgroundColor: tableState.colour }
-                  : {}
-            }
-            onClick={() => onClickHandler(`Table ${id}`)}
-         >
-            <div className="table-id no-select">{id}</div>
-         </div>
-      </>
+      <div
+         className={`table ${tableClass}`}
+         style={getElementStyle(tableState?.colour)}
+         onClick={() =>
+            handleElementClick(tableClass, tableId, setSelected, setAssigned)
+         }
+      >
+         <div className="table-id no-select">{id}</div>
+      </div>
    );
 };
 

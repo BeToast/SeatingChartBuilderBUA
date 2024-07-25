@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useCallback } from "react";
 import { readLastColour, returnColour } from "../utils/colours";
 
-interface recordValue {
+export interface recordValue {
    //todo add selected as boolean.
    selected: boolean;
    assigned: Array<string>;
@@ -64,12 +64,18 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
    //sets the assigned value to the party array. and maybe a colour
    const setAssigned = useCallback(
       (id: string, party: Array<string>, newColour?: string) => {
+         const isAssigned: boolean = party.length > 0;
+
          setState((prev) => ({
             ...prev,
             [id]: {
                selected: prev[id].selected,
                assigned: [...party],
-               colour: newColour ? newColour : prev[id].colour,
+               colour: isAssigned
+                  ? newColour
+                     ? newColour
+                     : prev[id].colour
+                  : undefined,
             },
          }));
       },
