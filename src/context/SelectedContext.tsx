@@ -7,6 +7,7 @@ export const enum State {
 }
 
 interface recordValue {
+   //todo add selected as boolean.
    state: State;
    assigned: Array<string>;
    colour: string | undefined;
