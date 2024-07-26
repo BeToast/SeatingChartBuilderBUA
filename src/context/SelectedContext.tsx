@@ -13,6 +13,7 @@ interface SelectedContextType {
    // setVacant: (id: string) => void;
    setSelected: (id: string, selected: boolean) => void;
    selectGroup: (id: string) => void;
+   deselectAll: () => void;
    setAssigned: (id: string, party: Array<string>, colour?: string) => void;
    removeAssigned: (id: string, party: string) => void;
 }
@@ -22,6 +23,7 @@ const SelectedContext = createContext<SelectedContextType>({
    // setVacant: () => {},
    setSelected: () => {},
    selectGroup: () => {},
+   deselectAll: () => {},
    setAssigned: () => {},
    removeAssigned: () => {},
 });
@@ -80,6 +82,16 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
             },
             { ...prev }
          );
+      });
+   }, []);
+
+   const deselectAll = useCallback(() => {
+      setState((prev) => {
+         const newState = { ...prev };
+         Object.keys(newState).forEach((key) => {
+            newState[key].selected = false;
+         });
+         return newState;
       });
    }, []);
 
@@ -142,6 +154,7 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
       // setVacant,
       setSelected,
       selectGroup,
+      deselectAll,
       setAssigned,
       removeAssigned,
    };

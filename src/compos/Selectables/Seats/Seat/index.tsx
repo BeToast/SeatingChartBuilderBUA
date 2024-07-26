@@ -13,7 +13,8 @@ interface SeatProps {
 }
 
 const Seat: React.FC<SeatProps> = ({ id, invis = false }) => {
-   const { state, setSelected, selectGroup, setAssigned } = useSelected();
+   const { state, setSelected, selectGroup, setAssigned, deselectAll } =
+      useSelected();
    const seatId = `Seat ${id}`;
    const seatState = state[seatId];
 
@@ -29,6 +30,7 @@ const Seat: React.FC<SeatProps> = ({ id, invis = false }) => {
                seatId,
                setSelected,
                selectGroup,
+               deselectAll,
                setAssigned
             )
          }

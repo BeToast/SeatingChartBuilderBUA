@@ -12,7 +12,8 @@ interface TableProps {
 }
 
 const Table: React.FC<TableProps> = ({ id }) => {
-   const { state, setSelected, setAssigned, selectGroup } = useSelected();
+   const { state, setSelected, setAssigned, selectGroup, deselectAll } =
+      useSelected();
    const tableId = `Table ${id}`;
    const tableState = state[tableId];
 
@@ -28,6 +29,7 @@ const Table: React.FC<TableProps> = ({ id }) => {
                tableId,
                setSelected,
                selectGroup,
+               deselectAll,
                setAssigned
             )
          }
