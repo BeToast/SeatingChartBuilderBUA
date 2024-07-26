@@ -12,6 +12,7 @@ interface SelectedContextType {
    state: Record<string, recordValue>;
    // setVacant: (id: string) => void;
    setSelected: (id: string, selected: boolean) => void;
+   selectGroup: (id: string) => void;
    setAssigned: (id: string, party: Array<string>, colour?: string) => void;
    removeAssigned: (id: string, party: string) => void;
 }
@@ -20,6 +21,7 @@ const SelectedContext = createContext<SelectedContextType>({
    state: {},
    // setVacant: () => {},
    setSelected: () => {},
+   selectGroup: () => {},
    setAssigned: () => {},
    removeAssigned: () => {},
 });
@@ -48,7 +50,6 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
          if (selectedIds.length > 0) {
             selectedRecord = prev[selectedIds[0].innerHTML];
          }
-         console.log(selectedRecord);
 
          return {
             ...prev,
@@ -58,6 +59,27 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
                colour: selectedRecord?.colour || undefined,
             },
          };
+      });
+   }, []);
+
+   const selectGroup = useCallback((id: string) => {
+      setState((prev) => {
+         const partyKeys: Array<string> = Object.keys(prev).filter(
+            (currId: string) => prev[currId].assigned === prev[id].assigned
+         );
+
+         return partyKeys.reduce(
+            (newState, key) => {
+               return {
+                  ...newState,
+                  [key]: {
+                     ...prev[key],
+                     selected: true,
+                  },
+               };
+            },
+            { ...prev }
+         );
       });
    }, []);
 
@@ -119,6 +141,7 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
       state,
       // setVacant,
       setSelected,
+      selectGroup,
       setAssigned,
       removeAssigned,
    };

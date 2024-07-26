@@ -12,7 +12,7 @@ interface TableProps {
 }
 
 const Table: React.FC<TableProps> = ({ id }) => {
-   const { state, setSelected, setAssigned } = useSelected();
+   const { state, setSelected, setAssigned, selectGroup } = useSelected();
    const tableId = `Table ${id}`;
    const tableState = state[tableId];
 
@@ -23,7 +23,13 @@ const Table: React.FC<TableProps> = ({ id }) => {
          className={`table ${tableClass}`}
          style={getElementStyle(tableState?.colour)}
          onClick={() =>
-            handleElementClick(tableClass, tableId, setSelected, setAssigned)
+            handleElementClick(
+               tableClass,
+               tableId,
+               setSelected,
+               selectGroup,
+               setAssigned
+            )
          }
       >
          <div className="table-id no-select">{id}</div>

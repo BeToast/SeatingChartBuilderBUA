@@ -1,6 +1,6 @@
 import "./style.css";
 import { useSelected } from "../../context/SelectedContext";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { getColour } from "../../utils/colours";
 
 const InfoBox: React.FC<{}> = ({}) => {
@@ -11,15 +11,34 @@ const InfoBox: React.FC<{}> = ({}) => {
    const [partyCount, setPartyCount] = useState<number>(1);
    const [parties, setParties] = useState<Array<string>>([]);
 
-   const addPartyHandler = (name: string, count: number): void => {
-      const newParties: Array<string> = [...parties, `${name} (${count})`];
-      const newColour: string | undefined =
-         newParties.length == 1 ? getColour() : undefined;
-      setPartyName(""); // Clear the input after adding
-      selectedIds.map((id) => {
-         setAssigned(id, newParties, newColour);
+   const updateParties = useCallback(() => {
+      const updatedParties = new Set<string>();
+      selectedIds.forEach((id) => {
+         if (state[id].assigned) {
+            state[id].assigned.forEach((party: string) => {
+               updatedParties.add(party);
+            });
+         }
       });
-      setParties(newParties);
+      const newParties = Array.from(updatedParties);
+      if (JSON.stringify(newParties) !== JSON.stringify(parties)) {
+         setParties(newParties);
+      }
+   }, [selectedIds, state, parties]);
+
+   useEffect(() => {
+      updateParties();
+   }, [updateParties]);
+
+   const addPartyHandler = (name: string, count: number): void => {
+      const newParty = `${name} (${count})`;
+      const newColour: string | undefined =
+         parties.length === 0 ? getColour() : undefined;
+      setPartyName(""); // Clear the input after adding
+      setPartyCount(1); // Reset party count
+      selectedIds.forEach((id) => {
+         setAssigned(id, [...(state[id].assigned || []), newParty], newColour);
+      });
    };
 
    const selectedRemoveHandler = (selectedId: string) => {
@@ -27,17 +46,13 @@ const InfoBox: React.FC<{}> = ({}) => {
    };
 
    const partyRemoveHandler = (party: string) => {
-      setParties((prevParties) => {
-         return prevParties.filter((name) => name !== party);
-      });
-      selectedIds.map((id) => {
+      selectedIds.forEach((id) => {
          removeAssigned(id, party);
       });
    };
 
    const deselectHandler = () => {
-      setParties([]);
-      selectedIds.map((id) => setSelected(id, false));
+      selectedIds.forEach((id) => setSelected(id, false));
    };
 
    return (
@@ -99,11 +114,10 @@ const InfoBox: React.FC<{}> = ({}) => {
                               id="party-size-input"
                               placeholder="1"
                               onChange={(e) => {
-                                 var parsedValue = parseInt(e.target.value);
-                                 if (isNaN(parsedValue)) {
-                                    parsedValue = 1;
-                                 }
-                                 setPartyCount(parsedValue);
+                                 const parsedValue = parseInt(e.target.value);
+                                 setPartyCount(
+                                    isNaN(parsedValue) ? 1 : parsedValue
+                                 );
                               }}
                               onKeyDown={(e) => {
                                  if (e.key === "Enter") {

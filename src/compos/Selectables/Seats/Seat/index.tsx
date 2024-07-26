@@ -13,7 +13,7 @@ interface SeatProps {
 }
 
 const Seat: React.FC<SeatProps> = ({ id, invis = false }) => {
-   const { state, setSelected, setAssigned } = useSelected();
+   const { state, setSelected, selectGroup, setAssigned } = useSelected();
    const seatId = `Seat ${id}`;
    const seatState = state[seatId];
 
@@ -24,7 +24,13 @@ const Seat: React.FC<SeatProps> = ({ id, invis = false }) => {
          className={`seat ${seatClass} ${invis ? "invis" : ""}`}
          style={getElementStyle(seatState?.colour)}
          onClick={() =>
-            handleElementClick(seatClass, seatId, setSelected, setAssigned)
+            handleElementClick(
+               seatClass,
+               seatId,
+               setSelected,
+               selectGroup,
+               setAssigned
+            )
          }
       >
          <div className="seat-id no-select">{id.slice(1)}</div>

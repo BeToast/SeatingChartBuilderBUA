@@ -17,6 +17,7 @@ export const handleElementClick = (
    elementClass: string,
    id: string,
    setSelected: (id: string, selected: boolean) => void,
+   selectGroup: (id: string) => void,
    setAssigned: (id: string, party: Array<string>, colour?: string) => void
 ) => {
    if (elementClass === "vacant") {
@@ -24,6 +25,8 @@ export const handleElementClick = (
    } else if (elementClass === "selected") {
       setSelected(id, false);
       setAssigned(id, []);
+   } else if (elementClass === "assigned") {
+      selectGroup(id);
    }
 };
 
