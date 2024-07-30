@@ -21,6 +21,7 @@ const Table: React.FC<TableProps> = ({ id }) => {
 
    return (
       <div
+         id={tableId}
          className={`table ${tableClass}`}
          style={getElementStyle(tableState?.colour)}
          onClick={() =>

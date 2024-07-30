@@ -14,25 +14,17 @@ interface SeatProps {
 }
 
 const Seat: React.FC<SeatProps> = ({ id, invis = false }) => {
-   const {
-      state,
-      setSelected,
-      selectGroup,
-      setAssigned,
-      getAssigned,
-      deselectAll,
-   } = useSelected();
+   const { state, setSelected, selectGroup, setAssigned, deselectAll } =
+      useSelected();
    const seatId = `Seat ${id}`;
    const seatState = state[seatId];
 
    const seatClass = getElementClass(seatState);
 
-   //get assigned to add to class for <NamePrinter/>
-   const assigned = getClassFromAssigned(getAssigned(seatId));
-
    return (
       <div
-         className={`seat ${seatClass} ${assigned} ${invis ? "invis" : ""}`}
+         id={seatId}
+         className={`seat ${seatClass} ${invis ? "invis" : ""}`}
          style={getElementStyle(seatState?.colour)}
          onClick={() =>
             handleElementClick(
