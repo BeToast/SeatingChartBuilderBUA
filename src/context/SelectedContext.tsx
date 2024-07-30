@@ -15,6 +15,10 @@ interface SelectedContextType {
    selectGroup: (id: string) => void;
    deselectAll: () => void;
    setAssigned: (id: string, party: Array<string>, colour?: string) => void;
+   getAssigned: (id: string) => Array<string>;
+   getAllUniqueAssigned: (
+      localState: Record<string, recordValue>
+   ) => Array<string>;
    removeAssigned: (id: string, party: string) => void;
 }
 
@@ -25,6 +29,8 @@ const SelectedContext = createContext<SelectedContextType>({
    selectGroup: () => {},
    deselectAll: () => {},
    setAssigned: () => {},
+   getAssigned: () => [],
+   getAllUniqueAssigned: () => [],
    removeAssigned: () => {},
 });
 
@@ -116,6 +122,29 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
       []
    );
 
+   const getAssigned = useCallback(
+      (id: string) => {
+         const seat = state[id];
+         return seat && seat.assigned ? seat.assigned : [];
+      },
+      [state]
+   );
+
+   //return an array of each unique value in assigned foe entire state.
+   const getAllUniqueAssigned = useCallback(
+      (localState: Record<string, recordValue>) => {
+         // Extract all 'assigned' arrays and flatten them into a single array
+         const allAssigned = Object.values(localState).flatMap((item) =>
+            item.assigned.join(",")
+         );
+         // Create a Set from the flattened array to remove duplicates
+         const uniqueSet = new Set(allAssigned);
+         // Convert the Set back to an array and return it
+         return Array.from(uniqueSet);
+      },
+      [state]
+   );
+
    //remove party from the assigned array.
    const removeAssigned = useCallback((id: string, partyToRemove: string) => {
       setState((prev) => {
@@ -156,6 +185,8 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
       selectGroup,
       deselectAll,
       setAssigned,
+      getAssigned,
+      getAllUniqueAssigned,
       removeAssigned,
    };
 

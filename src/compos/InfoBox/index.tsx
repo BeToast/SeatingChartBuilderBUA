@@ -31,7 +31,7 @@ const InfoBox: React.FC<{}> = ({}) => {
    }, [updateParties]);
 
    const addPartyHandler = (name: string, count: number): void => {
-      const newParty = `${name} (${count})`;
+      const newParty = `${name.trim()}(${count})`;
       const newColour: string | undefined =
          parties.length === 0 ? getColour() : undefined;
       setPartyName(""); // Clear the input after adding
