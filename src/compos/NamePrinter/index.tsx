@@ -1,9 +1,19 @@
+import { useState, useEffect } from "react";
 import { recordValue, useSelected } from "../../context/SelectedContext";
 import { getExtremePoints } from "../Selectables/utils";
 
 const NamePrinter: React.FC = () => {
+   const [resizeCount, setResizeCount] = useState<number>(0);
+
+   useEffect(() => {
+      addEventListener("resize", () => setResizeCount(resizeCount + 1));
+   }, [resizeCount, setResizeCount]);
+
    const { state } = useSelected();
    const assignedElements = createAssignedElementsRecord(state);
+
+   const scrollTop: number =
+      window.scrollY || document.documentElement.scrollTop;
 
    const renderElements: JSX.Element[] = [];
 
@@ -13,7 +23,6 @@ const NamePrinter: React.FC = () => {
       const hasBathroomSeats = elements.some((el) => el.id.match(/Seat b+\d/));
 
       //get curr scroll for accurate absolute positioning
-      const scrollTop = window.scrollY || document.documentElement.scrollTop;
 
       switch (true) {
          case hasTable:
