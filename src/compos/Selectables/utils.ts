@@ -36,23 +36,16 @@ export const getElementStyle = (colour: string | undefined) => {
    return colour ? { backgroundColor: colour } : {};
 };
 
-export const getClassFromAssigned = (partyName: string | Array<string>) => {
-   if (Array.isArray(partyName)) {
-      return partyName.join(",").replace(/\s/g, "-");
-   }
-   return partyName.replace(/\s/g, "-");
-};
-
-// export const getPartyFromClass = (partyClass: string) => {
-//    return partyClass.replace(/-/g, " ");
-// };
-
-export const getExtremePointsX: (elements: HTMLCollectionOf<Element>) => {
+export const getExtremePoints: (elements: Element[]) => {
    left: number;
    right: number;
-} = (elements: HTMLCollectionOf<Element>) => {
+   top: number;
+   bottom: number;
+} = (elements: Element[]) => {
    let leftmost = Infinity;
    let rightmost = -Infinity;
+   let topmost = Infinity;
+   let bottommost = -Infinity;
 
    for (let i = 0; i < elements.length; i++) {
       const element = elements[i];
@@ -65,12 +58,20 @@ export const getExtremePointsX: (elements: HTMLCollectionOf<Element>) => {
       if (rect.right > rightmost) {
          rightmost = rect.right;
       }
-   }
 
-   console.log(elements.length);
+      if (rect.top < topmost) {
+         topmost = rect.top;
+      }
+
+      if (rect.bottom > bottommost) {
+         bottommost = rect.bottom;
+      }
+   }
 
    return {
       left: leftmost,
       right: rightmost,
+      top: topmost,
+      bottom: bottommost,
    };
 };

@@ -4,7 +4,7 @@ import { useSelected } from "../../context/SelectedContext";
 const InfoContext: React.FC<{}> = ({}) => {
    const { state } = useSelected();
 
-   const _DEBUG = true;
+   const _DEBUG = false;
 
    if (_DEBUG) {
       return (

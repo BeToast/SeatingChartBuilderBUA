@@ -19,7 +19,9 @@ const Seats = () => {
          {kSeats.map((num) => (
             <Seat id={`k${num}`} />
          ))}
+         <Seat id={"nope"} invis={true} />
          <div className="seat-row">
+            <Seat id={"nope"} invis={true} />
             <Seat id={"nope"} invis={true} />
             {bSeats.map((num) => (
                <Seat id={`b${num}`} />
