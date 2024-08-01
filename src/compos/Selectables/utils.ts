@@ -36,12 +36,14 @@ export const getElementStyle = (colour: string | undefined) => {
    return colour ? { backgroundColor: colour } : {};
 };
 
-export const getExtremePoints: (elements: Element[]) => {
+export type Lrtb = {
    left: number;
    right: number;
    top: number;
    bottom: number;
-} = (elements: Element[]) => {
+};
+
+export const getLrtb: (elements: Element[]) => Lrtb = (elements: Element[]) => {
    let leftmost = Infinity;
    let rightmost = -Infinity;
    let topmost = Infinity;

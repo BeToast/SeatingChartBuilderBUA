@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { recordValue, useSelected } from "../../context/SelectedContext";
-import { getExtremePoints } from "../Selectables/utils";
+import { getLrtb, Lrtb } from "../Selectables/utils";
 
 const NamePrinter: React.FC = () => {
    const [resizeCount, setResizeCount] = useState<number>(0);
@@ -15,7 +15,10 @@ const NamePrinter: React.FC = () => {
    const scrollTop: number =
       window.scrollY || document.documentElement.scrollTop;
 
-   const renderElements: JSX.Element[] = [];
+   //stores the names for rendering
+   const nameElements: Array<JSX.Element> = [];
+   //the canvas used for drawing all the lines
+   const canvasElements: Array<HTMLCanvasElement> = [];
 
    Object.entries(assignedElements).forEach(([assigned, elements]) => {
       const hasTable = elements.some((el) => el.id.startsWith("Table "));
@@ -26,21 +29,26 @@ const NamePrinter: React.FC = () => {
 
       switch (true) {
          case hasTable:
-            renderElements.push(createNameTable(assigned, elements, scrollTop));
+            nameElements.push(
+               createNameTable(assigned, getLrtb(elements), scrollTop)
+            );
+
             break;
          case hasKitchenSeats && !hasBathroomSeats:
-            renderElements.push(
-               createNameKitchen(assigned, elements, scrollTop)
+            const lrtbKitchen: Lrtb = getLrtb(elements);
+            nameElements.push(
+               createNameKitchen(assigned, lrtbKitchen, scrollTop)
             );
+            canvasElements.push(drawLinesKitchen(lrtbKitchen));
             break;
          case hasBathroomSeats && !hasKitchenSeats:
-            renderElements.push(
-               createNameBathroom(assigned, elements, scrollTop)
+            nameElements.push(
+               createNameBathroom(assigned, getLrtb(elements), scrollTop)
             );
             break;
          case hasKitchenSeats && hasBathroomSeats:
-            renderElements.push(
-               createNameKitchenBathroom(assigned, elements, scrollTop)
+            nameElements.push(
+               createNameKitchenBathroom(assigned, getLrtb(elements), scrollTop)
             );
             break;
          default:
@@ -48,7 +56,14 @@ const NamePrinter: React.FC = () => {
       }
    });
 
-   return <>{renderElements}</>;
+   return (
+      <>
+         {nameElements}
+         {/* {canvasElements.map((canvas) => (
+            <>{canvas}</>
+         ))} */}
+      </>
+   );
 };
 
 function createAssignedElementsRecord(
@@ -88,10 +103,10 @@ function createAssignedElementsRecord(
 // };
 const createNameTable: (
    assigned: string,
-   elements: Element[],
+   lrtb: Lrtb,
    scrollTop: number
-) => JSX.Element = (assigned, elements, scrollTop) => {
-   const { left, right, top, bottom } = getExtremePoints(elements);
+) => JSX.Element = (assigned, lrtb, scrollTop) => {
+   const { left, right, top, bottom } = lrtb;
 
    const centerX = (left + right) / 2;
    const centerY = scrollTop + (top + bottom) / 2;
@@ -118,10 +133,10 @@ const createNameTable: (
 
 const createNameKitchen: (
    assigned: string,
-   elements: Element[],
+   lrtb: Lrtb,
    scrollTop: number
-) => JSX.Element = (assigned, elements, scrollTop) => {
-   const { right, top, bottom } = getExtremePoints(elements);
+) => JSX.Element = (assigned, lrtb, scrollTop) => {
+   const { right, top, bottom } = lrtb;
 
    const centerY = scrollTop + (top + bottom) / 2;
 
@@ -145,12 +160,34 @@ const createNameKitchen: (
    return nameElement;
 };
 
+const drawLinesKitchen: (lrtbKitchen: Lrtb) => HTMLCanvasElement = (
+   lrtbKitchen
+) => {
+   const { right, top, bottom } = lrtbKitchen;
+
+   const centerY = (top + bottom) / 2;
+
+   const canvas = document.createElement("canvas");
+   canvas.width = 100;
+   canvas.height = 100;
+   const ctx = canvas.getContext("2d");
+
+   if (ctx) {
+      ctx.beginPath();
+      ctx.moveTo(right, centerY);
+      ctx.lineTo(right + 8, centerY);
+      ctx.stroke();
+   }
+
+   return canvas;
+};
+
 const createNameBathroom: (
    assigned: string,
-   elements: Element[],
+   lrtb: Lrtb,
    scrollTop: number
-) => JSX.Element = (assigned, elements, scrollTop) => {
-   const { left, right, top } = getExtremePoints(elements);
+) => JSX.Element = (assigned, lrtb, scrollTop) => {
+   const { left, right, top } = lrtb;
 
    const centerX = (left + right) / 2 - 4;
 
@@ -172,15 +209,22 @@ const createNameBathroom: (
       </p>
    );
 
-   return nameElement;
+   const lines: Array<JSX.Element> = [];
+
+   return (
+      <>
+         {nameElement}
+         {lines}
+      </>
+   );
 };
 
 const createNameKitchenBathroom: (
    assigned: string,
-   elements: Element[],
+   lrtb: Lrtb,
    scrollTop: number
-) => JSX.Element = (assigned, elements, scrollTop) => {
-   const { left, right, top, bottom } = getExtremePoints(elements);
+) => JSX.Element = (assigned, lrtb, scrollTop) => {
+   const { left, right, top, bottom } = lrtb;
 
    const centerX = (left + right) / 2;
    const centerY = scrollTop + (top + bottom) / 2;
