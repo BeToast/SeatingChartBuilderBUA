@@ -1,7 +1,7 @@
 import "./App.css";
 import InfoBox from "./compos/InfoBox";
 import InfoContext from "./compos/InfoContext";
-import NamePrinter from "./compos/NamePrinter";
+import OverlayPrinter from "./compos/OverlayPrinter";
 import PrintButton from "./compos/PrintButton";
 import Seats from "./compos/Selectables/Seats";
 import Tables from "./compos/Selectables/Tables";
@@ -13,13 +13,13 @@ function App() {
          <PrintButton />
          <SelectedProvider>
             <div className="flexie">
-               <main className="letter-paper">
+               <main id="letter-paper" className="letter-paper">
                   <Tables />
                   <Seats />
+                  <OverlayPrinter />
                </main>
                <InfoBox />
                <InfoContext />
-               <NamePrinter />
             </div>
          </SelectedProvider>
       </>

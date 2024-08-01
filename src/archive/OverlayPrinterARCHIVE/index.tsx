@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { recordValue, useSelected } from "../../context/SelectedContext";
-import { getLrtb, Lrtb } from "../Selectables/utils";
+import { getLrtb, Lrtb } from "../../compos/Selectables/utils";
 
-const NamePrinter: React.FC = () => {
+const AbsolutePrinter: React.FC = () => {
    const [resizeCount, setResizeCount] = useState<number>(0);
 
    useEffect(() => {
@@ -18,7 +18,7 @@ const NamePrinter: React.FC = () => {
    //stores the names for rendering
    const nameElements: Array<JSX.Element> = [];
    //the canvas used for drawing all the lines
-   const canvasElements: Array<HTMLCanvasElement> = [];
+   const canvasElements: Array<JSX.Element> = [];
 
    Object.entries(assignedElements).forEach(([assigned, elements]) => {
       const hasTable = elements.some((el) => el.id.startsWith("Table "));
@@ -160,26 +160,24 @@ const createNameKitchen: (
    return nameElement;
 };
 
-const drawLinesKitchen: (lrtbKitchen: Lrtb) => HTMLCanvasElement = (
-   lrtbKitchen
-) => {
+const drawLinesKitchen: (lrtbKitchen: Lrtb) => JSX.Element = (lrtbKitchen) => {
    const { right, top, bottom } = lrtbKitchen;
 
    const centerY = (top + bottom) / 2;
 
    const canvas = document.createElement("canvas");
-   canvas.width = 100;
-   canvas.height = 100;
-   const ctx = canvas.getContext("2d");
+   // canvas.width = 100;
+   // canvas.height = 100;
+   // const ctx = canvas.getContext("2d");
 
-   if (ctx) {
-      ctx.beginPath();
-      ctx.moveTo(right, centerY);
-      ctx.lineTo(right + 8, centerY);
-      ctx.stroke();
-   }
+   // if (ctx) {
+   //    ctx.beginPath();
+   //    ctx.moveTo(right, centerY);
+   //    ctx.lineTo(right + 8, centerY);
+   //    ctx.stroke();
+   // }
 
-   return canvas;
+   return <>{canvas}</>;
 };
 
 const createNameBathroom: (
@@ -250,4 +248,4 @@ const createNameKitchenBathroom: (
    return nameElement;
 };
 
-export default NamePrinter;
+export default AbsolutePrinter;

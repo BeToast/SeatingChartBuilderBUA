@@ -4,7 +4,6 @@ import {
    getElementClass,
    handleElementClick,
    getElementStyle,
-   getClassFromAssigned,
 } from "./../../utils";
 import "./style.css";
 
