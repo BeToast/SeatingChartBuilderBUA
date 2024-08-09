@@ -12,7 +12,7 @@ function App() {
       <>
          <PrintButton />
          <SelectedProvider>
-            <div className="flexie">
+            <div id="flexie" className="flexie">
                <main id="letter-paper" className="letter-paper">
                   <Tables />
                   <Seats />
