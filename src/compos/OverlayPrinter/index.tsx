@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import { useSelected } from "../../context/SelectedContext";
 import { createAssignedElementsRecord, getLrtb } from "./utils";
-import Name from "./Name";
+import NameAndLines from "./NameAndLines";
 import Canvas from "./Canvas";
 
 const AbsolutePrinter: React.FC = () => {
@@ -76,7 +76,7 @@ const AbsolutePrinter: React.FC = () => {
                      paperRect={paperRect}
                      flexieMargin={flexieMargin}
                   /> */}
-                  <Name
+                  <NameAndLines
                      assigned={assigned}
                      elements={elements}
                      scrollTop={scrollTop}
