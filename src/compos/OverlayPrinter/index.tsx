@@ -8,7 +8,6 @@ import React, {
 import { useSelected } from "../../context/SelectedContext";
 import { createAssignedElementsRecord, getLrtb } from "./utils";
 import NameAndLines from "./NameAndLines";
-import Canvas from "./Canvas";
 
 const AbsolutePrinter: React.FC = () => {
    const [scrollTop, setScrollTop] = useState(0);

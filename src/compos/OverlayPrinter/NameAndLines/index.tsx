@@ -2,6 +2,7 @@ import React from "react";
 import { getLrtb, Lrtb } from "../utils";
 import LineDiv from "./LineDiv";
 import "./style.css";
+import TableHandler from "./TableHandler";
 
 interface NameProps {
    assigned: string;
@@ -73,210 +74,16 @@ const NameAndLines: React.FC<NameProps> = ({
       }
 
       if (tableCount > 1 && !hasKitchenSeats && !hasBathroomSeats) {
-         if (_DEBUG) console.log("multiple tables");
-
-         const tableLrtb = getLrtb(elements);
-
-         const tableLeft = tableLrtb.left - paperRect.left;
-         const tableRight = tableLrtb.right - paperRect.left;
-         const tableTop = tableLrtb.top + scrollTop - flexieMargin;
-         const tableBottom = tableLrtb.bottom + scrollTop - flexieMargin;
-
-         centerX = (tableLeft + tableRight) / 2;
-         centerY = (tableTop + tableBottom) / 2;
-
-         const tableNumbers = elements
-            .filter((el) => el.id.startsWith("Table "))
-            .map((el) => parseInt(el.id.split(" ")[1]));
-         const onlyKitchenTables = tableNumbers.every(
-            (num) => num >= 10 && num <= 16
+         return (
+            <TableHandler
+               style={style}
+               assigned={assigned}
+               elements={elements}
+               scrollTop={scrollTop}
+               paperRect={paperRect}
+               flexieMargin={flexieMargin}
+            />
          );
-         const onlyBathroomTables = tableNumbers.every(
-            (num) => num >= 16 && num <= 21
-         );
-         const onlyCornerTables =
-            tableNumbers.some((num) => num >= 10 && num <= 16) &&
-            tableNumbers.some((num) => num >= 16 && num <= 21);
-
-         if (onlyKitchenTables) {
-            const kitchenTables = elements.filter((el) =>
-               el.id.startsWith("Table ")
-            );
-            const sortedTables = kitchenTables.sort((a, b) => {
-               const rectA = a.getBoundingClientRect();
-               const rectB = b.getBoundingClientRect();
-               return rectA.top - rectB.top;
-            });
-
-            const topTable = sortedTables[0];
-            const bottomTable = sortedTables[sortedTables.length - 1];
-
-            const topTableRect = topTable.getBoundingClientRect();
-            const bottomTableRect = bottomTable.getBoundingClientRect();
-
-            const tableRadius = topTableRect.height / 2;
-
-            // Calculate points relative to the paper
-            const topLeftX = topTableRect.left - paperRect.left;
-            const topLeftY = topTableRect.top + scrollTop - flexieMargin - 25;
-            const topRightX = topTableRect.right - paperRect.left;
-            const topRightY = topTableRect.top + scrollTop - flexieMargin - 25;
-            const bottomLeftX = bottomTableRect.left - paperRect.left;
-            const bottomLeftY =
-               bottomTableRect.top + scrollTop - flexieMargin - 25;
-            const bottomRightX = bottomTableRect.right - paperRect.left;
-            const bottomRightY =
-               bottomTableRect.top + scrollTop - flexieMargin - 25;
-
-            linesJsx = (
-               <React.Fragment>
-                  <LineDiv
-                     pointOne={{ x: topLeftX + 1, y: topLeftY + tableRadius }}
-                     pointTwo={{
-                        x: bottomLeftX + 1,
-                        y: bottomLeftY + tableRadius,
-                     }}
-                  />
-                  <LineDiv
-                     pointOne={{ x: topRightX - 1, y: topRightY + tableRadius }}
-                     pointTwo={{
-                        x: bottomRightX - 1,
-                        y: bottomRightY + tableRadius,
-                     }}
-                  />
-               </React.Fragment>
-            );
-
-            style = {
-               ...style,
-               left: `${centerX}px`,
-               top: `${centerY}px`,
-               transform: "translateX(-50%) translateY(-50%)",
-            };
-         } else if (onlyBathroomTables) {
-            const kitchenTables = elements.filter((el) =>
-               el.id.startsWith("Table ")
-            );
-            const sortedTables = kitchenTables.sort((a, b) => {
-               const rectA = a.getBoundingClientRect();
-               const rectB = b.getBoundingClientRect();
-               return rectA.left - rectB.left;
-            });
-
-            const leftmostTable = sortedTables[0];
-            const rightmostTable = sortedTables[sortedTables.length - 1];
-
-            const leftmostTableRect = leftmostTable.getBoundingClientRect();
-            const rightmostTableRect = rightmostTable.getBoundingClientRect();
-
-            const tableRadius = leftmostTableRect.height / 2;
-
-            // Calculate points relative to the paper
-            const topLeftX = leftmostTableRect.left - paperRect.left;
-            const topLeftY =
-               leftmostTableRect.top + scrollTop - flexieMargin - 25;
-            const topRightX = rightmostTableRect.right - paperRect.left;
-            const topRightY =
-               rightmostTableRect.top + scrollTop - flexieMargin - 25;
-            const bottomLeftX = leftmostTableRect.left - paperRect.left;
-            const bottomLeftY =
-               leftmostTableRect.bottom + scrollTop - flexieMargin - 25;
-            const bottomRightX = rightmostTableRect.right - paperRect.left;
-            const bottomRightY =
-               rightmostTableRect.bottom + scrollTop - flexieMargin - 25;
-
-            linesJsx = (
-               <React.Fragment>
-                  <LineDiv
-                     pointOne={{ x: topLeftX + tableRadius, y: topLeftY }}
-                     pointTwo={{ x: topRightX - tableRadius, y: topRightY }}
-                  />
-                  <LineDiv
-                     pointOne={{
-                        x: bottomLeftX + tableRadius,
-                        y: bottomLeftY - 2,
-                     }}
-                     pointTwo={{
-                        x: bottomRightX - tableRadius,
-                        y: bottomRightY - 2,
-                     }}
-                  />
-               </React.Fragment>
-            );
-
-            style = {
-               ...style,
-               left: `${centerX}px`,
-               top: `${centerY}px`,
-               transform: "translateX(-50%) translateY(-50%)",
-            };
-         } else if (onlyCornerTables) {
-            const cornerTables = elements.filter((el) =>
-               el.id.startsWith("Table ")
-            );
-            const sortedTables = cornerTables.sort((a, b) => {
-               const rectA = a.getBoundingClientRect();
-               const rectB = b.getBoundingClientRect();
-               return rectA.left - rectB.left || rectA.top - rectB.top;
-            });
-
-            const topLeftTable = sortedTables[0];
-            const bottomRightTable = sortedTables[sortedTables.length - 1];
-
-            const topLeftRect = topLeftTable.getBoundingClientRect();
-            const bottomRightRect = bottomRightTable.getBoundingClientRect();
-
-            const tableRadius = topLeftRect.height / 2;
-
-            // Calculate points relative to the paper
-            const topLeftX = topLeftRect.left - paperRect.left;
-            const topLeftY = topLeftRect.top + scrollTop - flexieMargin - 25;
-            const bottomRightX = bottomRightRect.right - paperRect.left;
-            const bottomRightY =
-               bottomRightRect.bottom + scrollTop - flexieMargin - 25;
-
-            linesJsx = (
-               <React.Fragment>
-                  {/* Vertical line */}
-                  <LineDiv
-                     pointOne={{ x: topLeftX + 1, y: topLeftY + tableRadius }}
-                     pointTwo={{
-                        x: topLeftX + 1,
-                        y: bottomRightY - tableRadius,
-                     }}
-                  />
-                  {/* Horizontal line */}
-                  <LineDiv
-                     pointOne={{
-                        x: topLeftX + tableRadius,
-                        y: bottomRightY - 2,
-                     }}
-                     pointTwo={{
-                        x: bottomRightX - tableRadius,
-                        y: bottomRightY - 2,
-                     }}
-                  />
-                  {/* Diagonal line */}
-                  <LineDiv
-                     pointOne={{
-                        x: topLeftX + tableRadius * 1.8,
-                        y: topLeftY + tableRadius / 2.3,
-                     }}
-                     pointTwo={{
-                        x: bottomRightX - tableRadius * 0.3,
-                        y: bottomRightY - tableRadius / 0.59,
-                     }}
-                  />
-               </React.Fragment>
-            );
-
-            style = {
-               ...style,
-               left: `${topLeftX + 8}px`,
-               top: `${centerY}px`,
-               transform: "translateY(-50%)",
-            };
-         }
       } else if (tableCount == 1 && hasKitchenSeats && !hasBathroomSeats) {
          if (_DEBUG) console.log("one table and kitchen seats");
          const tables = elements.filter((el) => el.id.startsWith("Table "));
@@ -354,14 +161,28 @@ const NameAndLines: React.FC<NameProps> = ({
          };
       }
 
-      return (
-         <React.Fragment>
-            <div className="party-name" style={style}>
-               {assigned}
-            </div>
-            ;{linesJsx}
-         </React.Fragment>
-      );
+      return getReturnJsx({ style, assigned, linesJsx });
    }
 };
 export default NameAndLines;
+
+export type StyleAssignedLines = {
+   style: React.CSSProperties;
+   assigned: string;
+   linesJsx: JSX.Element;
+};
+
+export const getReturnJsx = ({
+   style,
+   assigned,
+   linesJsx,
+}: StyleAssignedLines) => {
+   return (
+      <React.Fragment>
+         <div className="party-name" style={style}>
+            {assigned}
+         </div>
+         ;{linesJsx}
+      </React.Fragment>
+   );
+};
