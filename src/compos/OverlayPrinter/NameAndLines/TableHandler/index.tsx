@@ -1,7 +1,7 @@
 import React from "react";
-import { getReturnJsx } from "../NameAndLines";
-import { getLrtb } from "../utils";
-import LineDiv from "./LineDiv";
+import { getReturnJsx } from "..";
+import { getLrtb } from "../../utils";
+import LineDiv from "../LineDiv";
 
 const TableHandler: React.FC<{
    style: React.CSSProperties;
@@ -20,8 +20,8 @@ const TableHandler: React.FC<{
    const tableTop = tableLrtb.top + scrollTop - flexieMargin;
    const tableBottom = tableLrtb.bottom + scrollTop - flexieMargin;
 
-   const centerX = (tableLeft + tableRight) / 2;
-   const centerY = (tableTop + tableBottom) / 2;
+   const tableCenterX = (tableLeft + tableRight) / 2;
+   const tableCenterY = (tableTop + tableBottom) / 2;
 
    const tableNumbers = elements
       .filter((el) => el.id.startsWith("Table "))
@@ -36,8 +36,19 @@ const TableHandler: React.FC<{
       tableNumbers.some((num) => num >= 10 && num <= 16) &&
       tableNumbers.some((num) => num >= 16 && num <= 21);
 
+   // ONE TABLE LOGIC -------------------------------------------------------------------------------------------
+   if (elements.length == 1) {
+      style = {
+         ...style,
+         left: `${tableCenterX}px`,
+         top: `${tableCenterY}px`,
+         transform: "translateX(-50%) translateY(-50%)",
+      };
+      return getReturnJsx({ style, assigned, linesJsx });
+   }
+
    // KITCHEN TABLE LOGIC ----------------------------------------------------------------------------------------
-   if (onlyKitchenTables) {
+   else if (onlyKitchenTables) {
       const kitchenTables = elements.filter((el) => el.id.startsWith("Table "));
       const sortedTables = kitchenTables.sort((a, b) => {
          const rectA = a.getBoundingClientRect();
@@ -84,8 +95,8 @@ const TableHandler: React.FC<{
 
       style = {
          ...style,
-         left: `${centerX}px`,
-         top: `${centerY}px`,
+         left: `${tableCenterX}px`,
+         top: `${tableCenterY}px`,
          transform: "translateX(-50%) translateY(-50%)",
       };
 
@@ -140,8 +151,8 @@ const TableHandler: React.FC<{
 
       style = {
          ...style,
-         left: `${centerX}px`,
-         top: `${centerY}px`,
+         left: `${tableCenterX}px`,
+         top: `${tableCenterY}px`,
          transform: "translateX(-50%) translateY(-50%)",
       };
       return getReturnJsx({ style, assigned, linesJsx });
@@ -208,7 +219,7 @@ const TableHandler: React.FC<{
       style = {
          ...style,
          left: `${topLeftX + 8}px`,
-         top: `${centerY}px`,
+         top: `${tableCenterY}px`,
          transform: "translateY(-50%)",
       };
       return getReturnJsx({ style, assigned, linesJsx });

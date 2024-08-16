@@ -1,8 +1,8 @@
 import React from "react";
 import { getLrtb, Lrtb } from "../utils";
-import LineDiv from "./LineDiv";
 import "./style.css";
 import TableHandler from "./TableHandler";
+import TableRailHandler from "./TableRailHandler";
 
 interface NameProps {
    assigned: string;
@@ -33,6 +33,12 @@ const NameAndLines: React.FC<NameProps> = ({
       el.id.startsWith("Table ")
    ).length;
 
+   if (_DEBUG) {
+      console.log("tableCount: ", tableCount);
+      console.log("hasKitchenSeats: ", hasKitchenSeats);
+      console.log("hasBathroomSeats: ", hasBathroomSeats);
+   }
+
    let style: React.CSSProperties = {
       position: "absolute",
       margin: 0,
@@ -41,6 +47,7 @@ const NameAndLines: React.FC<NameProps> = ({
    };
 
    if (paperRect) {
+      if (_DEBUG) console.log("paperRect: true");
       const relativeLeft = left - paperRect.left;
       const relativeRight = right - paperRect.left;
 
@@ -52,25 +59,16 @@ const NameAndLines: React.FC<NameProps> = ({
 
       if (tableCount == 1 && !hasKitchenSeats && !hasBathroomSeats) {
          if (_DEBUG) console.log("one table");
-         //only one table
-
-         // Calculate centerX and centerY
-         const tableLrtb = getLrtb(elements);
-
-         const tableLeft = tableLrtb.left - paperRect.left;
-         const tableRight = tableLrtb.right - paperRect.left;
-         const tableTop = tableLrtb.top + scrollTop - flexieMargin;
-         const tableBottom = tableLrtb.bottom + scrollTop - flexieMargin;
-
-         centerX = (tableLeft + tableRight) / 2;
-         centerY = (tableTop + tableBottom) / 2;
-
-         style = {
-            ...style,
-            left: `${centerX}px`,
-            top: `${centerY}px`,
-            transform: "translateX(-50%) translateY(-50%)",
-         };
+         return (
+            <TableHandler
+               style={style}
+               assigned={assigned}
+               elements={elements}
+               scrollTop={scrollTop}
+               paperRect={paperRect}
+               flexieMargin={flexieMargin}
+            />
+         );
       }
 
       if (tableCount > 1 && !hasKitchenSeats && !hasBathroomSeats) {
@@ -84,50 +82,60 @@ const NameAndLines: React.FC<NameProps> = ({
                flexieMargin={flexieMargin}
             />
          );
-      } else if (tableCount == 1 && hasKitchenSeats && !hasBathroomSeats) {
-         if (_DEBUG) console.log("one table and kitchen seats");
-         const tables = elements.filter((el) => el.id.startsWith("Table "));
-         const tableLrtb = getLrtb(tables);
+      } else if (tableCount > 0 && (hasKitchenSeats || hasBathroomSeats)) {
+         if (_DEBUG) console.log("tables and rail");
+         return (
+            <TableRailHandler
+               style={style}
+               assigned={assigned}
+               elements={elements}
+               scrollTop={scrollTop}
+               paperRect={paperRect}
+               flexieMargin={flexieMargin}
+            />
+         );
+         // const tables = elements.filter((el) => el.id.startsWith("Table "));
+         // const tableLrtb = getLrtb(tables);
 
-         const tableLeft = tableLrtb.left - paperRect.left;
-         const tableRight = tableLrtb.right - paperRect.left;
-         const tableTop = tableLrtb.top + scrollTop - flexieMargin;
-         const tableBottom = tableLrtb.bottom + scrollTop - flexieMargin;
+         // const tableLeft = tableLrtb.left - paperRect.left;
+         // const tableRight = tableLrtb.right - paperRect.left;
+         // const tableTop = tableLrtb.top + scrollTop - flexieMargin;
+         // const tableBottom = tableLrtb.bottom + scrollTop - flexieMargin;
 
-         centerX = (tableLeft + tableRight) / 2;
-         centerY = (tableTop + tableBottom) / 2;
+         // centerX = (tableLeft + tableRight) / 2;
+         // centerY = (tableTop + tableBottom) / 2;
 
-         style = {
-            ...style,
-            left: `${centerX}px`,
-            top: `${centerY}px`,
-            transform: "translateX(-50%) translateY(-50%)",
-         };
-      } else if (tableCount == 1 && hasBathroomSeats && !hasKitchenSeats) {
-         if (_DEBUG) console.log("one table and bathroom seats");
-         const tables = elements.filter((el) => el.id.startsWith("Table "));
-         const tableLrtb = getLrtb(tables);
+         // style = {
+         //    ...style,
+         //    left: `${centerX}px`,
+         //    top: `${centerY}px`,
+         //    transform: "translateX(-50%) translateY(-50%)",
+         // };
+         // } else if (tableCount == 1 && hasBathroomSeats && !hasKitchenSeats) {
+         //    if (_DEBUG) console.log("one table and bathroom seats");
+         //    const tables = elements.filter((el) => el.id.startsWith("Table "));
+         //    const tableLrtb = getLrtb(tables);
 
-         const tableLeft = tableLrtb.left - paperRect.left;
-         const tableRight = tableLrtb.right - paperRect.left;
-         const tableTop = tableLrtb.top + scrollTop - flexieMargin;
-         const tableBottom = tableLrtb.bottom + scrollTop - flexieMargin;
+         //    const tableLeft = tableLrtb.left - paperRect.left;
+         //    const tableRight = tableLrtb.right - paperRect.left;
+         //    const tableTop = tableLrtb.top + scrollTop - flexieMargin;
+         //    const tableBottom = tableLrtb.bottom + scrollTop - flexieMargin;
 
-         centerX = (tableLeft + tableRight) / 2;
-         centerY = (tableTop + tableBottom) / 2;
+         //    centerX = (tableLeft + tableRight) / 2;
+         //    centerY = (tableTop + tableBottom) / 2;
 
-         style = {
-            ...style,
-            left: `${centerX}px`,
-            top: `${centerY}px`,
-            transform: "translateX(-50%) translateY(-50%)",
-         };
+         //    style = {
+         //       ...style,
+         //       left: `${centerX}px`,
+         //       top: `${centerY}px`,
+         //       transform: "translateX(-50%) translateY(-50%)",
+         //    };
+         // }
       } else if (hasKitchenSeats && !hasBathroomSeats && tableCount == 0) {
          if (_DEBUG) console.log("kitchen seats");
          // Kitchen seats, no bathroom seats
          centerX = (relativeLeft + relativeRight) / 2;
          centerY = (setTop + setBottom) / 2;
-         console.log(setTop);
          style = {
             ...style,
             left: `${relativeRight + 8}px`,
