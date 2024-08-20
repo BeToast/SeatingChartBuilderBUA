@@ -25,8 +25,7 @@ const LineDiv: React.FC<LineProps> = ({ pointOne, pointTwo }) => {
       width: `${length}px`,
       backgroundColor: "black",
       transformOrigin: "0 0", // Set transform origin to the start of the line
-      transform: `translate(${pointOne.x}px, ${pointOne.y}px) rotate(${degrees}deg)`,
-      borderRadius: "", // Rounded corners for a smooth line
+      transform: `translate(${pointOne.x}px, ${pointOne.y}px) rotate(${degrees}deg)`, // Translate and rotate the line
    };
 
    return <div style={lineStyle} />;

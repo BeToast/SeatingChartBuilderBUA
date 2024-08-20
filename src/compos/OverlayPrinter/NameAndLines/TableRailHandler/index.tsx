@@ -11,6 +11,18 @@ const TableRailHandler: React.FC<{
    paperRect: DOMRect;
    flexieMargin: number;
 }> = ({ style, assigned, elements, scrollTop, paperRect, flexieMargin }) => {
+   //kitchen rail varables
+   let kRailLrtb: Lrtb,
+      kRailLeft: number,
+      kRailRight: number,
+      kRailTop: number,
+      kRailBottom: number;
+   //barthroom rail varables
+   let bRailLrtb: Lrtb,
+      bRailLeft: number,
+      bRailRight: number,
+      bRailTop: number,
+      bRailBottom: number;
    var linesJsx: JSX.Element = <></>;
 
    const tables = elements.filter((el) => el.id.startsWith("Table "));
@@ -36,11 +48,11 @@ const TableRailHandler: React.FC<{
 
    //kitchen rail and tables
    if (kitchenRail.length > 0 && bathroomRail.length == 0) {
-      const kRailLrtb: Lrtb = getLrtb(kitchenRail);
-      const kRailLeft = kRailLrtb.left - paperRect.left;
-      // const kRailRight = kRailLrtb.right - paperRect.left;
-      const kRailTop = kRailLrtb.top + scrollTop - flexieMargin - 26;
-      const kRailBottom = kRailLrtb.bottom + scrollTop - flexieMargin - 26;
+      kRailLrtb = getLrtb(kitchenRail);
+      kRailLeft = kRailLrtb.left - paperRect.left;
+      // kRailRight = kRailLrtb.right - paperRect.left;
+      kRailTop = kRailLrtb.top + scrollTop - flexieMargin - 26;
+      kRailBottom = kRailLrtb.bottom + scrollTop - flexieMargin - 26;
 
       linesJsx = (
          <React.Fragment>
@@ -76,11 +88,11 @@ const TableRailHandler: React.FC<{
       return getReturnJsx({ style, assigned, linesJsx });
    } //bathroom rail and tables
    else if (kitchenRail.length == 0 && bathroomRail.length > 0) {
-      const bRailLrtb: Lrtb = getLrtb(bathroomRail);
-      const bRailLeft = bRailLrtb.left - paperRect.left;
-      const bRailRight = bRailLrtb.right - paperRect.left - 2;
-      // const bRailTop = bRailLrtb.top + scrollTop - flexieMargin - 26;
-      const bRailBottom = bRailLrtb.bottom + scrollTop - flexieMargin - 26;
+      bRailLrtb = getLrtb(bathroomRail);
+      bRailLeft = bRailLrtb.left - paperRect.left;
+      bRailRight = bRailLrtb.right - paperRect.left - 2;
+      // bRailTop = bRailLrtb.top + scrollTop - flexieMargin - 26;
+      bRailBottom = bRailLrtb.bottom + scrollTop - flexieMargin - 26;
 
       linesJsx = (
          <React.Fragment>
@@ -116,7 +128,49 @@ const TableRailHandler: React.FC<{
       return getReturnJsx({ style, assigned, linesJsx });
    } //both kitchen and bathroom rail
    else if (kitchenRail.length > 0 && bathroomRail.length > 0) {
-      //TODO: implement this?
+      kRailLrtb = getLrtb(kitchenRail);
+      kRailLeft = kRailLrtb.left - paperRect.left;
+      kRailRight = kRailLrtb.right - paperRect.left - 2;
+      kRailTop = kRailLrtb.top + scrollTop - flexieMargin - 26;
+      kRailBottom = kRailLrtb.bottom + scrollTop - flexieMargin - 26;
+
+      bRailLrtb = getLrtb(bathroomRail);
+      bRailLeft = bRailLrtb.left - paperRect.left;
+      bRailRight = bRailLrtb.right - paperRect.left - 2;
+      // bRailTop = bRailLrtb.top + scrollTop - flexieMargin - 26;
+      bRailBottom = bRailLrtb.bottom + scrollTop - flexieMargin - 26;
+      linesJsx = (
+         <React.Fragment>
+            <LineDiv
+               pointOne={{
+                  x: tableLeft + tableRadius,
+                  y: tableTop - 26,
+               }}
+               pointTwo={{
+                  x: kRailLeft,
+                  y: kRailTop,
+               }}
+            />
+            <LineDiv
+               pointOne={{
+                  x: tableRight - 2,
+                  y: tableBottom - 26 - tableRadius,
+               }}
+               pointTwo={{
+                  x: bRailRight,
+                  y: bRailBottom,
+               }}
+            />
+         </React.Fragment>
+      );
+      style = {
+         //TODO: reposition this to make it visually distince trom only table handler
+         ...style,
+         left: `${tableCenterX}px`,
+         top: `${tableCenterY}px`,
+         transform: "translateX(-50%) translateY(-50%)",
+      };
+      return getReturnJsx({ style, assigned, linesJsx });
    } else if (kitchenRail.length == 0 && bathroomRail.length == 0) {
       throw new Error(
          "No rails seats in TableRailHandler, component should not have been called"

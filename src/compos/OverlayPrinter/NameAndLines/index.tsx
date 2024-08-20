@@ -3,6 +3,7 @@ import { getLrtb, Lrtb } from "../utils";
 import "./style.css";
 import TableHandler from "./TableHandler";
 import TableRailHandler from "./TableRailHandler";
+import RailHandler from "./RailHandler.tsx";
 
 interface NameProps {
    assigned: string;
@@ -44,6 +45,7 @@ const NameAndLines: React.FC<NameProps> = ({
       margin: 0,
       color: "black",
       zIndex: 10,
+      backgroundColor: "transparent",
    };
 
    if (paperRect) {
@@ -94,82 +96,20 @@ const NameAndLines: React.FC<NameProps> = ({
                flexieMargin={flexieMargin}
             />
          );
-         // const tables = elements.filter((el) => el.id.startsWith("Table "));
-         // const tableLrtb = getLrtb(tables);
-
-         // const tableLeft = tableLrtb.left - paperRect.left;
-         // const tableRight = tableLrtb.right - paperRect.left;
-         // const tableTop = tableLrtb.top + scrollTop - flexieMargin;
-         // const tableBottom = tableLrtb.bottom + scrollTop - flexieMargin;
-
-         // centerX = (tableLeft + tableRight) / 2;
-         // centerY = (tableTop + tableBottom) / 2;
-
-         // style = {
-         //    ...style,
-         //    left: `${centerX}px`,
-         //    top: `${centerY}px`,
-         //    transform: "translateX(-50%) translateY(-50%)",
-         // };
-         // } else if (tableCount == 1 && hasBathroomSeats && !hasKitchenSeats) {
-         //    if (_DEBUG) console.log("one table and bathroom seats");
-         //    const tables = elements.filter((el) => el.id.startsWith("Table "));
-         //    const tableLrtb = getLrtb(tables);
-
-         //    const tableLeft = tableLrtb.left - paperRect.left;
-         //    const tableRight = tableLrtb.right - paperRect.left;
-         //    const tableTop = tableLrtb.top + scrollTop - flexieMargin;
-         //    const tableBottom = tableLrtb.bottom + scrollTop - flexieMargin;
-
-         //    centerX = (tableLeft + tableRight) / 2;
-         //    centerY = (tableTop + tableBottom) / 2;
-
-         //    style = {
-         //       ...style,
-         //       left: `${centerX}px`,
-         //       top: `${centerY}px`,
-         //       transform: "translateX(-50%) translateY(-50%)",
-         //    };
-         // }
-      } else if (hasKitchenSeats && !hasBathroomSeats && tableCount == 0) {
-         if (_DEBUG) console.log("kitchen seats");
-         // Kitchen seats, no bathroom seats
-         centerX = (relativeLeft + relativeRight) / 2;
-         centerY = (setTop + setBottom) / 2;
-         style = {
-            ...style,
-            left: `${relativeRight + 8}px`,
-            top: `${centerY}px`,
-            transform: "translateY(-50%) rotate(-30deg)",
-            transformOrigin: "left",
-         };
-      } else if (hasBathroomSeats && !hasKitchenSeats) {
-         if (_DEBUG) console.log("bathroom seats");
-         centerX = (relativeLeft + relativeRight) / 2;
-         centerY = (setTop + setBottom) / 2;
-         style = {
-            ...style,
-            left: `${centerX - 4}px`,
-            top: `${setTop}px`,
-            transform: "translateY(-100%) rotate(-30deg)",
-            transformOrigin: "left",
-         };
-      } else if (hasKitchenSeats && hasBathroomSeats && !hasTables) {
-         if (_DEBUG) console.log("kitchen and bathroom seats");
-         //corner seats
-         centerX = (relativeLeft + relativeRight) / 2;
-         centerY = (setTop + setBottom) / 2;
-
-         style = {
-            ...style,
-            left: `${centerX}px`,
-            top: `${centerY}px`,
-            transform: "translateY(-60%) rotate(-30deg)",
-            transformOrigin: "left",
-         };
+      } else if (tableCount == 0 && (hasKitchenSeats || hasBathroomSeats)) {
+         return (
+            <RailHandler
+               style={style}
+               assigned={assigned}
+               elements={elements}
+               scrollTop={scrollTop}
+               paperRect={paperRect}
+               flexieMargin={flexieMargin}
+               hasKitchenSeats={hasKitchenSeats}
+               hasBathroomSeats={hasBathroomSeats}
+            />
+         );
       }
-
-      return getReturnJsx({ style, assigned, linesJsx });
    }
 };
 export default NameAndLines;
