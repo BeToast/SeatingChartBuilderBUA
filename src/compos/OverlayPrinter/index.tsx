@@ -69,12 +69,6 @@ const AbsolutePrinter: React.FC = () => {
 
             return (
                <React.Fragment key={assigned}>
-                  {/* <Canvas
-                     elements={elements}
-                     scrollTop={scrollTop}
-                     paperRect={paperRect}
-                     flexieMargin={flexieMargin}
-                  /> */}
                   <NameAndLines
                      assigned={assigned}
                      elements={elements}

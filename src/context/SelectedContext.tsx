@@ -13,7 +13,12 @@ interface SelectedContextType {
    setSelected: (id: string, selected: boolean) => void;
    selectGroup: (id: string) => void;
    deselectAll: () => void;
-   setAssigned: (id: string, party: Array<string>, colour?: string) => void;
+   setAssigned: (
+      id: string,
+      assigned: Array<string>,
+      colour?: string,
+      selected?: boolean
+   ) => void;
    removeAssigned: (id: string, party: string) => void;
 }
 
@@ -96,14 +101,23 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
 
    //sets the assigned value to the party array. and maybe a colour
    const setAssigned = useCallback(
-      (id: string, party: Array<string>, newColour?: string) => {
-         const isAssigned: boolean = party.length > 0;
+      (
+         id: string,
+         assigned: Array<string>,
+         newColour?: string,
+         selected?: boolean
+      ) => {
+         const isAssigned: boolean = assigned.length > 0;
 
          setState((prev) => ({
             ...prev,
             [id]: {
-               selected: prev[id].selected,
-               assigned: [...party],
+               selected: selected
+                  ? selected
+                  : prev[id]
+                  ? prev[id].selected
+                  : false,
+               assigned: [...assigned],
                colour: isAssigned
                   ? newColour
                      ? newColour
