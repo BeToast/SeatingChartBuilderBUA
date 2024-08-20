@@ -26,10 +26,6 @@ const Seats = () => {
             {bSeats.map((num) => (
                <Seat id={`b${num}`} />
             ))}
-            <div style={{ width: "8px" }} />
-            <AddSeat
-               addHandler={() => setBSeats([bSeats.length + 1, ...bSeats])}
-            />
          </div>
       </div>
    );
