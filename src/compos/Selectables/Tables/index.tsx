@@ -10,8 +10,8 @@ const Tables = () => {
    const { setAssigned } = useSelected();
 
    useEffect(() => {
-      kTables.map((id) => setAssigned(`Table ${id}`, []));
-      bTables.map((id) => setAssigned(`Table ${id}`, []));
+      kTables.map((id) => setAssigned(`Table ${id}`, [], undefined, false));
+      bTables.map((id) => setAssigned(`Table ${id}`, [], undefined, false));
    }, []);
 
    return (

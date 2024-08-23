@@ -3,6 +3,7 @@ import AddSeat from "./AddSeat";
 import Seat from "./Seat";
 import "./style.css";
 import { useSelected } from "../../../context/SelectedContext";
+import { render } from "react-dom";
 
 const Seats = () => {
    const [kSeats, setKSeats] = useState<Array<number>>(
@@ -12,42 +13,55 @@ const Seats = () => {
       Array.from({ length: 14 }, (_, i) => 14 - i)
    );
    useEffect(() => {
-      kSeats.map((id) => setAssigned(`Seat k${id}`, []));
-      bSeats.map((id) => setAssigned(`Seat k${id}`, []));
+      kSeats.map((id) => setAssigned(`Seat k${id}`, [], undefined, false));
+      bSeats.map((id) => setAssigned(`Seat k${id}`, [], undefined, false));
    }, []);
 
-   const { state, setAssigned, deselectAll } = useSelected();
+   const { state, setAssigned, nameAndLinesBool, renderNameAndLines } =
+      useSelected();
+   console.log(nameAndLinesBool);
 
    const addKitchenSeatHandler = () => {
-      //deselect to be safe??? or cuz i cant wrap my head around the alternatives rn?
-      //to be fair, its confusing to the user if their selection should increment with the added seats...
-      // deselectAll();
-
       //incremente all assigned
       kSeats.map((index) => {
          //use this to iterate backwards in O(n) time
-         let currId = kSeats[kSeats.length - index];
-         let currKey = `Seat k${currId}`;
+         const currId = kSeats[kSeats.length - index];
+         const currKey = `Seat k${currId}`;
+         const assignedObj = {
+            id: `Seat k${currId + 1}`,
+            assigned: state[currKey].assigned,
+            colour: state[currKey].colour,
+            selected: state[currKey].selected,
+         };
          setAssigned(
-            `Seat k${currId + 1}`,
-            state[currKey].assigned,
-            state[currKey].colour,
-            state[currKey].selected
+            assignedObj.id,
+            assignedObj.assigned,
+            assignedObj.colour,
+            assignedObj.selected
+            // `Seat k${currId + 1}`,
+            // state[currKey].assigned,
+            // state[currKey].colour,
+            // state[currKey].selected
          );
       });
       setAssigned("Seat k1", []);
 
       //add a seat id, consequently re-rendering the seats
       setKSeats([...kSeats, kSeats.length + 1]);
+      //toggle renderNameAndLines to re-render the lines and names
+      renderNameAndLines();
    };
+
+   let extraSeats = kSeats.length - 15; //-15 bc decrement comes before boolean
 
    return (
       <div className="seat-col">
          <AddSeat addHandler={addKitchenSeatHandler} />
          <div style={{ height: "8px" }} />
-         {kSeats.map((num) => (
-            <Seat id={`k${num}`} />
-         ))}
+         {kSeats.map((num) => {
+            extraSeats--; //decrement before return statement
+            return <Seat id={`k${num}`} extraSeat={extraSeats > 0} />;
+         })}
          <Seat id={"nope"} invis={true} />
          <div className="seat-row">
             <Seat id={"nope"} invis={true} />

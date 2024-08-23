@@ -9,6 +9,7 @@ export interface recordValue {
 
 interface SelectedContextType {
    state: Record<string, recordValue>;
+   nameAndLinesBool: boolean;
    // setVacant: (id: string) => void;
    setSelected: (id: string, selected: boolean) => void;
    selectGroup: (id: string) => void;
@@ -20,16 +21,19 @@ interface SelectedContextType {
       selected?: boolean
    ) => void;
    removeAssigned: (id: string, party: string) => void;
+   renderNameAndLines: () => void;
 }
 
 const SelectedContext = createContext<SelectedContextType>({
    state: {},
+   nameAndLinesBool: false,
    // setVacant: () => {},
    setSelected: () => {},
    selectGroup: () => {},
    deselectAll: () => {},
    setAssigned: () => {},
    removeAssigned: () => {},
+   renderNameAndLines: () => {},
 });
 
 interface SelectedProviderProps {
@@ -40,6 +44,7 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
    children,
 }) => {
    const [state, setState] = useState<Record<string, recordValue>>({});
+   const [nameAndLinesBool, setNameAndLinesBool] = useState<boolean>(false);
 
    // const setVacant = useCallback((id: string) => {
    //    setState((prev) => ({
@@ -103,21 +108,18 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
    const setAssigned = useCallback(
       (
          id: string,
-         assigned: Array<string>,
+         newAssigned: Array<string>,
          newColour?: string,
-         selected?: boolean
+         newSelected?: boolean
       ) => {
-         const isAssigned: boolean = assigned.length > 0;
+         const isAssigned: boolean = newAssigned.length > 0;
 
          setState((prev) => ({
             ...prev,
             [id]: {
-               selected: selected
-                  ? selected
-                  : prev[id]
-                  ? prev[id].selected
-                  : false,
-               assigned: [...assigned],
+               selected:
+                  newSelected !== undefined ? newSelected : prev[id].selected,
+               assigned: [...newAssigned],
                colour: isAssigned
                   ? newColour
                      ? newColour
@@ -125,6 +127,23 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
                   : undefined,
             },
          }));
+
+         // setState((prev) => ({
+         //    ...prev,
+         //    [id]: {
+         //       selected: newSelected
+         //          ? newSelected
+         //          : prev[id]
+         //          ? prev[id].selected
+         //          : false,
+         //       assigned: [...newAssigned],
+         //       colour: isAssigned
+         //          ? newColour
+         //             ? newColour
+         //             : prev[id].colour
+         //          : undefined,
+         //    },
+         // }));
       },
       []
    );
@@ -162,14 +181,20 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
       });
    }, []);
 
+   const renderNameAndLines = () => {
+      setNameAndLinesBool((prev) => !prev);
+   };
+
    const value: SelectedContextType = {
       state,
+      nameAndLinesBool,
       // setVacant,
       setSelected,
       selectGroup,
       deselectAll,
       setAssigned,
       removeAssigned,
+      renderNameAndLines,
    };
 
    return (

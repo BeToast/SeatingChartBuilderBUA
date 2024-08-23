@@ -6,13 +6,19 @@ import {
    getElementStyle,
 } from "./../../utils";
 import "./style.css";
+import RemoveSeat from "../RemoveSeat";
 
 interface SeatProps {
    id: string;
+   extraSeat?: boolean;
    invis?: boolean;
 }
 
-const Seat: React.FC<SeatProps> = ({ id, invis = false }) => {
+const Seat: React.FC<SeatProps> = ({
+   id,
+   extraSeat = false,
+   invis = false,
+}) => {
    const { state, setSelected, selectGroup, setAssigned, deselectAll } =
       useSelected();
    const seatId = `Seat ${id}`;
@@ -21,23 +27,26 @@ const Seat: React.FC<SeatProps> = ({ id, invis = false }) => {
    const seatClass = getElementClass(seatState);
 
    return (
-      <div
-         id={seatId}
-         className={`seat ${seatClass} ${invis ? "invis" : ""}`}
-         style={getElementStyle(seatState?.colour)}
-         onClick={() =>
-            handleElementClick(
-               seatClass,
-               seatId,
-               setSelected,
-               selectGroup,
-               deselectAll,
-               setAssigned
-            )
-         }
-      >
-         <div className="seat-id no-select">{id.slice(1)}</div>
-      </div>
+      <>
+         <div
+            id={seatId}
+            className={`seat ${seatClass} ${invis ? "invis" : ""}`}
+            style={getElementStyle(seatState?.colour)}
+            onClick={() =>
+               handleElementClick(
+                  seatClass,
+                  seatId,
+                  setSelected,
+                  selectGroup,
+                  deselectAll,
+                  setAssigned
+               )
+            }
+         >
+            <div className="seat-id no-select">{id.slice(1)}</div>
+         </div>
+         {extraSeat ? <RemoveSeat /> : <></>}
+      </>
    );
 };
 

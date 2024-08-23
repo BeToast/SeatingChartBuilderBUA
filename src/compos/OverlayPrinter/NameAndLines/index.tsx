@@ -1,5 +1,4 @@
 import React from "react";
-import { getLrtb, Lrtb } from "../utils";
 import "./style.css";
 import TableHandler from "./TableHandler";
 import TableRailHandler from "./TableRailHandler";
@@ -22,12 +21,6 @@ const NameAndLines: React.FC<NameProps> = ({
 }) => {
    const _DEBUG = false;
 
-   var linesJsx: JSX.Element = <></>;
-
-   const lrtb: Lrtb = getLrtb(elements);
-   const { left, right, top, bottom } = lrtb;
-
-   const hasTables = elements.some((el) => el.id.startsWith("Table "));
    const hasKitchenSeats = elements.some((el) => el.id.match(/Seat k+\d/));
    const hasBathroomSeats = elements.some((el) => el.id.match(/Seat b+\d/));
    const tableCount = elements.filter((el) =>
@@ -50,14 +43,6 @@ const NameAndLines: React.FC<NameProps> = ({
 
    if (paperRect) {
       if (_DEBUG) console.log("paperRect: true");
-      const relativeLeft = left - paperRect.left;
-      const relativeRight = right - paperRect.left;
-
-      const setTop = top + scrollTop - flexieMargin;
-      const setBottom = bottom + scrollTop - flexieMargin;
-
-      let centerX: number;
-      let centerY: number;
 
       if (tableCount == 1 && !hasKitchenSeats && !hasBathroomSeats) {
          if (_DEBUG) console.log("one table");

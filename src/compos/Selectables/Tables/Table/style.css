@@ -6,7 +6,9 @@
    border: 2px dashed black;
    position: relative;
 }
-.table.selected,
+.table.selected {
+   background-color: rgb(140, 244, 255);
+}
 .table.assigned {
    border: 2px solid black;
    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -14,7 +16,9 @@
 
 .table-id {
    color: black;
+   background-color: white;
    position: absolute;
+   z-index: 20;
    top: 0.9in;
    left: -0.1in;
    font-size: 16px;

@@ -6,7 +6,7 @@ const AddSeat: React.FC<{
 }> = ({ addHandler }) => {
    return (
       <>
-         <div className="add-seat-wrapper">
+         <div>
             <Tooltip content="Add Rail Seat 🪑" direction="top">
                <div className="add-seat no-print" onClick={addHandler}>
                   <img src="/plus.webp" width={"16px"} />

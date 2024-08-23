@@ -1,4 +1,5 @@
 import React from "react";
+import "./style.css";
 
 interface LineProps {
    pointOne: { x: number; y: number };
@@ -20,15 +21,11 @@ const LineDiv: React.FC<LineProps> = ({ pointOne, pointTwo }) => {
 
    // Style for the line div
    const lineStyle: React.CSSProperties = {
-      position: "absolute",
-      height: "2px", // Set the thickness of the line
       width: `${length}px`,
-      backgroundColor: "black",
-      transformOrigin: "0 0", // Set transform origin to the start of the line
       transform: `translate(${pointOne.x}px, ${pointOne.y}px) rotate(${degrees}deg)`, // Translate and rotate the line
    };
 
-   return <div style={lineStyle} />;
+   return <div className={"line"} style={lineStyle} />;
 };
 
 export default LineDiv;
