@@ -3,7 +3,6 @@ import AddSeat from "./AddSeat";
 import Seat from "./Seat";
 import "./style.css";
 import { useSelected } from "../../../context/SelectedContext";
-import { render } from "react-dom";
 
 const Seats = () => {
    const [kSeats, setKSeats] = useState<Array<number>>(
