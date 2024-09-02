@@ -1,9 +1,43 @@
+import { useSelected } from "../../../../context/SelectedContext";
 import { xSvg } from "../../../../utils/svgs";
 import Tooltip from "../../../Tooltip";
 
-const RemoveSeat: React.FC<{}> = ({}) => {
+const RemoveSeat: React.FC<{
+   kSeats: number[];
+   setKSeats: React.Dispatch<React.SetStateAction<number[]>>;
+}> = ({ kSeats, setKSeats }) => {
+   const { state, setAssigned, renderNameAndLines } = useSelected();
+
    const removeSeatHandler = () => {
-      console.log("Remove Seat");
+      //incremente all assigned
+      kSeats.map((index) => {
+         if (index >= kSeats.length - 1) return;
+         //use this to iterate backwards in O(n) time
+         const replaceKey = `Seat k${kSeats[index]}`;
+         const nextKey = `Seat k${kSeats[index] + 1}`;
+         const assignedObj = {
+            id: replaceKey,
+            assigned: state[nextKey].assigned,
+            colour: state[nextKey].colour,
+            selected: state[nextKey].selected,
+         };
+         setAssigned(
+            assignedObj.id,
+            assignedObj.assigned,
+            assignedObj.colour,
+            assignedObj.selected
+            // `Seat k${currId + 1}`,
+            // state[currKey].assigned,
+            // state[currKey].colour,
+            // state[currKey].selected
+         );
+      });
+      // setAssigned(`Seat k${kSeats.length}`, []);
+
+      //add a seat id, consequently re-rendering the seats
+      setKSeats(kSeats.slice(0, -1));
+      //toggle renderNameAndLines to re-render the lines and names
+      window.setTimeout(renderNameAndLines, 100);
    };
 
    return (

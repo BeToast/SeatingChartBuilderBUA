@@ -47,8 +47,9 @@ const Seats = () => {
 
       //add a seat id, consequently re-rendering the seats
       setKSeats([...kSeats, kSeats.length + 1]);
+
       //toggle renderNameAndLines to re-render the lines and names
-      renderNameAndLines();
+      window.setTimeout(renderNameAndLines, 100);
    };
 
    let extraSeats = kSeats.length - 15; //-15 bc decrement comes before boolean
@@ -59,14 +60,31 @@ const Seats = () => {
          <div style={{ height: "8px" }} />
          {kSeats.map((num) => {
             extraSeats--; //decrement before return statement
-            return <Seat id={`k${num}`} extraSeat={extraSeats > 0} />;
+            return (
+               <Seat
+                  id={`k${num}`}
+                  extraSeat={extraSeats > 0}
+                  kSeats={kSeats}
+                  setKSeats={setKSeats}
+               />
+            );
          })}
-         <Seat id={"nope"} invis={true} />
+         <Seat id={"nope"} invis={true} kSeats={kSeats} setKSeats={setKSeats} />
          <div className="seat-row">
-            <Seat id={"nope"} invis={true} />
-            <Seat id={"nope"} invis={true} />
+            <Seat
+               id={"nope"}
+               invis={true}
+               kSeats={kSeats}
+               setKSeats={setKSeats}
+            />
+            <Seat
+               id={"nope"}
+               invis={true}
+               kSeats={kSeats}
+               setKSeats={setKSeats}
+            />
             {bSeats.map((num) => (
-               <Seat id={`b${num}`} />
+               <Seat id={`b${num}`} kSeats={kSeats} setKSeats={setKSeats} />
             ))}
          </div>
       </div>
