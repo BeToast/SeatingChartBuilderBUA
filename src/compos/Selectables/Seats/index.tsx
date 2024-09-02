@@ -49,45 +49,54 @@ const Seats = () => {
       setKSeats([...kSeats, kSeats.length + 1]);
 
       //toggle renderNameAndLines to re-render the lines and names
-      window.setTimeout(renderNameAndLines, 100);
+      for (let i = 0; i < 10; i++) {
+         window.setTimeout(renderNameAndLines, 50);
+      }
    };
 
    let extraSeats = kSeats.length - 15; //-15 bc decrement comes before boolean
 
    return (
-      <div className="seat-col">
-         <AddSeat addHandler={addKitchenSeatHandler} />
-         <div style={{ height: "8px" }} />
-         {kSeats.map((num) => {
-            extraSeats--; //decrement before return statement
-            return (
+      <>
+         <div className="seat-col">
+            <AddSeat addHandler={addKitchenSeatHandler} />
+            <div style={{ height: "8px" }} />
+            {kSeats.map((num) => {
+               extraSeats--; //decrement before return statement
+               return (
+                  <Seat
+                     id={`k${num}`}
+                     extraSeat={extraSeats > 0}
+                     kSeats={kSeats}
+                     setKSeats={setKSeats}
+                  />
+               );
+            })}
+            <Seat
+               id={"nope"}
+               invis={true}
+               kSeats={kSeats}
+               setKSeats={setKSeats}
+            />
+            <div className="seat-row">
                <Seat
-                  id={`k${num}`}
-                  extraSeat={extraSeats > 0}
+                  id={"nope"}
+                  invis={true}
                   kSeats={kSeats}
                   setKSeats={setKSeats}
                />
-            );
-         })}
-         <Seat id={"nope"} invis={true} kSeats={kSeats} setKSeats={setKSeats} />
-         <div className="seat-row">
-            <Seat
-               id={"nope"}
-               invis={true}
-               kSeats={kSeats}
-               setKSeats={setKSeats}
-            />
-            <Seat
-               id={"nope"}
-               invis={true}
-               kSeats={kSeats}
-               setKSeats={setKSeats}
-            />
-            {bSeats.map((num) => (
-               <Seat id={`b${num}`} kSeats={kSeats} setKSeats={setKSeats} />
-            ))}
+               <Seat
+                  id={"nope"}
+                  invis={true}
+                  kSeats={kSeats}
+                  setKSeats={setKSeats}
+               />
+               {bSeats.map((num) => (
+                  <Seat id={`b${num}`} kSeats={kSeats} setKSeats={setKSeats} />
+               ))}
+            </div>
          </div>
-      </div>
+      </>
    );
 };
 

@@ -37,7 +37,9 @@ const RemoveSeat: React.FC<{
       //add a seat id, consequently re-rendering the seats
       setKSeats(kSeats.slice(0, -1));
       //toggle renderNameAndLines to re-render the lines and names
-      window.setTimeout(renderNameAndLines, 100);
+      for (let i = 0; i < 10; i++) {
+         window.setTimeout(renderNameAndLines, 50);
+      }
    };
 
    return (
