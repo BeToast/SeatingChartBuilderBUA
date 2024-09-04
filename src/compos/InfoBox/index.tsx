@@ -1,13 +1,25 @@
 import "./style.css";
 import { useSelected } from "../../context/SelectedContext";
-import { useState, useEffect, useCallback, useMemo } from "react";
-import { getColour } from "../../utils/colours";
+import {
+   useState,
+   useEffect,
+   useMemo,
+   useCallback,
+   SetStateAction,
+} from "react";
+import Tooltip from "../Tooltip";
+import { xSvg } from "../../utils/svgs";
+import RemoveParty from "./RemoveParty";
 
 const InfoBox: React.FC<{}> = ({}) => {
    const { state, setSelected, setAssigned, removeAssigned } = useSelected();
    const selectedIds = useMemo(
       () => Object.keys(state).filter((id) => state[id].selected),
       [state]
+   );
+   const selectedCount: number = useMemo(
+      () => selectedIds.length,
+      [selectedIds]
    );
 
    const railCount = selectedIds.filter((selected) =>
@@ -51,7 +63,7 @@ const InfoBox: React.FC<{}> = ({}) => {
       selectedIds.forEach((id) => {
          setAssigned(id, parties);
       });
-   }, [parties]);
+   }, [parties, selectedCount]);
 
    // this may be unnessicary
    // useEffect(() => {
@@ -60,7 +72,7 @@ const InfoBox: React.FC<{}> = ({}) => {
    //    }
    // }, [selectedIds]);
 
-   const addPartyToSelection = () => {};
+   // const addPartyToSelection = () => {};
 
    // const selectedRemoveHandler = (selectedId: string) => {
    //    setSelected(selectedId, false);
@@ -81,7 +93,7 @@ const InfoBox: React.FC<{}> = ({}) => {
    // }, [updateParties]);
 
    const addPartyJsx = (
-      <>
+      <div>
          <p className="party-input-label">Enter name and size of party.</p>
 
          <div className="input-group">
@@ -129,7 +141,7 @@ const InfoBox: React.FC<{}> = ({}) => {
                Add
             </button>
          </div>
-      </>
+      </div>
    );
    return (
       <>
@@ -139,8 +151,11 @@ const InfoBox: React.FC<{}> = ({}) => {
                {parties.length > 0 ? (
                   <div className="parties">
                      {parties.map((party) => (
-                        <div key={party} className="party">
-                           {party}
+                        <div className="party-row">
+                           <RemoveParty />
+                           <div key={party} className="party">
+                              {party}
+                           </div>
                         </div>
                      ))}
                   </div>

@@ -13,8 +13,31 @@ export const getElementClass = (
    return "vacant";
 };
 
+export enum SelectState {
+   VACANT,
+   SELECTED,
+   ASSIGNED,
+   SELECTEDASSIGNED,
+}
+export const getElementSelectState = (
+   elementState: recordValue | undefined
+): SelectState => {
+   if (elementState) {
+      if (elementState.selected) {
+         if (elementState.assigned.length > 0) {
+            return SelectState.SELECTEDASSIGNED;
+         } else {
+            return SelectState.SELECTED;
+         }
+      } else if (elementState.assigned.length > 0) {
+         return SelectState.ASSIGNED;
+      }
+   }
+   return SelectState.VACANT;
+};
+
 export const handleElementClick = (
-   elementClass: string,
+   elementSelectState: SelectState,
    id: string,
    assignedParties: string[],
    setSelected: (id: string, selected: boolean) => void,
@@ -22,17 +45,20 @@ export const handleElementClick = (
    deselectAll: () => void,
    setAssigned: (id: string, party: Array<string>) => void
 ) => {
-   if (elementClass === "vacant") {
+   if (elementSelectState === SelectState.VACANT) {
       setSelected(id, true);
       if (assignedParties.length > 0) {
          setAssigned(id, assignedParties);
       }
-   } else if (elementClass === "selected") {
+   } else if (elementSelectState === SelectState.SELECTED) {
       setSelected(id, false);
       setAssigned(id, assignedParties);
-   } else if (elementClass === "assigned") {
+   } else if (elementSelectState === SelectState.ASSIGNED) {
       deselectAll();
       selectGroup(id);
+   } else if (elementSelectState === SelectState.SELECTEDASSIGNED) {
+      setSelected(id, false);
+      setAssigned(id, []);
    }
 };
 

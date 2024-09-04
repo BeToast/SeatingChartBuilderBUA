@@ -2,6 +2,7 @@ import React from "react";
 import { recordValue, useSelected } from "../../../../context/SelectedContext";
 import {
    getElementClass,
+   getElementSelectState,
    getOtherSelectedAssignments,
    handleElementClick,
 } from "./../../utils";
@@ -37,7 +38,7 @@ const Seat: React.FC<SeatProps> = ({
             className={`seat ${seatClass} ${invis ? "invis" : ""}`}
             onClick={() =>
                handleElementClick(
-                  seatClass,
+                  getElementSelectState(seatState),
                   seatId,
                   getOtherSelectedAssignments(state),
                   setSelected,

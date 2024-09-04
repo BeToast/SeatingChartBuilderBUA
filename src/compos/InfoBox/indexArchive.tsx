@@ -40,12 +40,10 @@ const InfoBox: React.FC<{}> = ({}) => {
 
    const addPartyHandler = (name: string, count: number): void => {
       const newParty = `${name.trim()}(${count})`;
-      const newColour: string | undefined =
-         parties.length === 0 ? getColour() : undefined;
       setPartyName(""); // Clear the input after adding
       setPartyCount(1); // Reset party count
       selectedIds.forEach((id) => {
-         setAssigned(id, [...(state[id].assigned || []), newParty], newColour);
+         setAssigned(id, [...(state[id].assigned || []), newParty]);
       });
    };
 

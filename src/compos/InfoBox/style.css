@@ -29,7 +29,7 @@
 .party-input-label {
    font-size: 14px;
    font-weight: 300;
-   margin-bottom: 0px;
+   margin-bottom: 0px !important;
 }
 .input-group {
    display: flex;
@@ -98,6 +98,13 @@
 .party {
    font-size: 36px;
    font-weight: 600;
+}
+.party-row {
+   display: flex;
+   flex-direction: row;
+   justify-content: left;
+   align-items: center;
+   gap: 8px;
 }
 .selected-info {
    display: flex;

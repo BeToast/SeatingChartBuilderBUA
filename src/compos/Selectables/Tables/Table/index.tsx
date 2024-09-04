@@ -4,6 +4,7 @@ import {
    getElementClass,
    handleElementClick,
    getOtherSelectedAssignments,
+   getElementSelectState,
 } from "./../../utils";
 import "./style.css";
 
@@ -25,7 +26,7 @@ const Table: React.FC<TableProps> = ({ id }) => {
          className={`table ${tableClass}`}
          onClick={() =>
             handleElementClick(
-               tableClass,
+               getElementSelectState(tableState),
                tableId,
                getOtherSelectedAssignments(state),
                setSelected,

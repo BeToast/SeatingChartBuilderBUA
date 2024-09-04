@@ -16,8 +16,8 @@ const Seats = () => {
    useEffect(() => {
       // instanciate all the seats on init render
       if (isFirstRender.current) {
-         kSeats.map((id) => setAssigned(`Seat k${id}`, [], undefined, false));
-         bSeats.map((id) => setAssigned(`Seat b${id}`, [], undefined, false));
+         kSeats.map((id) => setAssigned(`Seat k${id}`, [], false));
+         bSeats.map((id) => setAssigned(`Seat b${id}`, [], false));
          isFirstRender.current = false;
       }
 
@@ -35,13 +35,11 @@ const Seats = () => {
          const assignedObj = {
             id: `Seat k${currId + 1}`,
             assigned: state[currKey].assigned,
-            colour: state[currKey].colour,
             selected: state[currKey].selected,
          };
          setAssigned(
             assignedObj.id,
             assignedObj.assigned,
-            assignedObj.colour,
             assignedObj.selected
             // `Seat k${currId + 1}`,
             // state[currKey].assigned,

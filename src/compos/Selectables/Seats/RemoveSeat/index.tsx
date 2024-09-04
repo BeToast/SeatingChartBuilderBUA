@@ -1,6 +1,7 @@
 import { useSelected } from "../../../../context/SelectedContext";
 import { xSvg } from "../../../../utils/svgs";
 import Tooltip from "../../../Tooltip";
+import "./style.css";
 
 const RemoveSeat: React.FC<{
    kSeats: number[];
@@ -21,18 +22,12 @@ const RemoveSeat: React.FC<{
          const assignedObj = {
             id: replaceKey,
             assigned: state[nextKey].assigned,
-            colour: state[nextKey].colour,
             selected: state[nextKey].selected,
          };
          setAssigned(
             assignedObj.id,
             assignedObj.assigned,
-            assignedObj.colour,
             assignedObj.selected
-            // `Seat k${currId + 1}`,
-            // state[currKey].assigned,
-            // state[currKey].colour,
-            // state[currKey].selected
          );
       });
       // setAssigned(`Seat k${kSeats.length}`, []);
