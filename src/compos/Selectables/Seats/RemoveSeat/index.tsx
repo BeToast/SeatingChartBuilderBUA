@@ -6,9 +6,12 @@ const RemoveSeat: React.FC<{
    kSeats: number[];
    setKSeats: React.Dispatch<React.SetStateAction<number[]>>;
 }> = ({ kSeats, setKSeats }) => {
-   const { state, setAssigned, renderNameAndLines } = useSelected();
+   const { state, setAssigned } = useSelected();
 
    const removeSeatHandler = () => {
+      //add a seat id, consequently re-rendering the seats
+      setKSeats(kSeats.slice(0, -1));
+
       //incremente all assigned
       kSeats.map((index) => {
          if (index >= kSeats.length - 1) return;
@@ -34,12 +37,10 @@ const RemoveSeat: React.FC<{
       });
       // setAssigned(`Seat k${kSeats.length}`, []);
 
-      //add a seat id, consequently re-rendering the seats
-      setKSeats(kSeats.slice(0, -1));
       //toggle renderNameAndLines to re-render the lines and names
-      for (let i = 0; i < 10; i++) {
-         window.setTimeout(renderNameAndLines, 50);
-      }
+      // for (let i = 0; i < 20; i++) {
+      //    window.setTimeout(renderNameAndLines, 50);
+      // }
    };
 
    return (

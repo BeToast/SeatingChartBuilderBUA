@@ -1,9 +1,9 @@
 import React from "react";
-import { useSelected } from "../../../../context/SelectedContext";
+import { recordValue, useSelected } from "../../../../context/SelectedContext";
 import {
    getElementClass,
+   getOtherSelectedAssignments,
    handleElementClick,
-   getElementStyle,
 } from "./../../utils";
 import "./style.css";
 import RemoveSeat from "../RemoveSeat";
@@ -35,11 +35,11 @@ const Seat: React.FC<SeatProps> = ({
          <div
             id={seatId}
             className={`seat ${seatClass} ${invis ? "invis" : ""}`}
-            style={getElementStyle(seatState?.colour)}
             onClick={() =>
                handleElementClick(
                   seatClass,
                   seatId,
+                  getOtherSelectedAssignments(state),
                   setSelected,
                   selectGroup,
                   deselectAll,

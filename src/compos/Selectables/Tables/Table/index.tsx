@@ -3,7 +3,7 @@ import { useSelected } from "../../../../context/SelectedContext";
 import {
    getElementClass,
    handleElementClick,
-   getElementStyle,
+   getOtherSelectedAssignments,
 } from "./../../utils";
 import "./style.css";
 
@@ -23,11 +23,11 @@ const Table: React.FC<TableProps> = ({ id }) => {
       <div
          id={tableId}
          className={`table ${tableClass}`}
-         style={getElementStyle(tableState?.colour)}
          onClick={() =>
             handleElementClick(
                tableClass,
                tableId,
+               getOtherSelectedAssignments(state),
                setSelected,
                selectGroup,
                deselectAll,

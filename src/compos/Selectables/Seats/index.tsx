@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import AddSeat from "./AddSeat";
 import Seat from "./Seat";
 import "./style.css";
@@ -11,14 +11,20 @@ const Seats = () => {
    const [bSeats, setBSeats] = useState<Array<number>>(
       Array.from({ length: 14 }, (_, i) => 14 - i)
    );
-   useEffect(() => {
-      kSeats.map((id) => setAssigned(`Seat k${id}`, [], undefined, false));
-      bSeats.map((id) => setAssigned(`Seat k${id}`, [], undefined, false));
-   }, []);
 
-   const { state, setAssigned, nameAndLinesBool, renderNameAndLines } =
-      useSelected();
-   console.log(nameAndLinesBool);
+   const isFirstRender = useRef(true);
+   useEffect(() => {
+      // instanciate all the seats on init render
+      if (isFirstRender.current) {
+         kSeats.map((id) => setAssigned(`Seat k${id}`, [], undefined, false));
+         bSeats.map((id) => setAssigned(`Seat b${id}`, [], undefined, false));
+         isFirstRender.current = false;
+      }
+
+      renderNameAndLines();
+   }, [kSeats]);
+
+   const { state, setAssigned, renderNameAndLines } = useSelected();
 
    const addKitchenSeatHandler = () => {
       //incremente all assigned
@@ -49,12 +55,12 @@ const Seats = () => {
       setKSeats([...kSeats, kSeats.length + 1]);
 
       //toggle renderNameAndLines to re-render the lines and names
-      for (let i = 0; i < 10; i++) {
-         window.setTimeout(renderNameAndLines, 50);
-      }
+      // for (let i = 0; i < 10; i++) {
+      //    window.setTimeout(renderNameAndLines, 50);
+      // }
    };
 
-   let extraSeats = kSeats.length - 15; //-15 bc decrement comes before boolean
+   let extraSeats = kSeats.length - 15; //-15 bc decrement comes before boolean check
 
    return (
       <>
@@ -65,6 +71,7 @@ const Seats = () => {
                extraSeats--; //decrement before return statement
                return (
                   <Seat
+                     key={num}
                      id={`k${num}`}
                      extraSeat={extraSeats > 0}
                      kSeats={kSeats}
@@ -92,7 +99,12 @@ const Seats = () => {
                   setKSeats={setKSeats}
                />
                {bSeats.map((num) => (
-                  <Seat id={`b${num}`} kSeats={kSeats} setKSeats={setKSeats} />
+                  <Seat
+                     key={num}
+                     id={`b${num}`}
+                     kSeats={kSeats}
+                     setKSeats={setKSeats}
+                  />
                ))}
             </div>
          </div>

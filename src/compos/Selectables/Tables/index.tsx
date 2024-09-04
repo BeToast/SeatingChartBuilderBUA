@@ -17,11 +17,11 @@ const Tables = () => {
    return (
       <div className="table-col">
          {kTables.map((num) => (
-            <Table id={num} />
+            <Table key={num} id={num} />
          ))}
          <div className="table-row">
             {bTables.map((num) => (
-               <Table id={num} />
+               <Table key={num} id={num} />
             ))}
          </div>
       </div>

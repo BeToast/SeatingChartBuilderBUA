@@ -13,12 +13,12 @@ function App() {
          <PrintButton />
          <SelectedProvider>
             <div id="flexie" className="flexie">
+               <InfoBox />
                <main id="letter-paper" className="letter-paper">
                   <Tables />
                   <Seats />
                   <OverlayPrinter />
                </main>
-               <InfoBox />
                <InfoContext />
             </div>
          </SelectedProvider>

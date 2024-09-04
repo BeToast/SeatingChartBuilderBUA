@@ -16,24 +16,32 @@ export const getElementClass = (
 export const handleElementClick = (
    elementClass: string,
    id: string,
+   assignedParties: string[],
    setSelected: (id: string, selected: boolean) => void,
    selectGroup: (id: string) => void,
    deselectAll: () => void,
-   setAssigned: (id: string, party: Array<string>, colour?: string) => void
+   setAssigned: (id: string, party: Array<string>) => void
 ) => {
    if (elementClass === "vacant") {
       setSelected(id, true);
+      if (assignedParties.length > 0) {
+         setAssigned(id, assignedParties);
+      }
    } else if (elementClass === "selected") {
       setSelected(id, false);
-      setAssigned(id, []);
+      setAssigned(id, assignedParties);
    } else if (elementClass === "assigned") {
       deselectAll();
       selectGroup(id);
    }
 };
 
-export const getElementStyle = (colour: string | undefined) => {
-   return colour ? { backgroundColor: colour } : {};
+export const getOtherSelectedAssignments = (
+   state: Record<string, recordValue>
+): string[] => {
+   const selectedId = Object.keys(state).find((id) => state[id].selected);
+   //return assigned if another variable is selected
+   return selectedId ? state[selectedId].assigned : [];
 };
 
 export type Lrtb = {

@@ -4,7 +4,6 @@ import { readLastColour, returnColour } from "../utils/colours";
 export interface recordValue {
    selected: boolean;
    assigned: Array<string>;
-   colour: string | undefined;
 }
 
 interface SelectedContextType {
@@ -67,16 +66,29 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
             [id]: {
                selected: selected,
                assigned: selectedRecord?.assigned || [],
-               colour: selectedRecord?.colour || undefined,
             },
          };
       });
    }, []);
 
    const selectGroup = useCallback((id: string) => {
+      function arraysEqual(a: string[], b: string[]) {
+         if (a === b) return true;
+         if (a == null || b == null) return false;
+         if (a.length !== b.length) return false;
+
+         for (var i = 0; i < a.length; ++i) {
+            if (a[i] !== b[i]) return false;
+         }
+         return true;
+      }
+
       setState((prev) => {
-         const partyKeys: Array<string> = Object.keys(prev).filter(
-            (currId: string) => prev[currId].assigned === prev[id].assigned
+         const party = prev[id].assigned;
+         console.log(party);
+         const partyKeys: string[] = Object.keys(prev).filter(
+            (currId: string) =>
+               arraysEqual(prev[currId].assigned, prev[id].assigned)
          );
 
          return partyKeys.reduce(
@@ -93,6 +105,26 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
          );
       });
    }, []);
+
+   // setState((prev) => {
+   //    const partyKeys: Array<string> = Object.keys(prev).filter(
+   //       (currId: string) => prev[currId].assigned === prev[id].assigned
+   //    );
+   //    console.log(partyKeys);
+
+   //    return partyKeys.reduce(
+   //       (newState, key) => {
+   //          return {
+   //             ...newState,
+   //             [key]: {
+   //                ...prev[key],
+   //                selected: true,
+   //             },
+   //          };
+   //       },
+   //       { ...prev }
+   //    );
+   // });
 
    const deselectAll = useCallback(() => {
       setState((prev) => {
@@ -120,11 +152,6 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
                selected:
                   newSelected !== undefined ? newSelected : prev[id].selected,
                assigned: [...newAssigned],
-               colour: isAssigned
-                  ? newColour
-                     ? newColour
-                     : prev[id].colour
-                  : undefined,
             },
          }));
 
@@ -158,16 +185,6 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
 
          // Determine new state and color based on remaining assigned parties
          const isStillAssigned: boolean = remainingAssigned.length > 0;
-         const newColour = isStillAssigned ? currentItem.colour : undefined;
-
-         // Handle color management
-         if (
-            !newColour &&
-            currentItem.colour &&
-            readLastColour() !== currentItem.colour
-         ) {
-            returnColour(currentItem.colour);
-         }
 
          // Return updated state
          return {
@@ -175,7 +192,6 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
             [id]: {
                selected: prev[id].selected,
                assigned: remainingAssigned,
-               colour: newColour,
             },
          };
       });

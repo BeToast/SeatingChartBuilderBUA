@@ -1,14 +1,11 @@
 import "./style.css";
 import { useSelected } from "../../context/SelectedContext";
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { getColour } from "../../utils/colours";
 
 const InfoBox: React.FC<{}> = ({}) => {
    const { state, setSelected, setAssigned, removeAssigned } = useSelected();
-   const selectedIds = useMemo(
-      () => Object.keys(state).filter((id) => state[id].selected),
-      [state]
-   );
+   const selectedIds = Object.keys(state).filter((id) => state[id].selected);
 
    const railCount = selectedIds.filter((selected) =>
       selected.startsWith("Seat ")
@@ -18,67 +15,53 @@ const InfoBox: React.FC<{}> = ({}) => {
       selected.startsWith("Table ")
    ).length;
 
-   // used for input fields
    const [partyName, setPartyName] = useState<string>("");
    const [partySize, setPartyCount] = useState<number>(1);
-   // the party list for this infoBox
-   // updates the state onChange
    const [parties, setParties] = useState<Array<string>>([]);
 
-   // const updateParties = useCallback(() => {
-   //    const updatedParties = new Set<string>();
-   //    selectedIds.forEach((id) => {
-   //       if (state[id].assigned) {
-   //          state[id].assigned.forEach((party: string) => {
-   //             updatedParties.add(party);
-   //          });
-   //       }
-   //    });
-   //    const newParties = Array.from(updatedParties);
-   //    if (JSON.stringify(newParties) !== JSON.stringify(parties)) {
-   //       setParties(newParties);
-   //    }
-   // }, [selectedIds, state, parties]);
+   const updateParties = useCallback(() => {
+      const updatedParties = new Set<string>();
+      selectedIds.forEach((id) => {
+         if (state[id].assigned) {
+            state[id].assigned.forEach((party: string) => {
+               updatedParties.add(party);
+            });
+         }
+      });
+      const newParties = Array.from(updatedParties);
+      if (JSON.stringify(newParties) !== JSON.stringify(parties)) {
+         setParties(newParties);
+      }
+   }, [selectedIds, state, parties]);
+
+   useEffect(() => {
+      updateParties();
+   }, [updateParties]);
 
    const addPartyHandler = (name: string, count: number): void => {
       const newParty = `${name.trim()}(${count})`;
+      const newColour: string | undefined =
+         parties.length === 0 ? getColour() : undefined;
       setPartyName(""); // Clear the input after adding
       setPartyCount(1); // Reset party count
-      setParties([...parties, newParty]);
+      selectedIds.forEach((id) => {
+         setAssigned(id, [...(state[id].assigned || []), newParty], newColour);
+      });
    };
 
-   useEffect(() => {
+   const selectedRemoveHandler = (selectedId: string) => {
+      setSelected(selectedId, false);
+   };
+
+   const partyRemoveHandler = (party: string) => {
       selectedIds.forEach((id) => {
-         setAssigned(id, parties);
+         removeAssigned(id, party);
       });
-   }, [parties]);
+   };
 
-   // this may be unnessicary
-   // useEffect(() => {
-   //    if (selectedIds.length == 0) {
-   //       setParties([]);
-   //    }
-   // }, [selectedIds]);
-
-   const addPartyToSelection = () => {};
-
-   // const selectedRemoveHandler = (selectedId: string) => {
-   //    setSelected(selectedId, false);
-   // };
-
-   // const partyRemoveHandler = (party: string) => {
-   //    selectedIds.forEach((id) => {
-   //       removeAssigned(id, party);
-   //    });
-   // };
-
-   // const deselectHandler = () => {
-   //    selectedIds.forEach((id) => setSelected(id, false));
-   // };
-
-   // useEffect(() => {
-   //    updateParties();
-   // }, [updateParties]);
+   const deselectHandler = () => {
+      selectedIds.forEach((id) => setSelected(id, false));
+   };
 
    const addPartyJsx = (
       <>
@@ -150,8 +133,9 @@ const InfoBox: React.FC<{}> = ({}) => {
 
                {/* add party box */}
                {/* if has table or there is no assigned party then display add party box */}
-               {tableCount > 0 || parties.length == 0 ? addPartyJsx : <></>}
-
+               <div>
+                  {tableCount > 0 || parties.length == 0 ? addPartyJsx : <></>}
+               </div>
                {/* selected/assigned info */}
                <div className="selected-info">
                   <div>{tableCount} : Tables</div>
@@ -161,6 +145,61 @@ const InfoBox: React.FC<{}> = ({}) => {
          </div>
       </>
    );
+
+   // return (
+   //    <>
+   //       <div className="info-wrap no-print">
+   //          <div className="info-box">
+   //             <div className="heading">
+   //                {parties.map((party) => (
+   //                   <span style={{ width: "100%" }}>{party}</span>
+   //                ))}
+   //             </div>
+
+   //             <div style={{ width: "100%" }}>
+   //                {selectedIds.length > 0 ? (
+   //                   <>
+   //                      <ul>
+   //                         {selectedIds.map((id) => (
+   //                            <li
+   //                               onClick={() => selectedRemoveHandler(id)}
+   //                               className="remove-hover selected-id"
+   //                               key={id}
+   //                            >
+   //                               {id}
+   //                            </li>
+   //                         ))}
+   //                      </ul>
+   //                      <div>
+   //                         <div className="heading">Parties at Selected</div>
+   //                         <ul>
+   //                            {parties.map((name, index) => (
+   //                               <li
+   //                                  onClick={() => partyRemoveHandler(name)}
+   //                                  className="remove-hover"
+   //                                  key={index}
+   //                               >
+   //                                  {name}
+   //                               </li>
+   //                            ))}
+   //                         </ul>
+   //                      </div>
+   //
+   //                      <button
+   //                         onClick={deselectHandler}
+   //                         className="deselect-button"
+   //                      >
+   //                         Deselect All
+   //                      </button>
+   //                   </>
+   //                ) : (
+   //                   <p>None selected</p>
+   //                )}
+   //             </div>
+   //          </div>
+   //       </div>
+   //    </>
+   // );
 };
 
 export default InfoBox;
