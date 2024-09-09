@@ -35,6 +35,7 @@ interface SelectedContextType {
       linkedParty: Array<string>,
       relevantLinks: Array<Array<string>>
    ) => void;
+   removePartyLink: (thisParty: Array<string>, index: number) => void;
    renderNameAndLines: () => void;
 }
 
@@ -53,6 +54,7 @@ const SelectedContext = createContext<SelectedContextType>({
    setAssigned: () => {},
    removeAssigned: () => {},
    addPartyLink: () => {},
+   removePartyLink: () => {},
    renderNameAndLines: () => {},
 });
 
@@ -249,6 +251,31 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
       },
       []
    );
+
+   const removePartyLink = useCallback((thisParty: string[], index: number) => {
+      setPartyLinks((prev) => {
+         // Check if the index is valid
+         if (index < 0 || index >= prev.length) {
+            console.error("Invalid index");
+            return prev;
+         }
+         //store local copy of the array
+         const updatedLinks = [...prev];
+         //remove if 2 or less bc that means the link is gone
+         if (prev[index].length <= 2) {
+            updatedLinks.splice(index, 1);
+         } else {
+            //remove the party from the array
+            const updatedParties = prev[index].filter(
+               (party) => !arraysEqual(party, thisParty)
+            );
+            updatedLinks[index] = updatedParties;
+         }
+
+         return updatedLinks;
+      });
+   }, []);
+
    const renderNameAndLines = () => {
       setNameAndLinesBool((prev) => !prev);
    };
@@ -260,7 +287,6 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
       nameAndLinesBool,
       parties,
       setParties,
-
       partyOveride,
       setPartyOveride,
       setSelected,
@@ -269,6 +295,7 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
       setAssigned,
       removeAssigned,
       addPartyLink,
+      removePartyLink,
       renderNameAndLines,
    };
 

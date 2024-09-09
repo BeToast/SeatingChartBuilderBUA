@@ -63,10 +63,6 @@ const AbsolutePrinter: React.FC = () => {
    return (
       <>
          {Object.entries(assignedElements).map(([assigned, elements]) => {
-            const lrtb = getLrtb(elements);
-            const canvasWidth = lrtb.right - lrtb.left;
-            const canvasHeight = lrtb.bottom - lrtb.top;
-
             return (
                <React.Fragment key={assigned}>
                   <NameAndLines

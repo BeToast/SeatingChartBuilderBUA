@@ -4,21 +4,13 @@ import TableHandler from "./TableHandler";
 import TableRailHandler from "./TableRailHandler";
 import RailHandler from "./RailHandler.tsx";
 
-interface NameProps {
+const NameAndLines: React.FC<{
    assigned: string;
    elements: Element[];
    scrollTop: number;
    paperRect: DOMRect | null;
    flexieMargin: number;
-}
-
-const NameAndLines: React.FC<NameProps> = ({
-   assigned,
-   elements,
-   scrollTop,
-   paperRect,
-   flexieMargin,
-}) => {
+}> = ({ assigned, elements, scrollTop, paperRect, flexieMargin }) => {
    const _DEBUG = false;
 
    const hasKitchenSeats = elements.some((el) => el.id.match(/Seat k+\d/));

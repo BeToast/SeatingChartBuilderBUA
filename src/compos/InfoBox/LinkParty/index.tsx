@@ -1,23 +1,17 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useSelected } from "../../../context/SelectedContext";
 import "./style.css";
 import RemoveLink from "./RemoveLink";
-import { arraysEqual } from "../../../utils/generic";
+import { arraysEqual, isArrayInArrayOfArrays } from "../../../utils/generic";
 
 const LinkParty: React.FC<{
    linkOptions: Array<Array<string>>;
    currParties: string[];
 }> = ({ linkOptions, currParties }) => {
-   const { partyLinks, addPartyLink } = useSelected();
+   const { partyLinks, addPartyLink, removePartyLink } = useSelected();
    const [isOpen, setIsOpen] = useState(false);
    const [searchTerm, setSearchTerm] = useState("");
    const dropdownRef = useRef<HTMLDivElement>(null);
-
-   const filteredOptions = linkOptions.filter((party) =>
-      party.some((item) =>
-         item.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-   );
 
    useEffect(() => {
       const handleClickOutside = (event: MouseEvent) => {
@@ -42,24 +36,37 @@ const LinkParty: React.FC<{
    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       setSearchTerm(event.target.value);
    };
-
+   //index of the links for this party in the partyLinks array
    const linkedArrayIndex = partyLinks.findIndex((link) =>
       link.some((party) => arraysEqual(currParties, party))
    );
+   //the array for this parties link
    const linkedArray: Array<Array<string>> =
       linkedArrayIndex !== -1 ? partyLinks[linkedArrayIndex] : [];
+   //array excluding the currently selected party[]
    const otherLinkedParties = linkedArray.filter(
       (party) => !arraysEqual(party, currParties)
    );
-   console.log("linkedArray", linkedArray);
-   console.log("otherLinkedParties", otherLinkedParties);
 
-   const handleRemoveLink = (linkToRemove: Array<string>) => {
-      // removePartyLink(linkToRemove);
-      console.log("remove link", linkToRemove);
+   const useFilteredLinkOptions = (
+      LinkOptions: string[][],
+      linkedArray: string[][]
+   ) => {
+      const filteredLinkOptions = useMemo(() => {
+         return LinkOptions.filter(
+            (option) => !isArrayInArrayOfArrays(option, linkedArray)
+         );
+      }, [LinkOptions, linkedArray]);
+
+      return filteredLinkOptions;
    };
 
-   console.log("relevantLinks", linkedArray);
+   const filteredLinkOptions = useFilteredLinkOptions(linkOptions, linkedArray);
+   const filteredOptions = filteredLinkOptions.filter((party) =>
+      party.some((item) =>
+         item.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+   );
 
    return (
       <div ref={dropdownRef}>
@@ -69,16 +76,16 @@ const LinkParty: React.FC<{
                <div key={index} className="linked-party">
                   <RemoveLink
                      otherAssignment={otherAssignment}
-                     removeLinkHandler={handleRemoveLink}
+                     removeLinkHandler={() =>
+                        removePartyLink(currParties, linkedArrayIndex)
+                     }
                   />
-                  {link.map((assigned) =>
-                     arraysEqual(currParties, assigned) ? null : (
-                        <span key={assigned.join()}>{assigned.join(", ")}</span>
-                     )
-                  )}
+                  <span key={otherAssignment.join()}>
+                     {otherAssignment.join(", ")}
+                  </span>
                </div>
             ))}
-            {linkedArray.length < filteredOptions.length && (
+            {filteredLinkOptions.length > 0 && (
                <input
                   type="text"
                   className="party-input"
@@ -99,17 +106,8 @@ const LinkParty: React.FC<{
                      <div
                         key={index}
                         onMouseDown={() =>
-                           addPartyLink(currParties, party, linkedArray[0])
+                           addPartyLink(currParties, party, linkedArray)
                         }
-                        style={{
-                           display: linkedArray.some((link) =>
-                              link.some((linkedParty) =>
-                                 arraysEqual(linkedParty, party)
-                              )
-                           )
-                              ? "none"
-                              : "block",
-                        }}
                      >
                         {party.join(", ")}
                      </div>

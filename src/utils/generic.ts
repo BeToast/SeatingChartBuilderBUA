@@ -9,6 +9,13 @@ export const arraysEqual = (a: string[], b: string[]) => {
    return true;
 };
 
+export const isArrayInArrayOfArrays = (
+   arr: string[],
+   arrayOfArrays: string[][]
+): boolean => {
+   return arrayOfArrays.some((subArr) => arraysEqual(arr, subArr));
+};
+
 export const arraysSameContents = (a: string[], b: string[]) => {
    if (a === b) return true; //make sure they are different references
    if (a == null || b == null) return false; //make sure they are not null
