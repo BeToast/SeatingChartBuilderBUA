@@ -5,6 +5,7 @@ import {
    handleElementClick,
    getOtherSelectedAssignments,
    getElementSelectState,
+   getAssignments,
 } from "./../../utils";
 import "./style.css";
 
@@ -13,8 +14,14 @@ interface TableProps {
 }
 
 const Table: React.FC<TableProps> = ({ id }) => {
-   const { state, setSelected, setAssigned, selectGroup, deselectAll } =
-      useSelected();
+   const {
+      state,
+      setSelected,
+      setAssigned,
+      selectGroup,
+      deselectAll,
+      setParties,
+   } = useSelected();
    const tableId = `Table ${id}`;
    const tableState = state[tableId];
 
@@ -28,11 +35,13 @@ const Table: React.FC<TableProps> = ({ id }) => {
             handleElementClick(
                getElementSelectState(tableState),
                tableId,
+               getAssignments(tableId, state),
                getOtherSelectedAssignments(state),
                setSelected,
                selectGroup,
                deselectAll,
-               setAssigned
+               setAssigned,
+               setParties
             )
          }
       >

@@ -39,22 +39,27 @@ export const getElementSelectState = (
 export const handleElementClick = (
    elementSelectState: SelectState,
    id: string,
-   assignedParties: string[],
+   thisAssignments: string[],
+   selectedAssignments: string[],
    setSelected: (id: string, selected: boolean) => void,
    selectGroup: (id: string) => void,
    deselectAll: () => void,
-   setAssigned: (id: string, party: Array<string>) => void
+   setAssigned: (id: string, party: Array<string>) => void,
+   updateInfoBoxParties: (parties: Array<string>) => void
 ) => {
    if (elementSelectState === SelectState.VACANT) {
       setSelected(id, true);
-      if (assignedParties.length > 0) {
-         setAssigned(id, assignedParties);
+      if (selectedAssignments.length > 0) {
+         setAssigned(id, selectedAssignments);
       }
    } else if (elementSelectState === SelectState.SELECTED) {
       setSelected(id, false);
-      setAssigned(id, assignedParties);
+      setAssigned(id, selectedAssignments);
    } else if (elementSelectState === SelectState.ASSIGNED) {
       deselectAll();
+      // updateInfoBoxParties([]);]
+
+      updateInfoBoxParties(thisAssignments);
       selectGroup(id);
    } else if (elementSelectState === SelectState.SELECTEDASSIGNED) {
       setSelected(id, false);
@@ -62,6 +67,12 @@ export const handleElementClick = (
    }
 };
 
+export const getAssignments = (
+   id: string,
+   state: Record<string, recordValue>
+): string[] => {
+   return state[id].assigned;
+};
 export const getOtherSelectedAssignments = (
    state: Record<string, recordValue>
 ): string[] => {

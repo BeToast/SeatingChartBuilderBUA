@@ -1,18 +1,21 @@
 import "./style.css";
 import { useSelected } from "../../context/SelectedContext";
-import {
-   useState,
-   useEffect,
-   useMemo,
-   useCallback,
-   SetStateAction,
-} from "react";
-import Tooltip from "../Tooltip";
-import { xSvg } from "../../utils/svgs";
+import { useState, useEffect, useMemo } from "react";
 import RemoveParty from "./RemoveParty";
+import LinkParty from "./LinkParty";
+import { arraysEqual } from "../../utils/generic";
 
 const InfoBox: React.FC<{}> = ({}) => {
-   const { state, setSelected, setAssigned, removeAssigned } = useSelected();
+   const {
+      state,
+      uniquePartiesArray,
+      parties,
+      setParties,
+      partyOveride,
+      setPartyOveride,
+      setAssigned,
+      setSelected,
+   } = useSelected();
    const selectedIds = useMemo(
       () => Object.keys(state).filter((id) => state[id].selected),
       [state]
@@ -33,9 +36,6 @@ const InfoBox: React.FC<{}> = ({}) => {
    // used for input fields
    const [partyName, setPartyName] = useState<string>("");
    const [partySize, setPartyCount] = useState<number>(1);
-   // the party list for this infoBox
-   // updates the state onChange
-   const [parties, setParties] = useState<Array<string>>([]);
 
    // const updateParties = useCallback(() => {
    //    const updatedParties = new Set<string>();
@@ -59,10 +59,19 @@ const InfoBox: React.FC<{}> = ({}) => {
       setParties([...parties, newParty]);
    };
 
+   // syncs infoBox state with SelectedContext state
    useEffect(() => {
-      selectedIds.forEach((id) => {
-         setAssigned(id, parties);
-      });
+      //party ovverride boolean to populate parties when going from none selected
+      if (partyOveride) {
+         selectedIds.forEach((id) => {
+            setAssigned(id, parties);
+         });
+      } else {
+         if (selectedCount > 0) {
+            setParties(state[selectedIds[0]].assigned);
+            setPartyOveride(true);
+         }
+      }
    }, [parties, selectedCount]);
 
    // this may be unnessicary
@@ -92,16 +101,31 @@ const InfoBox: React.FC<{}> = ({}) => {
    //    updateParties();
    // }, [updateParties]);
 
+   // legit just remove the party from the state. useEffect() will handle the rest.
+   const removePartyHandler = (party: string) => {
+      setParties(parties.filter((p) => p !== party));
+   };
+
+   const deselectHandler = () => {
+      selectedIds.forEach((id) => setSelected(id, false));
+      setParties([]);
+      setPartyOveride(false);
+   };
+
    const addPartyJsx = (
-      <div>
-         <p className="party-input-label">Enter name and size of party.</p>
+      <div className="party-input-wrapper">
+         <p className="party-input-label">
+            {parties.length > 0
+               ? "Add another party to table?"
+               : "Enter name and size of party."}
+         </p>
 
          <div className="input-group">
             <input
                type="text"
                className="name-input"
                placeholder={
-                  parties.length > 0 ? "Party Name" : "Add another party"
+                  parties.length > 0 ? "Add another party" : "Party Name"
                }
                value={partyName}
                onChange={(e) => setPartyName(e.target.value)}
@@ -143,6 +167,18 @@ const InfoBox: React.FC<{}> = ({}) => {
          </div>
       </div>
    );
+
+   // const linkOptions = uniquePartiesArray.filter(
+   //    (party) => !arraysEqual(party, parties)
+   // );
+   const linkOptions = Array.from(
+      new Set(
+         uniquePartiesArray
+            .filter((party) => !arraysEqual(party, parties))
+            .map((party) => JSON.stringify(party))
+      )
+   ).map((party) => JSON.parse(party));
+
    return (
       <>
          <div className="info-wrap no-print">
@@ -151,8 +187,13 @@ const InfoBox: React.FC<{}> = ({}) => {
                {parties.length > 0 ? (
                   <div className="parties">
                      {parties.map((party) => (
-                        <div className="party-row">
-                           <RemoveParty />
+                        <div key={party} className="party-row">
+                           <RemoveParty
+                              party={party}
+                              removePartyHandler={() =>
+                                 removePartyHandler(party)
+                              }
+                           />
                            <div key={party} className="party">
                               {party}
                            </div>
@@ -168,10 +209,32 @@ const InfoBox: React.FC<{}> = ({}) => {
                {tableCount > 0 || parties.length == 0 ? addPartyJsx : <></>}
 
                {/* selected/assigned info */}
-               <div className="selected-info">
-                  <div>{tableCount} : Tables</div>
-                  <div>{railCount} : Rail</div>
-               </div>
+               {parties.length > 0 ? (
+                  <>
+                     {/* <div className="selected-info">
+                        <div>{tableCount} : Tables</div>
+                        <div>{railCount} : Rail</div>
+                     </div> */}
+                  </>
+               ) : (
+                  <></>
+               )}
+
+               {/* link party input */}
+               {parties.length > 0 && linkOptions.length > 0 ? (
+                  <LinkParty linkOptions={linkOptions} currParties={parties} />
+               ) : (
+                  <></>
+               )}
+
+               {/* deselect */}
+               {selectedCount > 0 ? (
+                  <button onClick={deselectHandler} className="deselect-button">
+                     Done
+                  </button>
+               ) : (
+                  <></>
+               )}
             </div>
          </div>
       </>

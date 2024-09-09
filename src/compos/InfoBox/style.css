@@ -26,10 +26,14 @@
    /* calculate width excluding padding */
    width: calc(var(--info-width) - var(--info-padding-x) * 2);
 }
+.party-input-wrapper {
+   /* margin-top: -16px; */
+}
 .party-input-label {
    font-size: 14px;
    font-weight: 300;
    margin-bottom: 0px !important;
+   margin-top: -2px;
 }
 .input-group {
    display: flex;

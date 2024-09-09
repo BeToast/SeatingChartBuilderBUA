@@ -1,4 +1,11 @@
-import React, { createContext, useContext, useState, useCallback } from "react";
+import React, {
+   createContext,
+   useContext,
+   useState,
+   useCallback,
+   useEffect,
+} from "react";
+import { arraysEqual } from "../utils/generic";
 export interface recordValue {
    selected: boolean;
    assigned: Array<string>;
@@ -6,7 +13,13 @@ export interface recordValue {
 
 interface SelectedContextType {
    state: Record<string, recordValue>;
+   uniquePartiesArray: Array<Array<string>>;
+   partyLinks: Array<Array<Array<string>>>;
    nameAndLinesBool: boolean;
+   parties: Array<string>;
+   setParties: (parties: Array<string>) => void;
+   partyOveride: boolean;
+   setPartyOveride: (partyOveride: boolean) => void;
    // setVacant: (id: string) => void;
    setSelected: (id: string, selected: boolean) => void;
    selectGroup: (id: string) => void;
@@ -17,17 +30,29 @@ interface SelectedContextType {
       selected?: boolean
    ) => void;
    removeAssigned: (id: string, party: string) => void;
+   addPartyLink: (
+      thisParty: Array<string>,
+      linkedParty: Array<string>,
+      relevantLinks: Array<Array<string>>
+   ) => void;
    renderNameAndLines: () => void;
 }
 
 const SelectedContext = createContext<SelectedContextType>({
    state: {},
+   uniquePartiesArray: [],
+   partyLinks: [],
    nameAndLinesBool: false,
+   parties: [],
+   setParties: () => {},
+   partyOveride: true,
+   setPartyOveride: () => {},
    setSelected: () => {},
    selectGroup: () => {},
    deselectAll: () => {},
    setAssigned: () => {},
    removeAssigned: () => {},
+   addPartyLink: () => {},
    renderNameAndLines: () => {},
 });
 
@@ -39,42 +64,66 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
    children,
 }) => {
    const [state, setState] = useState<Record<string, recordValue>>({});
+   const [uniquePartiesArray, setUniquePartiesArray] = useState<
+      Array<Array<string>>
+   >([]);
+   const [partyLinks, setPartyLinks] = useState<Array<Array<Array<string>>>>(
+      []
+   );
    const [nameAndLinesBool, setNameAndLinesBool] = useState<boolean>(false);
+
+   // the party list for this infoBox
+   // updates the state onChange
+   const [parties, setParties] = useState<Array<string>>([]);
+   const [partyOveride, setPartyOveride] = useState<boolean>(true);
+
+   // updae the party set whenever state updates
+   // useEffect(() => updatePartiesSet(), [state]);
+
+   // const updatePartiesSet = useCallback(() => {
+   //    console.log("updating parties set");
+   //    setPartiesSet((prevSet) => {
+   //       const newSet = new Set(prevSet);
+   //       Object.values(state).forEach((record) => {
+   //          newSet.add(record.assigned);
+   //       });
+   //       return newSet;
+   //    });
+   // }, []);
+   const updateUniquePartiesArray = useCallback(() => {
+      // console.log("updating parties set");
+      setUniquePartiesArray(() => {
+         const uniquePartyArray = new Array<Array<string>>();
+         Object.values(state).forEach((record) => {
+            if (record.assigned.length > 0) {
+               uniquePartyArray.push(record.assigned);
+            }
+         });
+         return uniquePartyArray;
+      });
+   }, [state]);
+
+   useEffect(() => {
+      updateUniquePartiesArray();
+   }, [state, updateUniquePartiesArray]);
 
    //copies the currently selected assignments to the newly selected.
    const setSelected = useCallback((id: string, selected: boolean) => {
       setState((prev) => {
-         const selectedIds = document.getElementsByClassName("selected-id");
-         var selectedRecord: recordValue | undefined = undefined;
-         if (selectedIds.length > 0) {
-            selectedRecord = prev[selectedIds[0].innerHTML];
-         }
-
          return {
             ...prev,
             [id]: {
                selected: selected,
-               assigned: selectedRecord?.assigned || [],
+               assigned: prev[id].assigned,
             },
          };
       });
    }, []);
 
    const selectGroup = useCallback((id: string) => {
-      function arraysEqual(a: string[], b: string[]) {
-         if (a === b) return true;
-         if (a == null || b == null) return false;
-         if (a.length !== b.length) return false;
-
-         for (var i = 0; i < a.length; ++i) {
-            if (a[i] !== b[i]) return false;
-         }
-         return true;
-      }
-
       setState((prev) => {
          const party = prev[id].assigned;
-         console.log(party);
+         // console.log(party);
          const partyKeys: string[] = Object.keys(prev).filter(
             (currId: string) =>
                arraysEqual(prev[currId].assigned, prev[id].assigned)
@@ -160,19 +209,66 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
       });
    }, []);
 
+   const addPartyLink = useCallback(
+      (thisParty: string[], linkedParty: string[]) => {
+         setPartyLinks((prev) => {
+            const newLinks = [...prev];
+            const existingLinkIndex = newLinks.findIndex((link) =>
+               link.some(
+                  (party) =>
+                     party.every((item, index) => item === thisParty[index]) ||
+                     party.every((item, index) => item === linkedParty[index])
+               )
+            );
+
+            if (existingLinkIndex !== -1) {
+               // If a link with either party exists, add the other party to it
+               const existingLink = newLinks[existingLinkIndex];
+               if (
+                  !existingLink.some((party) =>
+                     party.every((item, index) => item === thisParty[index])
+                  )
+               ) {
+                  existingLink.push(thisParty);
+               }
+               if (
+                  !existingLink.some((party) =>
+                     party.every((item, index) => item === linkedParty[index])
+                  )
+               ) {
+                  existingLink.push(linkedParty);
+               }
+            } else {
+               // If no existing link is found, create a new one
+               newLinks.push([thisParty, linkedParty]);
+            }
+
+            console.log(newLinks);
+            return newLinks;
+         });
+      },
+      []
+   );
    const renderNameAndLines = () => {
       setNameAndLinesBool((prev) => !prev);
    };
 
    const value: SelectedContextType = {
       state,
+      uniquePartiesArray,
+      partyLinks,
       nameAndLinesBool,
-      // setVacant,
+      parties,
+      setParties,
+
+      partyOveride,
+      setPartyOveride,
       setSelected,
       selectGroup,
       deselectAll,
       setAssigned,
       removeAssigned,
+      addPartyLink,
       renderNameAndLines,
    };
 

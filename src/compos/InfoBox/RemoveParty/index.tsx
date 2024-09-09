@@ -1,16 +1,16 @@
-import { useSelected } from "../../../context/SelectedContext";
 import { xSvg } from "../../../utils/svgs";
 import Tooltip from "../../Tooltip";
 import "./style.css";
 
-const RemoveParty: React.FC<{}> = ({}) => {
+const RemoveParty: React.FC<{
+   party: string;
+   removePartyHandler: (party: string) => void;
+}> = ({ party, removePartyHandler }) => {
    return (
       <>
          <Tooltip content={"Remove Party"}>
             <div
-               onClick={() => {
-                  console.log("hello");
-               }}
+               onClick={() => removePartyHandler(party)}
                className="remove-party"
             >
                {xSvg}

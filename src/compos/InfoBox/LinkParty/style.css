@@ -1,0 +1,30 @@
+.linked-with {
+   font-size: 24px;
+   font-weight: 400;
+}
+
+.linked-party-wrapper {
+   /* margin-left: 32px; */
+}
+
+.linked-party {
+   font-size: 24px;
+   font-weight: 600;
+   display: flex;
+   flex-direction: row;
+   justify-content: left;
+   align-items: center;
+   gap: 8px;
+}
+
+.party-input {
+   font-size: 18px;
+   padding: 8px;
+   margin-top: -4px;
+   background-color: rgb(239, 239, 239);
+   border: 1px solid #ccc;
+   box-sizing: border-box;
+   border-radius: 4px;
+   flex-grow: 1;
+   width: 100%;
+}

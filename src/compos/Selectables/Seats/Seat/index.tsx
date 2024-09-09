@@ -1,6 +1,7 @@
 import React from "react";
-import { recordValue, useSelected } from "../../../../context/SelectedContext";
+import { useSelected } from "../../../../context/SelectedContext";
 import {
+   getAssignments,
    getElementClass,
    getElementSelectState,
    getOtherSelectedAssignments,
@@ -24,8 +25,14 @@ const Seat: React.FC<SeatProps> = ({
    kSeats,
    setKSeats,
 }) => {
-   const { state, setSelected, selectGroup, setAssigned, deselectAll } =
-      useSelected();
+   const {
+      state,
+      setSelected,
+      selectGroup,
+      setAssigned,
+      deselectAll,
+      setParties,
+   } = useSelected();
    const seatId = `Seat ${id}`;
    const seatState = state[seatId];
 
@@ -40,11 +47,13 @@ const Seat: React.FC<SeatProps> = ({
                handleElementClick(
                   getElementSelectState(seatState),
                   seatId,
+                  getAssignments(seatId, state),
                   getOtherSelectedAssignments(state),
                   setSelected,
                   selectGroup,
                   deselectAll,
-                  setAssigned
+                  setAssigned,
+                  setParties
                )
             }
          >
