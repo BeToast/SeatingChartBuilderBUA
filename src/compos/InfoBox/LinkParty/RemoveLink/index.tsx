@@ -3,14 +3,14 @@ import Tooltip from "../../../Tooltip";
 import "./style.css";
 
 const RemoveLink: React.FC<{
-   party: string;
-   removeLinkHandler: (party: string) => void;
-}> = ({ party, removeLinkHandler }) => {
+   otherAssignment: Array<string>;
+   removeLinkHandler: (party: Array<string>) => void;
+}> = ({ otherAssignment, removeLinkHandler }) => {
    return (
       <>
          <Tooltip content={"Remove Party Link"}>
             <div
-               onClick={() => removeLinkHandler(party)}
+               onClick={() => removeLinkHandler(otherAssignment)}
                className="remove-link"
             >
                {xSvg}

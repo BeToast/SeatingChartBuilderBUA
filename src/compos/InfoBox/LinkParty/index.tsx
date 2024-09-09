@@ -43,12 +43,18 @@ const LinkParty: React.FC<{
       setSearchTerm(event.target.value);
    };
 
-   //get the array of links
-   const linkedArray = partyLinks.filter((link) => {
-      return link.some((party) => arraysEqual(currParties, party));
-   });
+   const linkedArrayIndex = partyLinks.findIndex((link) =>
+      link.some((party) => arraysEqual(currParties, party))
+   );
+   const linkedArray: Array<Array<string>> =
+      linkedArrayIndex !== -1 ? partyLinks[linkedArrayIndex] : [];
+   const otherLinkedParties = linkedArray.filter(
+      (party) => !arraysEqual(party, currParties)
+   );
+   console.log("linkedArray", linkedArray);
+   console.log("otherLinkedParties", otherLinkedParties);
 
-   const handleRemoveLink = (linkToRemove: Array<Array<string>>) => {
+   const handleRemoveLink = (linkToRemove: Array<string>) => {
       // removePartyLink(linkToRemove);
       console.log("remove link", linkToRemove);
    };
@@ -59,11 +65,11 @@ const LinkParty: React.FC<{
       <div ref={dropdownRef}>
          <div className="linked-with">Linked Parties:</div>
          <div className="linked-party-wrapper">
-            {linkedArray.map((link: Array<Array<string>>, index) => (
+            {otherLinkedParties.map((otherAssignment: Array<string>, index) => (
                <div key={index} className="linked-party">
                   <RemoveLink
-                     party=""
-                     removeLinkHandler={() => handleRemoveLink(link)}
+                     otherAssignment={otherAssignment}
+                     removeLinkHandler={handleRemoveLink}
                   />
                   {link.map((assigned) =>
                      arraysEqual(currParties, assigned) ? null : (
