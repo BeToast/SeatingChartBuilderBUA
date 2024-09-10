@@ -4,8 +4,8 @@ import { getLrtb } from "../../utils";
 import LineDiv from "../LineDiv";
 
 const RailHandler: React.FC<{
-   style: React.CSSProperties;
-   assigned: string;
+   style?: React.CSSProperties;
+   assigned?: string;
    elements: Element[];
    scrollTop: number;
    paperRect: DOMRect;

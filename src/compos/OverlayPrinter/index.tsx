@@ -6,7 +6,7 @@ import React, {
    useRef,
 } from "react";
 import { useSelected } from "../../context/SelectedContext";
-import { createAssignedElementsRecord } from "./utils";
+import { createAssignedElementsRecord, partyPound } from "./utils";
 import NameAndLines from "./NameAndLines";
 
 const AbsolutePrinter: React.FC = () => {
@@ -60,6 +60,8 @@ const AbsolutePrinter: React.FC = () => {
       [state]
    );
 
+   var partyLinksFlatPounded: Array<string> = [];
+
    return (
       <>
          {/* handle linked groups here */}
@@ -67,12 +69,24 @@ const AbsolutePrinter: React.FC = () => {
             const assignedArray: Array<string> = [];
             const elementsArray: Array<Array<Element>> = [];
             parties.map((party) => {
-               const partyPound = party.join("£");
-               assignedArray.push(partyPound);
-               elementsArray.push(assignedElements.party);
-               delete assignedElements[partyPound]; //how do i remove an item from assignedElements??
+               const partyPounded = partyPound(party);
+               // console.log(assignedElements[partyPound]);
+               assignedArray.push(partyPounded);
+               elementsArray.push(assignedElements[partyPounded]);
+               partyLinksFlatPounded.push();
+               // delete assignedElementsCopy[partyPound]; //TY SRINI - how do i remove an item from assignedElements??
+               // console.log(assignedElements.length);
+               // console.log(assignedElementsCopy.length);
             });
+            //log what has been done already
+            partyLinksFlatPounded = [
+               ...partyLinksFlatPounded,
+               ...assignedArray,
+            ];
             // NameAndLines with assignedArray and elementsArray
+            // console.log(assignedElementsCopy);
+            // console.log(elementsArray);
+
             return (
                <React.Fragment key={assignedArray[0]}>
                   <NameAndLines
@@ -88,17 +102,23 @@ const AbsolutePrinter: React.FC = () => {
          {/* iterate through remainder of unlinked */}
          {Object.entries(assignedElements).map(([assigned, elements]) => {
             // console.log(assigned);
-            return (
-               <React.Fragment key={assigned}>
-                  <NameAndLines
-                     assigned={assigned}
-                     elements={elements}
-                     scrollTop={scrollTop}
-                     paperRect={paperRect}
-                     flexieMargin={flexieMargin}
-                  />
-               </React.Fragment>
-            );
+            if (
+               !partyLinksFlatPounded.some(
+                  (partyPounded) => partyPounded == assigned
+               )
+            ) {
+               return (
+                  <React.Fragment key={assigned}>
+                     <NameAndLines
+                        assigned={assigned}
+                        elements={elements}
+                        scrollTop={scrollTop}
+                        paperRect={paperRect}
+                        flexieMargin={flexieMargin}
+                     />
+                  </React.Fragment>
+               );
+            }
          })}
       </>
    );

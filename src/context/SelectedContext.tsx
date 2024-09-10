@@ -245,7 +245,7 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
                newLinks.push([thisParty, linkedParty]);
             }
 
-            console.log(newLinks);
+            // console.log(newLinks);
             return newLinks;
          });
       },
