@@ -10,7 +10,18 @@ const TableHandler: React.FC<{
    scrollTop: number;
    paperRect: DOMRect;
    flexieMargin: number;
-}> = ({ style, assigned, elements, scrollTop, paperRect, flexieMargin }) => {
+   printName?: boolean;
+   printLines?: boolean;
+}> = ({
+   style,
+   assigned,
+   elements,
+   scrollTop,
+   paperRect,
+   flexieMargin,
+   printName = true,
+   printLines = true,
+}) => {
    var linesJsx: JSX.Element = <></>;
 
    const tableLrtb = getLrtb(elements);

@@ -1,4 +1,5 @@
 import { recordValue } from "../../context/SelectedContext";
+import { arraysEqual } from "../../utils/generic";
 
 export interface Lrtb {
    left: number;
@@ -23,7 +24,8 @@ export function createAssignedElementsRecord(
    //make a set for each unique assigned value
    const uniqueAssigned = new Set<string>();
    Object.values(state).forEach((item) => {
-      item.assigned.forEach((value) => uniqueAssigned.add(value));
+      // item.assigned.forEach((value) => uniqueAssigned.add(value));
+      uniqueAssigned.add(item.assigned.join("£"));
    });
 
    //create a record with party as key and dom seats as values
@@ -31,7 +33,7 @@ export function createAssignedElementsRecord(
    uniqueAssigned.forEach((assignedValue) => {
       const elements: Element[] = [];
       Object.entries(state).forEach(([id, item]) => {
-         if (item.assigned.includes(assignedValue)) {
+         if (arraysEqual(item.assigned, assignedValue.split("£"))) {
             const element = document.getElementById(id);
             if (element) {
                elements.push(element);

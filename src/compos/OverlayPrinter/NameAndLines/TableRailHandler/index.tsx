@@ -10,7 +10,18 @@ const TableRailHandler: React.FC<{
    scrollTop: number;
    paperRect: DOMRect;
    flexieMargin: number;
-}> = ({ style, assigned, elements, scrollTop, paperRect, flexieMargin }) => {
+   printName?: boolean;
+   printLines?: boolean;
+}> = ({
+   style,
+   assigned,
+   elements,
+   scrollTop,
+   paperRect,
+   flexieMargin,
+   printName = true,
+   printLines = true,
+}) => {
    //kitchen rail varables
    let kRailLrtb: Lrtb,
       kRailLeft: number,

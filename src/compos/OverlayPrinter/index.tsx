@@ -63,14 +63,31 @@ const AbsolutePrinter: React.FC = () => {
    return (
       <>
          {/* handle linked groups here */}
-         {/* {partyLinks.map((parties) => {
-            const assignedArray: Array<string> = []
-            const elementsArray: Array<Array<Element>> = []
-            
-         })} */}
-
+         {partyLinks.map((parties) => {
+            const assignedArray: Array<string> = [];
+            const elementsArray: Array<Array<Element>> = [];
+            parties.map((party) => {
+               const partyPound = party.join("£");
+               assignedArray.push(partyPound);
+               elementsArray.push(assignedElements.party);
+               delete assignedElements[partyPound]; //how do i remove an item from assignedElements??
+            });
+            // NameAndLines with assignedArray and elementsArray
+            return (
+               <React.Fragment key={assignedArray[0]}>
+                  <NameAndLines
+                     assignedLink={assignedArray}
+                     elementsLink={elementsArray}
+                     scrollTop={scrollTop}
+                     paperRect={paperRect}
+                     flexieMargin={flexieMargin}
+                  />
+               </React.Fragment>
+            );
+         })}
          {/* iterate through remainder of unlinked */}
          {Object.entries(assignedElements).map(([assigned, elements]) => {
+            // console.log(assigned);
             return (
                <React.Fragment key={assigned}>
                   <NameAndLines

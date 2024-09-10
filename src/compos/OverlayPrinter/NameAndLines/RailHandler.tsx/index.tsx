@@ -12,6 +12,8 @@ const RailHandler: React.FC<{
    flexieMargin: number;
    hasKitchenSeats: boolean;
    hasBathroomSeats: boolean;
+   printName?: boolean;
+   printLines?: boolean;
 }> = ({
    style,
    assigned,
@@ -21,6 +23,8 @@ const RailHandler: React.FC<{
    flexieMargin,
    hasKitchenSeats,
    hasBathroomSeats,
+   printName = true,
+   printLines = true,
 }) => {
    var linesJsx: JSX.Element = <></>;
 
