@@ -91,23 +91,33 @@ const NameAndLines: React.FC<{
 };
 export default NameAndLines;
 
-export type StyleAssignedLines = {
-   style: React.CSSProperties;
-   assigned: string;
-   linesJsx: JSX.Element;
-};
-
 export const getReturnJsx = ({
-   style,
-   assigned,
-   linesJsx,
-}: StyleAssignedLines) => {
+   style = undefined,
+   assigned = undefined,
+   linesJsx = <></>,
+}: {
+   style?: React.CSSProperties;
+   assigned?: string;
+   linesJsx?: JSX.Element;
+}) => {
    return (
       <React.Fragment>
-         <div className="party-name" style={style}>
-            {assigned}
-         </div>
-         ;{linesJsx}
+         ;{" "}
+         {/* THIS SEMICOLON IS THE REASON EVERYTHING IS 20px OFFSET ON Y AXIS!!!  */}
+         {assigned ? (
+            <div className="party-name" style={style}>
+               {assigned}
+            </div>
+         ) : (
+            <></>
+         )}
+         {linesJsx}
       </React.Fragment>
+      // <React.Fragment>
+      //    <div className="party-name" style={style}>
+      //       {assigned}
+      //    </div>
+      //    ;{linesJsx}
+      // </React.Fragment>
    );
 };
