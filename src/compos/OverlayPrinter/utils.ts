@@ -20,11 +20,13 @@ export function getLrtb(elements: Element[]): Lrtb {
 export function createAssignedElementsRecord(
    state: Record<string, recordValue>
 ): Record<string, Array<Element>> {
+   //make a set for each unique assigned value
    const uniqueAssigned = new Set<string>();
    Object.values(state).forEach((item) => {
       item.assigned.forEach((value) => uniqueAssigned.add(value));
    });
 
+   //create a record with party as key and dom seats as values
    const result: Record<string, Array<Element>> = {};
    uniqueAssigned.forEach((assignedValue) => {
       const elements: Element[] = [];

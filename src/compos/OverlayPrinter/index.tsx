@@ -6,7 +6,7 @@ import React, {
    useRef,
 } from "react";
 import { useSelected } from "../../context/SelectedContext";
-import { createAssignedElementsRecord, getLrtb } from "./utils";
+import { createAssignedElementsRecord } from "./utils";
 import NameAndLines from "./NameAndLines";
 
 const AbsolutePrinter: React.FC = () => {
@@ -15,7 +15,7 @@ const AbsolutePrinter: React.FC = () => {
    const [paperRect, setPaperRect] = useState<DOMRect | null>(null);
    const [flexieMargin, setFlexieMargin] = useState(0);
 
-   const { state } = useSelected();
+   const { state, partyLinks } = useSelected();
    const paperRef = useRef<HTMLElement | null>(null);
 
    const updateScrollTopAndPaperSize = useCallback(() => {
@@ -62,6 +62,14 @@ const AbsolutePrinter: React.FC = () => {
 
    return (
       <>
+         {/* handle linked groups here */}
+         {/* {partyLinks.map((parties) => {
+            const assignedArray: Array<string> = []
+            const elementsArray: Array<Array<Element>> = []
+            
+         })} */}
+
+         {/* iterate through remainder of unlinked */}
          {Object.entries(assignedElements).map(([assigned, elements]) => {
             return (
                <React.Fragment key={assigned}>
