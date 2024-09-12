@@ -1,6 +1,6 @@
 import React from "react";
 import { getReturnJsx } from "..";
-import { getLrtb } from "../../utils";
+import { getLrtb, partyUnPound } from "../../utils";
 import LineDiv from "../LineDiv";
 
 const RailHandler: React.FC<{
@@ -29,6 +29,7 @@ const RailHandler: React.FC<{
    var linesJsx: JSX.Element = <></>;
 
    const railLrtb = getLrtb(elements);
+   const assignedUnPounded = assigned ? partyUnPound(assigned) : undefined;
    //X
    const relativeLeft = railLrtb.left - paperRect.left;
    const relativeRight = railLrtb.right - paperRect.left;
@@ -70,7 +71,7 @@ const RailHandler: React.FC<{
          transform: "translateY(-50%) rotate(-30deg)",
          transformOrigin: "left",
       };
-      return getReturnJsx({ style, assigned, linesJsx });
+      return getReturnJsx({ style, assignedUnPounded, linesJsx });
    } // BATHROOM ----------------------------------------------------------------------------------------
    else if (!hasKitchenSeats && hasBathroomSeats) {
       linesJsx = (
@@ -101,7 +102,7 @@ const RailHandler: React.FC<{
          transform: "translateY(-100%) rotate(-30deg)",
          transformOrigin: "left",
       };
-      return getReturnJsx({ style, assigned, linesJsx });
+      return getReturnJsx({ style, assignedUnPounded, linesJsx });
    } // BOTH ------------------------------------------------------------------------------------------
    else if (hasKitchenSeats && hasBathroomSeats) {
       const seatRect = elements[0].getBoundingClientRect();
@@ -139,7 +140,7 @@ const RailHandler: React.FC<{
          transform: "translateY(-60%) rotate(-30deg)",
          transformOrigin: "left",
       };
-      return getReturnJsx({ style, assigned, linesJsx });
+      return getReturnJsx({ style, assignedUnPounded, linesJsx });
    }
 };
 

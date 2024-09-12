@@ -1,6 +1,6 @@
 import React from "react";
 import { getReturnJsx } from "..";
-import { getLrtb } from "../../utils";
+import { getLrtb, partyUnPound } from "../../utils";
 import LineDiv from "../LineDiv";
 
 const TableHandler: React.FC<{
@@ -25,6 +25,7 @@ const TableHandler: React.FC<{
    var linesJsx: JSX.Element = <></>;
 
    const tableLrtb = getLrtb(elements);
+   const assignedUnPounded = assigned ? partyUnPound(assigned) : undefined;
 
    const tableLeft = tableLrtb.left - paperRect.left;
    const tableRight = tableLrtb.right - paperRect.left;
@@ -54,8 +55,14 @@ const TableHandler: React.FC<{
          left: `${tableCenterX}px`,
          top: `${tableCenterY}px`,
          transform: "translateX(-50%) translateY(-50%)",
+         backgroundColor: "white",
       };
-      return getReturnJsx({ style, assigned, linesJsx });
+      return getReturnJsx({
+         style,
+         assignedUnPounded,
+         linesJsx,
+         singleLine: false,
+      });
    }
 
    // KITCHEN TABLE LOGIC ----------------------------------------------------------------------------------------
@@ -109,9 +116,15 @@ const TableHandler: React.FC<{
          left: `${tableCenterX}px`,
          top: `${tableCenterY}px`,
          transform: "translateX(-50%) translateY(-50%)",
+         backgroundColor: "white",
       };
 
-      return getReturnJsx({ style, assigned, linesJsx });
+      return getReturnJsx({
+         style,
+         assignedUnPounded,
+         linesJsx,
+         singleLine: false,
+      });
       // BATHROOM TABLE LOGIC ----------------------------------------------------------------------------------------
    } else if (onlyBathroomTables) {
       const kitchenTables = elements.filter((el) => el.id.startsWith("Table "));
@@ -165,8 +178,14 @@ const TableHandler: React.FC<{
          left: `${tableCenterX}px`,
          top: `${tableCenterY}px`,
          transform: "translateX(-50%) translateY(-50%)",
+         backgroundColor: "white",
       };
-      return getReturnJsx({ style, assigned, linesJsx });
+      return getReturnJsx({
+         style,
+         assignedUnPounded,
+         linesJsx,
+         singleLine: false,
+      });
 
       //CORNER TABLE LOGIC ----------------------------------------------------------------------------------------
    } else if (onlyCornerTables) {
@@ -232,8 +251,14 @@ const TableHandler: React.FC<{
          left: `${topLeftX + 8}px`,
          top: `${tableCenterY}px`,
          transform: "translateY(-50%)",
+         backgroundColor: "white",
       };
-      return getReturnJsx({ style, assigned, linesJsx });
+      return getReturnJsx({
+         style,
+         assignedUnPounded,
+         linesJsx,
+         singleLine: false,
+      });
    }
 };
 

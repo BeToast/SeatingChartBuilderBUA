@@ -51,7 +51,7 @@ export function createAssignedElementsRecord(
 export const partyPound = (parties: Array<string>) => {
    return parties.join("£");
 };
-export const partyUnPound = (partyPound: string) => {
+export const partyUnPound = (partyPound: string): Array<string> => {
    return partyPound.split("£");
 };
 
@@ -59,6 +59,8 @@ export const styleBase: React.CSSProperties = {
    position: "absolute",
    margin: 0,
    color: "black",
-   zIndex: 10,
-   backgroundColor: "transparent",
+   zIndex: 30,
+   // backgroundColor: "transparent",
+   padding: "4px 8px",
+   borderRadius: "8px",
 };

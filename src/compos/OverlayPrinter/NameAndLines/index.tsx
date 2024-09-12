@@ -1,5 +1,4 @@
 import React from "react";
-import "./style.css";
 import TableHandler from "./TableHandler";
 import TableRailHandler from "./TableRailHandler";
 import RailHandler from "./RailHandler.tsx";
@@ -265,20 +264,32 @@ export default NameAndLines;
 
 export const getReturnJsx = ({
    style = undefined,
-   assigned = undefined,
+   assignedUnPounded = undefined,
    linesJsx = <></>,
+   singleLine = true,
 }: {
    style?: React.CSSProperties;
-   assigned?: string;
+   assignedUnPounded?: Array<string>;
    linesJsx?: JSX.Element;
+   singleLine?: boolean;
 }) => {
+   const partyJsx: React.ReactNode = assignedUnPounded ? (
+      singleLine ? (
+         <>{assignedUnPounded.join(" ")}</>
+      ) : (
+         assignedUnPounded.map((party, index) => <div key={index}>{party}</div>)
+      )
+   ) : (
+      ""
+   );
+
    return (
       <React.Fragment>
-         ;{" "}
+         ;
          {/* THIS SEMICOLON IS THE REASON EVERYTHING IS 20px OFFSET ON Y AXIS!!!  */}
-         {assigned ? (
+         {assignedUnPounded ? (
             <div className="party-name" style={style}>
-               {assigned}
+               {partyJsx}
             </div>
          ) : (
             <></>

@@ -1,6 +1,6 @@
 import React from "react";
 import { getReturnJsx } from "..";
-import { getLrtb, Lrtb } from "../../utils";
+import { getLrtb, Lrtb, partyUnPound } from "../../utils";
 import LineDiv from "../LineDiv";
 
 const TableRailHandler: React.FC<{
@@ -47,6 +47,7 @@ const TableRailHandler: React.FC<{
    }
 
    const tableLrtb = getLrtb(tables);
+   const assignedUnPounded = assigned ? partyUnPound(assigned) : undefined;
 
    const tableLeft = tableLrtb.left - paperRect.left;
    const tableRight = tableLrtb.right - paperRect.left;
@@ -95,8 +96,14 @@ const TableRailHandler: React.FC<{
          left: `${tableCenterX}px`,
          top: `${tableCenterY}px`,
          transform: "translateX(-50%) translateY(-50%)",
+         backgroundColor: "white",
       };
-      return getReturnJsx({ style, assigned, linesJsx });
+      return getReturnJsx({
+         style,
+         assignedUnPounded,
+         linesJsx,
+         singleLine: false,
+      });
    } //bathroom rail and tables
    else if (kitchenRail.length == 0 && bathroomRail.length > 0) {
       bRailLrtb = getLrtb(bathroomRail);
@@ -135,8 +142,14 @@ const TableRailHandler: React.FC<{
          left: `${tableCenterX}px`,
          top: `${tableCenterY}px`,
          transform: "translateX(-50%) translateY(-50%)",
+         backgroundColor: "white",
       };
-      return getReturnJsx({ style, assigned, linesJsx });
+      return getReturnJsx({
+         style,
+         assignedUnPounded,
+         linesJsx,
+         singleLine: false,
+      });
    } //both kitchen and bathroom rail
    else if (kitchenRail.length > 0 && bathroomRail.length > 0) {
       kRailLrtb = getLrtb(kitchenRail);
@@ -180,8 +193,14 @@ const TableRailHandler: React.FC<{
          left: `${tableCenterX}px`,
          top: `${tableCenterY}px`,
          transform: "translateX(-50%) translateY(-50%)",
+         backgroundColor: "white",
       };
-      return getReturnJsx({ style, assigned, linesJsx });
+      return getReturnJsx({
+         style,
+         assignedUnPounded,
+         linesJsx,
+         singleLine: false,
+      });
    } else if (kitchenRail.length == 0 && bathroomRail.length == 0) {
       throw new Error(
          "No rails seats in TableRailHandler, component should not have been called"
