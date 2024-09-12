@@ -245,16 +245,17 @@ const NameAndLines: React.FC<{
             combinedTableCount == 0 &&
             (combinedHasKitchenSeats || combinedHasBathroomSeats)
          ) {
-            outputJsx.push(
-               <RailHandler
-                  elements={elementsLink.flat()}
-                  scrollTop={scrollTop}
-                  paperRect={paperRect}
-                  flexieMargin={flexieMargin}
-                  hasKitchenSeats={combinedHasKitchenSeats}
-                  hasBathroomSeats={combinedHasBathroomSeats}
-               />
-            );
+            //we dont do anything for only rails at the moment
+            // outputJsx.push(
+            //    <RailHandler
+            //       elements={elementsLink.flat()}
+            //       scrollTop={scrollTop}
+            //       paperRect={paperRect}
+            //       flexieMargin={flexieMargin}
+            //       hasKitchenSeats={combinedHasKitchenSeats}
+            //       hasBathroomSeats={combinedHasBathroomSeats}
+            //    />
+            // );
          }
          return outputJsx;
       }

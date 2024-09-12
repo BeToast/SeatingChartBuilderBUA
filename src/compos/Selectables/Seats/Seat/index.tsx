@@ -32,6 +32,7 @@ const Seat: React.FC<SeatProps> = ({
       setAssigned,
       deselectAll,
       setParties,
+      setPartyOveride,
    } = useSelected();
    const seatId = `Seat ${id}`;
    const seatState = state[seatId];
@@ -53,7 +54,8 @@ const Seat: React.FC<SeatProps> = ({
                   selectGroup,
                   deselectAll,
                   setAssigned,
-                  setParties
+                  setParties,
+                  setPartyOveride
                )
             }
          >

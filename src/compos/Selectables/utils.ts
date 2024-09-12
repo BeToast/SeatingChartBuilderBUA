@@ -45,13 +45,19 @@ export const handleElementClick = (
    selectGroup: (id: string) => void,
    deselectAll: () => void,
    setAssigned: (id: string, party: Array<string>) => void,
-   updateInfoBoxParties: (parties: Array<string>) => void
+   updateInfoBoxParties: (parties: Array<string>) => void,
+   setPartyOveride: (partyOveride: boolean) => void
 ) => {
    if (elementSelectState === SelectState.VACANT) {
-      setSelected(id, true);
       if (selectedAssignments.length > 0) {
+         //set assigned to other selected elemnts assignment
          setAssigned(id, selectedAssignments);
+      } else {
+         //if none selected. then ovveride with InfoBox party state
+         setPartyOveride(true);
       }
+      //update state to selected
+      setSelected(id, true);
    } else if (elementSelectState === SelectState.SELECTED) {
       setSelected(id, false);
       setAssigned(id, selectedAssignments);

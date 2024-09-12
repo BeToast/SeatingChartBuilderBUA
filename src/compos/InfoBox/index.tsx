@@ -15,6 +15,8 @@ const InfoBox: React.FC<{}> = ({}) => {
       setPartyOveride,
       setAssigned,
       setSelected,
+      partyLinks,
+      removePartyLink,
    } = useSelected();
    const selectedIds = useMemo(
       () => Object.keys(state).filter((id) => state[id].selected),
@@ -35,27 +37,12 @@ const InfoBox: React.FC<{}> = ({}) => {
 
    // used for input fields
    const [partyName, setPartyName] = useState<string>("");
-   const [partySize, setPartyCount] = useState<number>(1);
+   const [partySize, setPartySize] = useState<number | undefined>(undefined);
 
-   // const updateParties = useCallback(() => {
-   //    const updatedParties = new Set<string>();
-   //    selectedIds.forEach((id) => {
-   //       if (state[id].assigned) {
-   //          state[id].assigned.forEach((party: string) => {
-   //             updatedParties.add(party);
-   //          });
-   //       }
-   //    });
-   //    const newParties = Array.from(updatedParties);
-   //    if (JSON.stringify(newParties) !== JSON.stringify(parties)) {
-   //       setParties(newParties);
-   //    }
-   // }, [selectedIds, state, parties]);
-
-   const addPartyHandler = (name: string, count: number): void => {
-      const newParty = `${name.trim()}(${count})`;
+   const addPartyHandler = (name: string, size: number | undefined): void => {
+      const newParty = `${name.trim()}(${size ? size : 1})`;
       setPartyName(""); // Clear the input after adding
-      setPartyCount(1); // Reset party count
+      setPartySize(undefined); // Reset party count
       setParties([...parties, newParty]);
    };
 
@@ -74,35 +61,17 @@ const InfoBox: React.FC<{}> = ({}) => {
       }
    }, [parties, selectedCount]);
 
-   // this may be unnessicary
-   // useEffect(() => {
-   //    if (selectedIds.length == 0) {
-   //       setParties([]);
-   //    }
-   // }, [selectedIds]);
-
-   // const addPartyToSelection = () => {};
-
-   // const selectedRemoveHandler = (selectedId: string) => {
-   //    setSelected(selectedId, false);
-   // };
-
-   // const partyRemoveHandler = (party: string) => {
-   //    selectedIds.forEach((id) => {
-   //       removeAssigned(id, party);
-   //    });
-   // };
-
-   // const deselectHandler = () => {
-   //    selectedIds.forEach((id) => setSelected(id, false));
-   // };
-
-   // useEffect(() => {
-   //    updateParties();
-   // }, [updateParties]);
-
    // legit just remove the party from the state. useEffect() will handle the rest.
    const removePartyHandler = (party: string) => {
+      //find index of linked parties
+      const partyLinkIndex = partyLinks.findIndex((link) =>
+         link.some((assigned) => arraysEqual(parties, assigned))
+      );
+      //if it is linked remove the link
+      if (partyLinkIndex !== -1) {
+         removePartyLink(parties, partyLinkIndex);
+      }
+      //update state
       setParties(parties.filter((p) => p !== party));
    };
 
@@ -145,9 +114,10 @@ const InfoBox: React.FC<{}> = ({}) => {
                className="number-input"
                id="party-size-input"
                placeholder="1"
+               value={partySize}
                onChange={(e) => {
                   const parsedValue = parseInt(e.target.value);
-                  setPartyCount(isNaN(parsedValue) ? 1 : parsedValue);
+                  setPartySize(isNaN(parsedValue) ? undefined : parsedValue);
                }}
                onKeyDown={(e) => {
                   if (e.key === "Enter") {
@@ -184,29 +154,39 @@ const InfoBox: React.FC<{}> = ({}) => {
          <div className="info-wrap no-print">
             <div className="info-box">
                {/* party list */}
-               {parties.length > 0 ? (
-                  <div className="parties">
-                     {parties.map((party) => (
-                        <div key={party} className="party-row">
-                           <RemoveParty
-                              party={party}
-                              removePartyHandler={() =>
-                                 removePartyHandler(party)
-                              }
-                           />
-                           <div key={party} className="party">
-                              {party}
-                           </div>
+               <div className="section">
+                  <div className="vert-line" />
+                  <div className="header">Parties</div>
+                  <div className="content">
+                     {parties.length > 0 ? (
+                        <div className="parties">
+                           {parties.map((party) => (
+                              <div key={party} className="party-row">
+                                 <RemoveParty
+                                    party={party}
+                                    removePartyHandler={() =>
+                                       removePartyHandler(party)
+                                    }
+                                 />
+                                 <div key={party} className="party">
+                                    {party}
+                                 </div>
+                              </div>
+                           ))}
                         </div>
-                     ))}
-                  </div>
-               ) : (
-                  <></>
-               )}
+                     ) : (
+                        <></>
+                     )}
 
-               {/* add party box */}
-               {/* if has table or there is no assigned party then display add party box */}
-               {tableCount > 0 || parties.length == 0 ? addPartyJsx : <></>}
+                     {/* add party box */}
+                     {/* if has table or there is no assigned party then display add party box */}
+                     {tableCount > 0 || parties.length == 0 ? (
+                        addPartyJsx
+                     ) : (
+                        <></>
+                     )}
+                  </div>
+               </div>
 
                {/* selected/assigned info */}
                {parties.length > 0 ? (
@@ -221,7 +201,9 @@ const InfoBox: React.FC<{}> = ({}) => {
                )}
 
                {/* link party input */}
-               {parties.length > 0 && linkOptions.length > 0 ? (
+               {parties.length > 0 &&
+               linkOptions.length > 0 &&
+               (tableCount > 0 || railCount > 0) ? (
                   <LinkParty linkOptions={linkOptions} currParties={parties} />
                ) : (
                   <></>

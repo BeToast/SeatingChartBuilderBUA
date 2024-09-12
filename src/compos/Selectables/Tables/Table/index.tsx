@@ -21,6 +21,7 @@ const Table: React.FC<TableProps> = ({ id }) => {
       selectGroup,
       deselectAll,
       setParties,
+      setPartyOveride,
    } = useSelected();
    const tableId = `Table ${id}`;
    const tableState = state[tableId];
@@ -41,7 +42,8 @@ const Table: React.FC<TableProps> = ({ id }) => {
                selectGroup,
                deselectAll,
                setAssigned,
-               setParties
+               setParties,
+               setPartyOveride
             )
          }
       >

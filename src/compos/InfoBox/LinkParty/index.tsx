@@ -105,9 +105,7 @@ const LinkParty: React.FC<{
                   {filteredOptions.map((party, index) => (
                      <div
                         key={index}
-                        onMouseDown={() =>
-                           addPartyLink(currParties, party, linkedArray)
-                        }
+                        onMouseDown={() => addPartyLink(currParties, party)}
                      >
                         {party.join(", ")}
                      </div>

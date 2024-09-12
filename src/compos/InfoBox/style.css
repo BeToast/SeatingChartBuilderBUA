@@ -138,3 +138,25 @@
 .deselect-button:hover {
    background-color: rgb(193, 39, 39);
 }
+
+.info-box > .section {
+   position: relative;
+}
+.info-box > .section > .vert-line {
+   position: absolute;
+   top: 0;
+   bottom: 0;
+   width: 2px;
+   border-radius: 8px;
+   background-color: rgb(98, 98, 98);
+}
+.info-box > .section > .header {
+   color: rgb(98, 98, 98);
+   font-size: 24px;
+   font-weight: 400;
+   padding-left: 8px;
+   margin-top: -8px;
+}
+.info-box > .section > .content {
+   padding-left: 8px;
+}

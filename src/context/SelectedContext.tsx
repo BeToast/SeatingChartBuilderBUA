@@ -30,11 +30,7 @@ interface SelectedContextType {
       selected?: boolean
    ) => void;
    removeAssigned: (id: string, party: string) => void;
-   addPartyLink: (
-      thisParty: Array<string>,
-      linkedParty: Array<string>,
-      relevantLinks: Array<Array<string>>
-   ) => void;
+   addPartyLink: (thisParty: Array<string>, linkedParty: Array<string>) => void;
    removePartyLink: (thisParty: Array<string>, index: number) => void;
    renderNameAndLines: () => void;
 }
@@ -77,7 +73,9 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
    // the party list for this infoBox
    // updates the state onChange
    const [parties, setParties] = useState<Array<string>>([]);
-   const [partyOveride, setPartyOveride] = useState<boolean>(true);
+
+   //when setPartyOverride is true, then whatever parties are in the InfoBox state will be assigned to the clicked selectable
+   const [partyOveride, setPartyOveride] = useState<boolean>(false);
 
    // updae the party set whenever state updates
    // useEffect(() => updatePartiesSet(), [state]);
@@ -168,23 +166,6 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
                assigned: [...newAssigned],
             },
          }));
-
-         // setState((prev) => ({
-         //    ...prev,
-         //    [id]: {
-         //       selected: newSelected
-         //          ? newSelected
-         //          : prev[id]
-         //          ? prev[id].selected
-         //          : false,
-         //       assigned: [...newAssigned],
-         //       colour: isAssigned
-         //          ? newColour
-         //             ? newColour
-         //             : prev[id].colour
-         //          : undefined,
-         //    },
-         // }));
       },
       []
    );
@@ -252,6 +233,7 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
       []
    );
 
+   //remove a specific party from the array of parties at index.
    const removePartyLink = useCallback((thisParty: string[], index: number) => {
       setPartyLinks((prev) => {
          // Check if the index is valid
@@ -271,7 +253,6 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
             );
             updatedLinks[index] = updatedParties;
          }
-
          return updatedLinks;
       });
    }, []);
