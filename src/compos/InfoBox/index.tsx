@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import RemoveParty from "./RemoveParty";
 import LinkParty from "./LinkParty";
 import { arraysEqual } from "../../utils/generic";
+import InfoSection from "./InfoSection";
 
 const InfoBox: React.FC<{}> = ({}) => {
    const {
@@ -83,18 +84,14 @@ const InfoBox: React.FC<{}> = ({}) => {
 
    const addPartyJsx = (
       <div className="party-input-wrapper">
-         <p className="party-input-label">
-            {parties.length > 0
-               ? "Add another party to table?"
-               : "Enter name and size of party."}
-         </p>
-
          <div className="input-group">
             <input
                type="text"
                className="name-input"
                placeholder={
-                  parties.length > 0 ? "Add another party" : "Party Name"
+                  parties.length > 0
+                     ? "Add another party"
+                     : "Enter party details."
                }
                value={partyName}
                onChange={(e) => setPartyName(e.target.value)}
@@ -154,57 +151,51 @@ const InfoBox: React.FC<{}> = ({}) => {
          <div className="info-wrap no-print">
             <div className="info-box">
                {/* party list */}
-               <div className="section">
-                  <div className="vert-line" />
-                  <div className="header">Parties</div>
-                  <div className="content">
-                     {parties.length > 0 ? (
-                        <div className="parties">
-                           {parties.map((party) => (
-                              <div key={party} className="party-row">
-                                 <RemoveParty
-                                    party={party}
-                                    removePartyHandler={() =>
-                                       removePartyHandler(party)
-                                    }
-                                 />
-                                 <div key={party} className="party">
-                                    {party}
-                                 </div>
+               <InfoSection header="Parties">
+                  {parties.length > 0 ? (
+                     <div className="parties">
+                        {parties.map((party) => (
+                           <div key={party} className="party-row">
+                              <RemoveParty
+                                 party={party}
+                                 removePartyHandler={() =>
+                                    removePartyHandler(party)
+                                 }
+                              />
+                              <div key={party} className="party">
+                                 {party}
                               </div>
-                           ))}
-                        </div>
-                     ) : (
-                        <></>
-                     )}
+                           </div>
+                        ))}
+                     </div>
+                  ) : (
+                     <></>
+                  )}
 
-                     {/* add party box */}
-                     {/* if has table or there is no assigned party then display add party box */}
-                     {tableCount > 0 || parties.length == 0 ? (
-                        addPartyJsx
-                     ) : (
-                        <></>
-                     )}
-                  </div>
-               </div>
+                  {/* add party box */}
+                  {/* if has table or there is no assigned party then display add party box */}
+                  {tableCount > 0 || parties.length == 0 ? addPartyJsx : <></>}
+               </InfoSection>
 
                {/* selected/assigned info */}
-               {parties.length > 0 ? (
-                  <>
-                     {/* <div className="selected-info">
-                        <div>{tableCount} : Tables</div>
-                        <div>{railCount} : Rail</div>
-                     </div> */}
-                  </>
-               ) : (
-                  <></>
-               )}
+               <InfoSection header="Seats">
+                  <div className="selected-info">
+                     <div>{tableCount} : Tables</div>
+                     <div>{railCount} : Rail</div>
+                  </div>
+               </InfoSection>
 
                {/* link party input */}
+
                {parties.length > 0 &&
                linkOptions.length > 0 &&
                (tableCount > 0 || railCount > 0) ? (
-                  <LinkParty linkOptions={linkOptions} currParties={parties} />
+                  <InfoSection header="Linked">
+                     <LinkParty
+                        linkOptions={linkOptions}
+                        currParties={parties}
+                     />
+                  </InfoSection>
                ) : (
                   <></>
                )}
