@@ -70,7 +70,7 @@ const LinkParty: React.FC<{
 
    return (
       <div ref={dropdownRef}>
-         <div className="linked-with">Linked Parties:</div>
+         {/* <div className="linked-with">Linked Parties:</div> */}
          <div className="linked-party-wrapper">
             {otherLinkedParties.map((otherAssignment: Array<string>, index) => (
                <div key={index} className="linked-party">
