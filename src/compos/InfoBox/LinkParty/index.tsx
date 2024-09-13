@@ -2,13 +2,13 @@ import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useSelected } from "../../../context/SelectedContext";
 import "./style.css";
 import RemoveLink from "./RemoveLink";
-import { arraysEqual } from "../../../utils/generic";
 import LinkIcon from "./LinkIcon";
 
 const LinkParty: React.FC<{
-   unlinkedPartiesArray: Array<Array<Array<string>>>;
-   currParties: string[];
-}> = ({ unlinkedPartiesArray, currParties }) => {
+   currParties: Array<string>;
+   linkedArrayIndex: number;
+   otherCombinedLinkOptions: Array<Array<Array<string>>>;
+}> = ({ currParties, linkedArrayIndex, otherCombinedLinkOptions }) => {
    const { partyLinks, addPartyLink, removePartyLink } = useSelected();
    const [isOpen, setIsOpen] = useState(false);
    const [searchTerm, setSearchTerm] = useState("");
@@ -37,10 +37,6 @@ const LinkParty: React.FC<{
    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       setSearchTerm(event.target.value);
    };
-   //index of the links for this party in the partyLinks array
-   const linkedArrayIndex = partyLinks.findIndex((link) =>
-      link.some((party) => arraysEqual(currParties, party))
-   );
    //the array for this parties link
    const linkedArray: Array<Array<string>> =
       linkedArrayIndex !== -1 ? partyLinks[linkedArrayIndex] : [];
@@ -66,24 +62,6 @@ const LinkParty: React.FC<{
    //    unlinkedPartiesArray,
    //    linkedArray
    // );
-
-   //combined links and unlinked parties
-   const combinedLinkOptions = useMemo((): Array<Array<Array<string>>> => {
-      return [...partyLinks, ...unlinkedPartiesArray];
-   }, [partyLinks, unlinkedPartiesArray]);
-
-   //combined link options which do not include the current party
-   const otherCombinedLinkOptions = useMemo(() => {
-      return combinedLinkOptions.filter((linkOption) => {
-         // Flatten the linkOption to check if it contains any of the currParties
-         const flattenedLinkOption = linkOption.flat(2);
-
-         // Check if none of the currParties are in the flattenedLinkOption
-         return !currParties.some((party) =>
-            flattenedLinkOption.includes(party)
-         );
-      });
-   }, [combinedLinkOptions, currParties]);
 
    //filtered by the search field
    const searchedLinkOptions = otherCombinedLinkOptions.filter((party) =>

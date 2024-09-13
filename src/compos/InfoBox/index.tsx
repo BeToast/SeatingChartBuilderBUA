@@ -62,6 +62,35 @@ const InfoBox: React.FC<{}> = ({}) => {
       }
    }, [parties, selectedCount]);
 
+   ///////////////////////////////////////////////////////
+   // start LinkParty variables
+   ///////////////////////////////////////////////////////
+
+   //combined links and unlinked parties
+   const combinedLinkOptions = useMemo((): Array<Array<Array<string>>> => {
+      return [...partyLinks, ...unlinkedPartiesArray];
+   }, [partyLinks, unlinkedPartiesArray]);
+
+   //combined link options which do not include the current party
+   const otherCombinedLinkOptions = useMemo(() => {
+      return combinedLinkOptions.filter((linkOption) => {
+         // Flatten the linkOption to check if it contains any of the currParties
+         const flattenedLinkOption = linkOption.flat(2);
+
+         // Check if none of the currParties are in the flattenedLinkOption
+         return !parties.some((party) => flattenedLinkOption.includes(party));
+      });
+   }, [combinedLinkOptions, parties]);
+
+   //index of the links for this party in the partyLinks array
+   const linkedArrayIndex = partyLinks.findIndex((link) =>
+      link.some((party) => arraysEqual(parties, party))
+   );
+
+   ///////////////////////////////////////////////////////
+   // end LinkParty variables
+   ///////////////////////////////////////////////////////
+
    // legit just remove the party from the state. useEffect() will handle the rest.
    const removePartyHandler = (party: string) => {
       //find index of linked parties
@@ -184,30 +213,23 @@ const InfoBox: React.FC<{}> = ({}) => {
                   {/* selected/assigned info */}
                   <InfoSection header="Seats">
                      <div className="selected-info">
-                        <div>{tableCount} : Tables</div>
+                        <div>
+                           {tableCount} : {tableCount > 1 ? "Tables" : "Table"}
+                        </div>
                         <div>{railCount} : Rail</div>
                      </div>
                   </InfoSection>
-                  {/* link party input */}
-                  {/* {parties.length > 0 &&
-               linkOptions.length > 0 &&
-               (tableCount > 0 || railCount > 0) ? (
-                  <InfoSection header="Linked">
-                     <LinkParty
-                        linkOptions={linkOptions}
-                        currParties={parties}
-                     />
-                  </InfoSection>
-               ) : (
-                  <></>
-               )} */}
 
                   {/* if there is things to be linked to */}
-                  {parties.length > 0 && (tableCount > 0 || railCount > 0) ? ( // if there is a selected Selectable
+                  {parties.length > 0 &&
+                  (otherCombinedLinkOptions.length > 0 ||
+                     linkedArrayIndex > -1) &&
+                  (tableCount > 0 || railCount > 0) ? ( // if there is a selected Selectable
                      <InfoSection header="Linked">
                         <LinkParty
-                           unlinkedPartiesArray={unlinkedPartiesArray}
                            currParties={parties}
+                           linkedArrayIndex={linkedArrayIndex}
+                           otherCombinedLinkOptions={otherCombinedLinkOptions}
                         />
                      </InfoSection>
                   ) : (
