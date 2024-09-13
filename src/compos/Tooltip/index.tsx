@@ -30,7 +30,7 @@ const Tooltip: React.FC<TooltipProps> = ({
 
    return (
       <div
-         className="Tooltip-Wrapper"
+         className="Tooltip-Wrapper no-print"
          onMouseEnter={showTip}
          onMouseLeave={hideTip}
       >

@@ -16,10 +16,10 @@ function App() {
             <div id="flexie" className="flexie">
                <InfoBox />
                <main id="letter-paper" className="letter-paper">
+                  <Inputs />
                   <Tables />
                   <Seats />
                   <OverlayPrinter />
-                  <Inputs />
                </main>
                <InfoContext />
             </div>

@@ -19,6 +19,8 @@ interface SelectedContextType {
    parties: Array<string>;
    setParties: (parties: Array<string>) => void;
    partyOveride: boolean;
+   extraChairs: number;
+   setExtraChairs: (extraChairs: number) => void;
    setPartyOveride: (partyOveride: boolean) => void;
    // setVacant: (id: string) => void;
    setSelected: (id: string, selected: boolean) => void;
@@ -43,6 +45,8 @@ const SelectedContext = createContext<SelectedContextType>({
    parties: [],
    setParties: () => {},
    partyOveride: true,
+   extraChairs: 0,
+   setExtraChairs: () => {},
    setPartyOveride: () => {},
    setSelected: () => {},
    selectGroup: () => {},
@@ -76,6 +80,7 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
 
    //when setPartyOverride is true, then whatever parties are in the InfoBox state will be assigned to the clicked selectable
    const [partyOveride, setPartyOveride] = useState<boolean>(false);
+   const [extraChairs, setExtraChairs] = useState<number>(0);
 
    // updae the party set whenever state updates
    // useEffect(() => updatePartiesSet(), [state]);
@@ -289,6 +294,8 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
       parties,
       setParties,
       partyOveride,
+      extraChairs,
+      setExtraChairs,
       setPartyOveride,
       setSelected,
       selectGroup,

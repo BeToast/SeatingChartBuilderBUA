@@ -24,7 +24,8 @@ const Seats = () => {
       renderNameAndLines();
    }, [kSeats]);
 
-   const { state, setAssigned, renderNameAndLines } = useSelected();
+   const { state, setAssigned, renderNameAndLines, setExtraChairs } =
+      useSelected();
 
    const addKitchenSeatHandler = () => {
       //incremente all assigned
@@ -58,7 +59,10 @@ const Seats = () => {
       // }
    };
 
-   let extraSeats = kSeats.length - 15; //-15 bc decrement comes before boolean check
+   let extraChairs = kSeats.length - 15; //-15 bc decrement comes before boolean check
+   if (extraChairs > -1) {
+      setExtraChairs(extraChairs - 1);
+   }
 
    return (
       <>
@@ -66,12 +70,12 @@ const Seats = () => {
             <AddSeat addHandler={addKitchenSeatHandler} />
             <div style={{ height: "8px" }} />
             {kSeats.map((num) => {
-               extraSeats--; //decrement before return statement
+               extraChairs--; //decrement before return statement
                return (
                   <Seat
                      key={num}
                      id={`k${num}`}
-                     extraSeat={extraSeats > 0}
+                     extraSeat={extraChairs > 0}
                      kSeats={kSeats}
                      setKSeats={setKSeats}
                   />
