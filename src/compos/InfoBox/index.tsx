@@ -121,9 +121,7 @@ const InfoBox: React.FC<{}> = ({}) => {
                className="name-input"
                id="party-name-input"
                placeholder={
-                  parties.length > 0
-                     ? "Add another party"
-                     : "Enter party details."
+                  parties.length > 0 ? "Add another party" : "Enter party name"
                }
                value={partyName}
                onChange={(e) => setPartyName(e.target.value)}
