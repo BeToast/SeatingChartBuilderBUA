@@ -9,7 +9,7 @@ import InfoSection from "./InfoSection";
 const InfoBox: React.FC<{}> = ({}) => {
    const {
       state,
-      uniquePartiesArray,
+      unlinkedPartiesArray,
       parties,
       setParties,
       partyOveride,
@@ -138,56 +138,58 @@ const InfoBox: React.FC<{}> = ({}) => {
    // const linkOptions = uniquePartiesArray.filter(
    //    (party) => !arraysEqual(party, parties)
    // );
-   const linkOptions = Array.from(
-      new Set(
-         uniquePartiesArray
-            .filter((party) => !arraysEqual(party, parties))
-            .map((party) => JSON.stringify(party))
-      )
-   ).map((party) => JSON.parse(party));
+   // const linkOptions: Array<Array<Array<string>>> = Array.from(
+   //    new Set(
+   //       uniquePartiesArray
+   //          .filter((party) => !arraysEqual(party, parties))
+   //          .map((party) => JSON.stringify(party))
+   //    )
+   // ).map((party) => JSON.parse(party));
 
    return (
       <>
          <div className="info-wrap no-print">
-            <div className="info-box">
-               {/* party list */}
-               <InfoSection header="Parties">
-                  {parties.length > 0 ? (
-                     <div className="parties">
-                        {parties.map((party) => (
-                           <div key={party} className="party-row">
-                              <RemoveParty
-                                 party={party}
-                                 removePartyHandler={() =>
-                                    removePartyHandler(party)
-                                 }
-                              />
-                              <div key={party} className="party">
-                                 {party}
+            <div className="info-wrap-fixed">
+               <div className="info-box">
+                  {/* party list */}
+                  <InfoSection header="Parties">
+                     {parties.length > 0 ? (
+                        <div className="parties">
+                           {parties.map((party) => (
+                              <div key={party} className="party-row">
+                                 <RemoveParty
+                                    party={party}
+                                    removePartyHandler={() =>
+                                       removePartyHandler(party)
+                                    }
+                                 />
+                                 <div key={party} className="party">
+                                    {party}
+                                 </div>
                               </div>
-                           </div>
-                        ))}
+                           ))}
+                        </div>
+                     ) : (
+                        <></>
+                     )}
+
+                     {/* add party box */}
+                     {/* if has table or there is no assigned party then display add party box */}
+                     {tableCount > 0 || parties.length == 0 ? (
+                        addPartyJsx
+                     ) : (
+                        <></>
+                     )}
+                  </InfoSection>
+                  {/* selected/assigned info */}
+                  <InfoSection header="Seats">
+                     <div className="selected-info">
+                        <div>{tableCount} : Tables</div>
+                        <div>{railCount} : Rail</div>
                      </div>
-                  ) : (
-                     <></>
-                  )}
-
-                  {/* add party box */}
-                  {/* if has table or there is no assigned party then display add party box */}
-                  {tableCount > 0 || parties.length == 0 ? addPartyJsx : <></>}
-               </InfoSection>
-
-               {/* selected/assigned info */}
-               <InfoSection header="Seats">
-                  <div className="selected-info">
-                     <div>{tableCount} : Tables</div>
-                     <div>{railCount} : Rail</div>
-                  </div>
-               </InfoSection>
-
-               {/* link party input */}
-
-               {parties.length > 0 &&
+                  </InfoSection>
+                  {/* link party input */}
+                  {/* {parties.length > 0 &&
                linkOptions.length > 0 &&
                (tableCount > 0 || railCount > 0) ? (
                   <InfoSection header="Linked">
@@ -198,16 +200,31 @@ const InfoBox: React.FC<{}> = ({}) => {
                   </InfoSection>
                ) : (
                   <></>
-               )}
+               )} */}
 
-               {/* deselect */}
-               {selectedCount > 0 ? (
-                  <button onClick={deselectHandler} className="deselect-button">
-                     Done
-                  </button>
-               ) : (
-                  <></>
-               )}
+                  {/* if there is things to be linked to */}
+                  {parties.length > 0 && (tableCount > 0 || railCount > 0) ? ( // if there is a selected Selectable
+                     <InfoSection header="Linked">
+                        <LinkParty
+                           unlinkedPartiesArray={unlinkedPartiesArray}
+                           currParties={parties}
+                        />
+                     </InfoSection>
+                  ) : (
+                     <></>
+                  )}
+                  {/* deselect */}
+                  {selectedCount > 0 ? (
+                     <button
+                        onClick={deselectHandler}
+                        className="deselect-button"
+                     >
+                        Done
+                     </button>
+                  ) : (
+                     <></>
+                  )}
+               </div>
             </div>
          </div>
       </>

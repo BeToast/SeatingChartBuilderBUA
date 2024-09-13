@@ -13,7 +13,7 @@ export interface recordValue {
 
 interface SelectedContextType {
    state: Record<string, recordValue>;
-   uniquePartiesArray: Array<Array<string>>;
+   unlinkedPartiesArray: Array<Array<Array<string>>>;
    partyLinks: Array<Array<Array<string>>>;
    nameAndLinesBool: boolean;
    parties: Array<string>;
@@ -37,7 +37,7 @@ interface SelectedContextType {
 
 const SelectedContext = createContext<SelectedContextType>({
    state: {},
-   uniquePartiesArray: [],
+   unlinkedPartiesArray: [],
    partyLinks: [],
    nameAndLinesBool: false,
    parties: [],
@@ -62,8 +62,8 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
    children,
 }) => {
    const [state, setState] = useState<Record<string, recordValue>>({});
-   const [uniquePartiesArray, setUniquePartiesArray] = useState<
-      Array<Array<string>>
+   const [unlinkedPartiesArray, setUnlinkedPartiesArray] = useState<
+      Array<Array<Array<string>>>
    >([]);
    const [partyLinks, setPartyLinks] = useState<Array<Array<Array<string>>>>(
       []
@@ -90,22 +90,44 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
    //       return newSet;
    //    });
    // }, []);
-   const updateUniquePartiesArray = useCallback(() => {
-      // console.log("updating parties set");
-      setUniquePartiesArray(() => {
-         const uniquePartyArray = new Array<Array<string>>();
-         Object.values(state).forEach((record) => {
-            if (record.assigned.length > 0) {
-               uniquePartyArray.push(record.assigned);
-            }
-         });
-         return uniquePartyArray;
+   // const updateUnlinkedPartiesArray = useCallback(() => {
+   //    partyLinks
+   //    // console.log("updating parties set");
+   //    setUnlinkedPartiesArray(() => {
+   //       const unlinkedPartyArray = new Array<Array<string>>();
+   //       Object.values(state).forEach((record) => {
+   //          if (record.assigned.length > 0) {
+   //             unlinkedPartyArray.push(record.assigned);
+   //          }
+   //       });
+   //       return unlinkedPartyArray;
+   //    });
+   // }, [state, partyLinks]);
+   const updateUnlinkedPartiesArray = useCallback(() => {
+      // Flatten partyLinks into a single array of all linked parties
+      const linkedParties = new Set(partyLinks.flat(2));
+
+      // Get all unique parties from state
+      const allParties = new Set<string>();
+      Object.values(state).forEach((record) => {
+         record.assigned.forEach((party) => allParties.add(party));
       });
-   }, [state]);
+
+      // Filter out parties that are in linkedParties
+      const unlinkedParties = Array.from(allParties).filter(
+         (party) => !linkedParties.has(party)
+      );
+
+      // Transform unlinkedParties into string[][][]
+      const newUnlinkedPartiesArray = unlinkedParties.map((party) => [[party]]);
+
+      // Update the state
+      setUnlinkedPartiesArray(newUnlinkedPartiesArray);
+   }, [state, partyLinks]);
 
    useEffect(() => {
-      updateUniquePartiesArray();
-   }, [state, updateUniquePartiesArray]);
+      updateUnlinkedPartiesArray();
+   }, [state, partyLinks, updateUnlinkedPartiesArray]);
 
    //copies the currently selected assignments to the newly selected.
    const setSelected = useCallback((id: string, selected: boolean) => {
@@ -122,8 +144,6 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
 
    const selectGroup = useCallback((id: string) => {
       setState((prev) => {
-         const party = prev[id].assigned;
-         // console.log(party);
          const partyKeys: string[] = Object.keys(prev).filter(
             (currId: string) =>
                arraysEqual(prev[currId].assigned, prev[id].assigned)
@@ -263,7 +283,7 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
 
    const value: SelectedContextType = {
       state,
-      uniquePartiesArray,
+      unlinkedPartiesArray,
       partyLinks,
       nameAndLinesBool,
       parties,

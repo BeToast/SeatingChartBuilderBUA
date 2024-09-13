@@ -2,12 +2,13 @@ import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useSelected } from "../../../context/SelectedContext";
 import "./style.css";
 import RemoveLink from "./RemoveLink";
-import { arraysEqual, isArrayInArrayOfArrays } from "../../../utils/generic";
+import { arraysEqual } from "../../../utils/generic";
+import LinkIcon from "./LinkIcon";
 
 const LinkParty: React.FC<{
-   linkOptions: Array<Array<string>>;
+   unlinkedPartiesArray: Array<Array<Array<string>>>;
    currParties: string[];
-}> = ({ linkOptions, currParties }) => {
+}> = ({ unlinkedPartiesArray, currParties }) => {
    const { partyLinks, addPartyLink, removePartyLink } = useSelected();
    const [isOpen, setIsOpen] = useState(false);
    const [searchTerm, setSearchTerm] = useState("");
@@ -44,27 +45,50 @@ const LinkParty: React.FC<{
    const linkedArray: Array<Array<string>> =
       linkedArrayIndex !== -1 ? partyLinks[linkedArrayIndex] : [];
    //array excluding the currently selected party[]
-   const otherLinkedParties = linkedArray.filter(
-      (party) => !arraysEqual(party, currParties)
-   );
+   // const otherLinkedParties = linkedArray.filter(
+   //    (party) => !arraysEqual(party, currParties)
+   // );
 
-   const useFilteredLinkOptions = (
-      LinkOptions: string[][],
-      linkedArray: string[][]
-   ) => {
-      const filteredLinkOptions = useMemo(() => {
-         return LinkOptions.filter(
-            (option) => !isArrayInArrayOfArrays(option, linkedArray)
+   // const useFilteredLinkOptions = (
+   //    LinkOptions: string[][],
+   //    linkedArray: string[][]
+   // ) => {
+   //    const filteredLinkOptions = useMemo(() => {
+   //       return LinkOptions.filter(
+   //          (option) => !isArrayInArrayOfArrays(option, linkedArray)
+   //       );
+   //    }, [LinkOptions, linkedArray]);
+
+   //    return filteredLinkOptions;
+   // };
+
+   // const filteredLinkOptions = useFilteredLinkOptions(
+   //    unlinkedPartiesArray,
+   //    linkedArray
+   // );
+
+   //combined links and unlinked parties
+   const combinedLinkOptions = useMemo((): Array<Array<Array<string>>> => {
+      return [...partyLinks, ...unlinkedPartiesArray];
+   }, [partyLinks, unlinkedPartiesArray]);
+
+   //combined link options which do not include the current party
+   const otherCombinedLinkOptions = useMemo(() => {
+      return combinedLinkOptions.filter((linkOption) => {
+         // Flatten the linkOption to check if it contains any of the currParties
+         const flattenedLinkOption = linkOption.flat(2);
+
+         // Check if none of the currParties are in the flattenedLinkOption
+         return !currParties.some((party) =>
+            flattenedLinkOption.includes(party)
          );
-      }, [LinkOptions, linkedArray]);
+      });
+   }, [combinedLinkOptions, currParties]);
 
-      return filteredLinkOptions;
-   };
-
-   const filteredLinkOptions = useFilteredLinkOptions(linkOptions, linkedArray);
-   const filteredOptions = filteredLinkOptions.filter((party) =>
+   //filtered by the search field
+   const searchedLinkOptions = otherCombinedLinkOptions.filter((party) =>
       party.some((item) =>
-         item.toLowerCase().includes(searchTerm.toLowerCase())
+         item.join().toLowerCase().includes(searchTerm.toLowerCase())
       )
    );
 
@@ -72,27 +96,27 @@ const LinkParty: React.FC<{
       <div ref={dropdownRef}>
          {/* <div className="linked-with">Linked Parties:</div> */}
          <div className="linked-party-wrapper">
-            {otherLinkedParties.map((otherAssignment: Array<string>, index) => (
+            {linkedArray.map((currentParty: Array<string>, index) => (
                <div key={index} className="linked-party">
                   <RemoveLink
-                     otherAssignment={otherAssignment}
+                     currentParty={currentParty}
                      removeLinkHandler={() =>
-                        removePartyLink(currParties, linkedArrayIndex)
+                        removePartyLink(currentParty, linkedArrayIndex)
                      }
                   />
-                  <span key={otherAssignment.join()}>
-                     {otherAssignment.join(", ")}
+                  <span key={currentParty.join()}>
+                     {currentParty.join(", ")}
                   </span>
                </div>
             ))}
-            {filteredLinkOptions.length > 0 && (
+            {otherCombinedLinkOptions.length > 0 && (
                <input
                   type="text"
                   className="party-input"
                   placeholder={
                      linkedArray.length > 0
                         ? "Link Another Party"
-                        : "Add Linked Party"
+                        : "Search Parties to Link"
                   }
                   value={searchTerm}
                   onFocus={handleToggleDropdown}
@@ -101,16 +125,18 @@ const LinkParty: React.FC<{
                />
             )}
             {isOpen && (
-               <div>
-                  {filteredOptions.map((party, index) => (
+               <>
+                  {searchedLinkOptions.map((party, index) => (
                      <div
+                        className="link-option"
                         key={index}
-                        onMouseDown={() => addPartyLink(currParties, party)}
+                        onMouseDown={() => addPartyLink(currParties, party[0])}
                      >
+                        <LinkIcon />
                         {party.join(", ")}
                      </div>
                   ))}
-               </div>
+               </>
             )}
          </div>
       </div>

@@ -16,8 +16,6 @@ const RemoveParty: React.FC<{
                {xSvg}
             </div>
          </Tooltip>
-
-         {/* <div className="remove-party">{xSvg}</div> */}
       </>
    );
 };
