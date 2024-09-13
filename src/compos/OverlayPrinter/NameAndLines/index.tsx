@@ -237,7 +237,7 @@ const NameAndLines: React.FC<{
                   scrollTop={scrollTop}
                   paperRect={paperRect}
                   flexieMargin={flexieMargin}
-                  printLines={false}
+                  printLines={true}
                />
             );
          } else if (

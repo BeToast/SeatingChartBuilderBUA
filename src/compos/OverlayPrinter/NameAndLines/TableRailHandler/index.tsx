@@ -66,30 +66,32 @@ const TableRailHandler: React.FC<{
       kRailTop = kRailLrtb.top + scrollTop - flexieMargin - 26;
       kRailBottom = kRailLrtb.bottom + scrollTop - flexieMargin - 26;
 
-      linesJsx = (
-         <React.Fragment>
-            <LineDiv
-               pointOne={{
-                  x: tableLeft + tableRadius,
-                  y: tableTop - 26,
-               }}
-               pointTwo={{
-                  x: kRailLeft,
-                  y: kRailTop,
-               }}
-            />
-            <LineDiv
-               pointOne={{
-                  x: tableLeft + tableRadius,
-                  y: tableBottom - 26,
-               }}
-               pointTwo={{
-                  x: kRailLeft,
-                  y: kRailBottom,
-               }}
-            />
-         </React.Fragment>
-      );
+      if (printLines) {
+         linesJsx = (
+            <React.Fragment>
+               <LineDiv
+                  pointOne={{
+                     x: tableLeft + tableRadius,
+                     y: tableTop - 26,
+                  }}
+                  pointTwo={{
+                     x: kRailLeft,
+                     y: kRailTop,
+                  }}
+               />
+               <LineDiv
+                  pointOne={{
+                     x: tableLeft + tableRadius,
+                     y: tableBottom - 26,
+                  }}
+                  pointTwo={{
+                     x: kRailLeft,
+                     y: kRailBottom,
+                  }}
+               />
+            </React.Fragment>
+         );
+      }
       style = {
          //TODO: reposition this to make it visually distince trom only table handler
          ...style,

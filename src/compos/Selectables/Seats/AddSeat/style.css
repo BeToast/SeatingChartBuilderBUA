@@ -11,6 +11,7 @@
 }
 .add-seat:hover {
    background-color: rgb(222, 255, 224);
+   cursor: pointer;
    /* border: 1px solid rgb(151, 207, 155); */
 }
 

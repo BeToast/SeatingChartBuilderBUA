@@ -14,6 +14,9 @@
    transition: box-shadow 0.3s;
    transition: background-color 0.3s;
 }
+.seat:hover {
+   cursor: pointer;
+}
 .seat.vacant {
    background-color: rgb(229, 229, 229);
 }

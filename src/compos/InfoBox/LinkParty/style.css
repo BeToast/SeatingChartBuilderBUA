@@ -28,6 +28,9 @@
    font-size: 22px;
    font-weight: 400;
 }
+.link-option:hover {
+   cursor: pointer;
+}
 
 .party-input {
    font-size: 18px;

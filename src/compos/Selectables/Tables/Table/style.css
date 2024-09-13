@@ -8,6 +8,9 @@
    transition: box-shadow 0.3s;
    transition: background-color 0.3s;
 }
+.table:hover {
+   cursor: pointer;
+}
 .table.vacant {
    background-color: rgb(229, 229, 229);
 }

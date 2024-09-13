@@ -63,4 +63,5 @@ export const styleBase: React.CSSProperties = {
    // backgroundColor: "transparent",
    padding: "4px 8px",
    borderRadius: "8px",
+   pointerEvents: "none",
 };

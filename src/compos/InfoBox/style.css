@@ -169,6 +169,7 @@
    left: 0;
    display: flex;
    flex-direction: column;
+   pointer-events: none;
    /* justify-content: center;
    align-items: center; */
 }
