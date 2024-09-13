@@ -39,9 +39,6 @@
    width: calc(var(--info-width) - var(--info-padding-x) * 2);
    transition: all 0.3s;
 }
-.party-input-wrapper {
-   /* margin-top: -16px; */
-}
 .party-input-label {
    font-size: 14px;
    font-weight: 300;
@@ -90,17 +87,20 @@
    justify-content: center;
    align-items: center;
    padding: 8px 0;
-   background-color: #4caf50;
-   color: white;
-   border: 1px solid #4caf50;
+   background-color: rgb(195, 238, 197);
+   font-size: 14px;
+   font-weight: 400;
+   color: rgb(25, 25, 25);
+   border: 1px solid #ccc;
    cursor: pointer;
    border-radius: 0 4px 4px 0;
    width: 50px;
-   font-size: 14px;
+   transition: all 0.3s;
 }
 
 .add-button:hover {
-   background-color: #45a049;
+   background-color: rgb(222, 255, 224);
+   border: 1px solid rgb(151, 207, 155);
 }
 
 /* .heading {

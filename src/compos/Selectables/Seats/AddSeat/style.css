@@ -7,6 +7,11 @@
    justify-content: center;
    align-items: center;
    margin: -0.5px;
+   transition: all 0.3s;
+}
+.add-seat:hover {
+   background-color: rgb(222, 255, 224);
+   /* border: 1px solid rgb(151, 207, 155); */
 }
 
 .add-seat-plus {

@@ -45,6 +45,8 @@ const InfoBox: React.FC<{}> = ({}) => {
       setPartyName(""); // Clear the input after adding
       setPartySize(undefined); // Reset party count
       setParties([...parties, newParty]);
+
+      console.log(partySize);
    };
 
    // syncs infoBox state with SelectedContext state
@@ -117,6 +119,7 @@ const InfoBox: React.FC<{}> = ({}) => {
             <input
                type="text"
                className="name-input"
+               id="party-name-input"
                placeholder={
                   parties.length > 0
                      ? "Add another party"
@@ -140,7 +143,7 @@ const InfoBox: React.FC<{}> = ({}) => {
                className="number-input"
                id="party-size-input"
                placeholder="1"
-               value={partySize}
+               value={partySize ? partySize : ""}
                onChange={(e) => {
                   const parsedValue = parseInt(e.target.value);
                   setPartySize(isNaN(parsedValue) ? undefined : parsedValue);
@@ -149,6 +152,11 @@ const InfoBox: React.FC<{}> = ({}) => {
                   if (e.key === "Enter") {
                      e.preventDefault();
                      addPartyHandler(partyName, partySize);
+                     const partyNameInput =
+                        document.getElementById("party-name-input");
+                     if (partyNameInput) {
+                        partyNameInput.focus();
+                     }
                   }
                }}
             />
