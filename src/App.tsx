@@ -1,6 +1,7 @@
 import "./App.css";
 import InfoBox from "./compos/InfoBox";
 import InfoContext from "./compos/InfoContext";
+import Inputs from "./compos/Inputs";
 import OverlayPrinter from "./compos/OverlayPrinter";
 import PrintButton from "./compos/PrintButton";
 import Seats from "./compos/Selectables/Seats";
@@ -18,6 +19,7 @@ function App() {
                   <Tables />
                   <Seats />
                   <OverlayPrinter />
+                  <Inputs />
                </main>
                <InfoContext />
             </div>

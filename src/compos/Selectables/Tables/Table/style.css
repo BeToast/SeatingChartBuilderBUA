@@ -5,9 +5,20 @@
    border-radius: 50%;
    border: 2px dashed black;
    position: relative;
+   transition: box-shadow 0.3s;
+   transition: background-color 0.3s;
+}
+.table.vacant {
+   background-color: rgb(229, 229, 229);
+}
+.table.vacant:hover {
+   background-color: rgb(241, 241, 241);
+   border: 2px solid rgb(0, 92, 158);
+   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
 .table.selected {
-   background-color: rgb(140, 244, 255);
+   background-color: rgb(148, 203, 241);
+   border: 2px solid rgb(0, 92, 158);
 }
 .table.assigned {
    border: 2px solid black;

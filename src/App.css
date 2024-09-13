@@ -47,10 +47,6 @@
    -ms-user-select: none; /* IE 10 and IE 11 */
    user-select: none; /* Standard syntax */
 }
-
-.vacant {
-   background-color: rgb(229, 229, 229);
-}
 .selected {
    background-color: rgb(255, 255, 255);
    border: 2px solid black;
