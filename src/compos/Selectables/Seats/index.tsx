@@ -8,9 +8,10 @@ const Seats = () => {
    const [kSeats, setKSeats] = useState<Array<number>>(
       Array.from({ length: 16 }, (_, i) => i + 1)
    );
-   const [bSeats, setBSeats] = useState<Array<number>>(
-      Array.from({ length: 14 }, (_, i) => 14 - i)
-   );
+   // const [bSeats, setBSeats] = useState<Array<number>>(
+   //    Array.from({ length: 14 }, (_, i) => 14 - i)
+   // );
+   const bSeats = Array.from({ length: 14 }, (_, i) => 14 - i);
 
    const isFirstRender = useRef(true);
    useEffect(() => {

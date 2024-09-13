@@ -21,6 +21,7 @@ function App() {
                   <Seats />
                   <OverlayPrinter />
                </main>
+               <div className="pixels200" />
                <InfoContext />
             </div>
          </SelectedProvider>
