@@ -89,6 +89,20 @@ const TableRailHandler: React.FC<{
                      y: kRailBottom,
                   }}
                />
+               {tables.length > 1 ? (
+                  <LineDiv
+                     pointOne={{
+                        x: tableLeft,
+                        y: tableTop + 26,
+                     }}
+                     pointTwo={{
+                        x: tableLeft,
+                        y: tableBottom - tableRadius,
+                     }}
+                  />
+               ) : (
+                  <></>
+               )}
             </React.Fragment>
          );
       }
@@ -136,6 +150,20 @@ const TableRailHandler: React.FC<{
                   y: bRailBottom,
                }}
             />
+            {tables.length > 1 ? (
+               <LineDiv
+                  pointOne={{
+                     x: tableLeft + tableRadius,
+                     y: tableBottom - 26,
+                  }}
+                  pointTwo={{
+                     x: tableRight - tableRadius,
+                     y: tableBottom - 26,
+                  }}
+               />
+            ) : (
+               <></>
+            )}
          </React.Fragment>
       );
       style = {
