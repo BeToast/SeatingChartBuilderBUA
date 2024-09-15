@@ -108,6 +108,10 @@ const NameAndLines: React.FC<{
 
          //for loop to iterate through both assignedLink and elementsLink array
          for (let i = 0; i < assignedLink.length; i++) {
+            //this does not render the linked groups if there would be a undefined error
+            if (elementsLink[i] == undefined) {
+               continue;
+            }
             //get hasKitchenSeats, hasBathroomSeats, and tableCount for this party.
             const hasKitchenSeats = elementsLink[i].some((el) =>
                el.id.match(/Seat k+\d/)
@@ -140,6 +144,7 @@ const NameAndLines: React.FC<{
                         scrollTop={scrollTop}
                         paperRect={paperRect}
                         flexieMargin={flexieMargin}
+                        printLines={false}
                      />
                   </React.Fragment>
                );
@@ -296,11 +301,5 @@ export const getReturnJsx = ({
          )}
          {linesJsx}
       </React.Fragment>
-      // <React.Fragment>
-      //    <div className="party-name" style={style}>
-      //       {assigned}
-      //    </div>
-      //    ;{linesJsx}
-      // </React.Fragment>
    );
 };

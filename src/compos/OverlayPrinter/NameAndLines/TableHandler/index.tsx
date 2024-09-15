@@ -92,7 +92,7 @@ const TableHandler: React.FC<{
       const bottomRightX = bottomTableRect.right - paperRect.left;
       const bottomRightY = bottomTableRect.top + scrollTop - flexieMargin - 25;
 
-      linesJsx = (
+      linesJsx = printLines ? (
          <React.Fragment>
             <LineDiv
                pointOne={{ x: topLeftX + 1, y: topLeftY + tableRadius }}
@@ -109,6 +109,8 @@ const TableHandler: React.FC<{
                }}
             />
          </React.Fragment>
+      ) : (
+         <></>
       );
 
       style = {
@@ -154,7 +156,7 @@ const TableHandler: React.FC<{
       const bottomRightY =
          rightmostTableRect.bottom + scrollTop - flexieMargin - 25;
 
-      linesJsx = (
+      linesJsx = printLines ? (
          <React.Fragment>
             <LineDiv
                pointOne={{ x: topLeftX + tableRadius, y: topLeftY }}
@@ -171,6 +173,8 @@ const TableHandler: React.FC<{
                }}
             />
          </React.Fragment>
+      ) : (
+         <></>
       );
 
       style = {
@@ -211,7 +215,7 @@ const TableHandler: React.FC<{
       const bottomRightY =
          bottomRightRect.bottom + scrollTop - flexieMargin - 25;
 
-      linesJsx = (
+      linesJsx = printLines ? (
          <React.Fragment>
             {/* Vertical line */}
             <LineDiv
@@ -244,6 +248,8 @@ const TableHandler: React.FC<{
                }}
             />
          </React.Fragment>
+      ) : (
+         <></>
       );
 
       style = {

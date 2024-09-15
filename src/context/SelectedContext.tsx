@@ -34,7 +34,10 @@ interface SelectedContextType {
    ) => void;
    removeAssigned: (id: string, party: string) => void;
    addPartyLink: (thisParty: Array<string>, linkedParty: Array<string>) => void;
-   removePartyLink: (thisParty: Array<string>, index: number) => void;
+   removePartyLink: (
+      thisParty: Array<string>,
+      index: number
+   ) => Array<string> | undefined;
 }
 
 const SelectedContext = createContext<SelectedContextType>({
@@ -53,7 +56,7 @@ const SelectedContext = createContext<SelectedContextType>({
    setAssigned: () => {},
    removeAssigned: () => {},
    addPartyLink: () => {},
-   removePartyLink: () => {},
+   removePartyLink: () => undefined,
 });
 
 interface SelectedProviderProps {
@@ -79,32 +82,6 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
    const [partyOveride, setPartyOveride] = useState<boolean>(false);
    const [extraChairs, setExtraChairs] = useState<number>(0);
 
-   // updae the party set whenever state updates
-   // useEffect(() => updatePartiesSet(), [state]);
-
-   // const updatePartiesSet = useCallback(() => {
-   //    console.log("updating parties set");
-   //    setPartiesSet((prevSet) => {
-   //       const newSet = new Set(prevSet);
-   //       Object.values(state).forEach((record) => {
-   //          newSet.add(record.assigned);
-   //       });
-   //       return newSet;
-   //    });
-   // }, []);
-   // const updateUnlinkedPartiesArray = useCallback(() => {
-   //    partyLinks
-   //    // console.log("updating parties set");
-   //    setUnlinkedPartiesArray(() => {
-   //       const unlinkedPartyArray = new Array<Array<string>>();
-   //       Object.values(state).forEach((record) => {
-   //          if (record.assigned.length > 0) {
-   //             unlinkedPartyArray.push(record.assigned);
-   //          }
-   //       });
-   //       return unlinkedPartyArray;
-   //    });
-   // }, [state, partyLinks]);
    const updateUnlinkedPartiesArray = useCallback(() => {
       // Flatten partyLinks into a single array of all linked parties
       const linkedParties = new Set(partyLinks.flat(2));
@@ -264,28 +241,37 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
    );
 
    //remove a specific party from the array of parties at index.
-   const removePartyLink = useCallback((thisParty: string[], index: number) => {
-      setPartyLinks((prev) => {
-         // Check if the index is valid
-         if (index < 0 || index >= prev.length) {
-            console.error("Invalid index");
-            return prev;
-         }
-         //store local copy of the array
-         const updatedLinks = [...prev];
-         //remove if 2 or less bc that means the link is gone
-         if (prev[index].length <= 2) {
-            updatedLinks.splice(index, 1);
-         } else {
-            //remove the party from the array
-            const updatedParties = prev[index].filter(
-               (party) => !arraysEqual(party, thisParty)
-            );
-            updatedLinks[index] = updatedParties;
-         }
-         return updatedLinks;
-      });
-   }, []);
+   const removePartyLink = useCallback(
+      (thisParty: string[], index: number): Array<string> | undefined => {
+         var firstRemovedParty: Array<string> | undefined;
+         setPartyLinks((prev) => {
+            // Check if the index is valid
+            if (index < 0 || index >= prev.length) {
+               console.error("Invalid index");
+               return prev;
+            }
+            //store local copy of the array
+            const updatedLinks = [...prev];
+            //remove if 2 or less bc that means the link is gone
+            if (prev[index].length <= 2) {
+               const removedLink = updatedLinks.splice(index, 1)[0];
+               firstRemovedParty = removedLink.find(
+                  (party) => !arraysEqual(party, thisParty)
+               );
+            } else {
+               //remove the party from the array
+               const updatedParties = prev[index].filter(
+                  (party) => !arraysEqual(party, thisParty)
+               );
+               firstRemovedParty = updatedParties[0];
+               updatedLinks[index] = updatedParties;
+            }
+            return updatedLinks;
+         });
+         return firstRemovedParty;
+      },
+      []
+   );
 
    const value: SelectedContextType = {
       state,

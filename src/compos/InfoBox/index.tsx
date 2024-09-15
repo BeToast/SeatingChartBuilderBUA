@@ -17,6 +17,7 @@ const InfoBox: React.FC<{}> = ({}) => {
       setAssigned,
       setSelected,
       partyLinks,
+      addPartyLink,
       removePartyLink,
    } = useSelected();
    const selectedIds = useMemo(
@@ -39,15 +40,6 @@ const InfoBox: React.FC<{}> = ({}) => {
    // used for input fields
    const [partyName, setPartyName] = useState<string>("");
    const [partySize, setPartySize] = useState<number | undefined>(undefined);
-
-   const addPartyHandler = (name: string, size: number | undefined): void => {
-      const newParty = `${name.trim()}(${size ? size : 1})`;
-      setPartyName(""); // Clear the input after adding
-      setPartySize(undefined); // Reset party count
-      setParties([...parties, newParty]);
-
-      // console.log(partySize);
-   };
 
    // syncs infoBox state with SelectedContext state
    useEffect(() => {
@@ -93,18 +85,41 @@ const InfoBox: React.FC<{}> = ({}) => {
    // end LinkParty variables
    ///////////////////////////////////////////////////////
 
-   // legit just remove the party from the state. useEffect() will handle the rest.
+   const addPartyHandler = (name: string, size: number | undefined): void => {
+      const newParty = `${name.trim()}(${size ? size : 1})`;
+      setPartyName(""); // Clear the input after adding
+      setPartySize(undefined); // Reset party count
+
+      var otherParty: Array<string> | undefined = undefined;
+      const newParties = [...parties, newParty];
+      console.log(newParties);
+      if (linkedArrayIndex !== -1) {
+         otherParty = removePartyLink(parties, linkedArrayIndex);
+         if (otherParty) {
+            addPartyLink(newParties, otherParty);
+         }
+      }
+      setParties(newParties);
+   };
+
    const removePartyHandler = (party: string) => {
+      const newParties = parties.filter((p) => p !== party);
+
       //find index of linked parties
       const partyLinkIndex = partyLinks.findIndex((link) =>
          link.some((assigned) => arraysEqual(parties, assigned))
       );
+
+      var otherParty: Array<string> | undefined = undefined;
       //if it is linked remove the link
       if (partyLinkIndex !== -1) {
-         removePartyLink(parties, partyLinkIndex);
+         otherParty = removePartyLink(parties, partyLinkIndex);
+         if (otherParty && newParties.length > 0) {
+            addPartyLink(newParties, otherParty);
+         }
       }
       //update state
-      setParties(parties.filter((p) => p !== party));
+      setParties(newParties);
    };
 
    const deselectHandler = () => {
