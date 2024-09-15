@@ -72,32 +72,32 @@ const TableRailHandler: React.FC<{
                <LineDiv
                   pointOne={{
                      x: tableLeft + tableRadius,
-                     y: tableTop - 26,
+                     y: tableTop - 25,
                   }}
                   pointTwo={{
                      x: kRailLeft,
-                     y: kRailTop,
+                     y: kRailTop + 1,
                   }}
                />
                <LineDiv
                   pointOne={{
                      x: tableLeft + tableRadius,
-                     y: tableBottom - 26,
+                     y: tableBottom - 27,
                   }}
                   pointTwo={{
                      x: kRailLeft,
-                     y: kRailBottom,
+                     y: kRailBottom - 1,
                   }}
                />
                {tables.length > 1 ? (
                   <LineDiv
                      pointOne={{
-                        x: tableLeft,
+                        x: tableLeft + 1,
                         y: tableTop + 26,
                      }}
                      pointTwo={{
-                        x: tableLeft,
-                        y: tableBottom - tableRadius,
+                        x: tableLeft + 1,
+                        y: tableBottom - tableRadius - 26,
                      }}
                   />
                ) : (
@@ -132,7 +132,7 @@ const TableRailHandler: React.FC<{
          <React.Fragment>
             <LineDiv
                pointOne={{
-                  x: tableLeft,
+                  x: tableLeft - 1,
                   y: tableTop + tableRadius - 26,
                }}
                pointTwo={{
@@ -142,7 +142,7 @@ const TableRailHandler: React.FC<{
             />
             <LineDiv
                pointOne={{
-                  x: tableRight - 2,
+                  x: tableRight - 3,
                   y: tableTop + tableRadius - 26,
                }}
                pointTwo={{
@@ -154,11 +154,11 @@ const TableRailHandler: React.FC<{
                <LineDiv
                   pointOne={{
                      x: tableLeft + tableRadius,
-                     y: tableBottom - 26,
+                     y: tableBottom - 27,
                   }}
                   pointTwo={{
                      x: tableRight - tableRadius,
-                     y: tableBottom - 26,
+                     y: tableBottom - 27,
                   }}
                />
             ) : (
