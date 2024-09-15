@@ -112,7 +112,6 @@ const TableRailHandler: React.FC<{
          left: `${tableCenterX}px`,
          top: `${tableCenterY}px`,
          transform: "translateX(-50%) translateY(-50%)",
-         backgroundColor: "white",
       };
       return getReturnJsx({
          style,
@@ -172,7 +171,6 @@ const TableRailHandler: React.FC<{
          left: `${tableCenterX}px`,
          top: `${tableCenterY}px`,
          transform: "translateX(-50%) translateY(-50%)",
-         backgroundColor: "white",
       };
       return getReturnJsx({
          style,
@@ -223,7 +221,6 @@ const TableRailHandler: React.FC<{
          left: `${tableCenterX}px`,
          top: `${tableCenterY}px`,
          transform: "translateX(-50%) translateY(-50%)",
-         backgroundColor: "white",
       };
       return getReturnJsx({
          style,

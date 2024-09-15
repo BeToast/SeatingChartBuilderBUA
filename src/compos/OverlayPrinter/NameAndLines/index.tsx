@@ -4,6 +4,8 @@ import TableRailHandler from "./TableRailHandler";
 import RailHandler from "./RailHandler.tsx";
 import { styleBase } from "../utils.ts";
 
+import "./style.css";
+
 const NameAndLines: React.FC<{
    assigned?: string;
    elements?: Element[];
@@ -278,27 +280,42 @@ export const getReturnJsx = ({
    linesJsx?: JSX.Element;
    singleLine?: boolean;
 }) => {
-   const partyJsx: React.ReactNode = assignedUnPounded ? (
-      singleLine ? (
-         <>{assignedUnPounded.join(" ")}</>
-      ) : (
-         assignedUnPounded.map((party, index) => <div key={index}>{party}</div>)
-      )
-   ) : (
-      ""
-   );
+   var partyJsx: React.ReactNode = <></>;
+   if (assignedUnPounded) {
+      if (singleLine) {
+         partyJsx = (
+            <div className="party-name">{assignedUnPounded.join(" ")}</div>
+         );
+      } else {
+         //put _'s first
+         assignedUnPounded.sort((a, b) => {
+            if (a.startsWith("_") && !b.startsWith("_")) {
+               return -1; // a comes before b
+            } else if (!a.startsWith("_") && b.startsWith("_")) {
+               return 1; // b comes before a
+            } else {
+               return a.localeCompare(b); // alphabetical order for the rest
+            }
+         });
+         partyJsx = assignedUnPounded.map((party, index) => {
+            const isConnected: boolean = !party.startsWith("_");
+            return (
+               <>
+                  <div key={index} className="party-name">
+                     {isConnected ? party : party.substring(1)}
+                  </div>
+                  {isConnected ? <></> : <div className="party-divider" />}
+               </>
+            );
+         });
+      }
+   }
 
    return (
       <React.Fragment>
          <span style={{ color: "transparent", pointerEvents: "none" }}>;</span>
          {/* THIS SEMICOLON IS THE REASON EVERYTHING IS 20px OFFSET ON Y AXIS!!!  */}
-         {assignedUnPounded ? (
-            <div className="party-name" style={style}>
-               {partyJsx}
-            </div>
-         ) : (
-            <></>
-         )}
+         {assignedUnPounded ? <div style={style}>{partyJsx}</div> : <></>}
          {linesJsx}
       </React.Fragment>
    );

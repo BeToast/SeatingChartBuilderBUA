@@ -55,7 +55,6 @@ const TableHandler: React.FC<{
          left: `${tableCenterX}px`,
          top: `${tableCenterY}px`,
          transform: "translateX(-50%) translateY(-50%)",
-         backgroundColor: "white",
       };
       return getReturnJsx({
          style,
@@ -118,7 +117,6 @@ const TableHandler: React.FC<{
          left: `${tableCenterX}px`,
          top: `${tableCenterY}px`,
          transform: "translateX(-50%) translateY(-50%)",
-         backgroundColor: "white",
       };
 
       return getReturnJsx({
@@ -182,7 +180,6 @@ const TableHandler: React.FC<{
          left: `${tableCenterX}px`,
          top: `${tableCenterY}px`,
          transform: "translateX(-50%) translateY(-50%)",
-         backgroundColor: "white",
       };
       return getReturnJsx({
          style,
@@ -257,7 +254,6 @@ const TableHandler: React.FC<{
          left: `${topLeftX + 8}px`,
          top: `${tableCenterY}px`,
          transform: "translateY(-50%)",
-         backgroundColor: "white",
       };
       return getReturnJsx({
          style,

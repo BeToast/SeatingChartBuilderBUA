@@ -1,10 +1,11 @@
 import "./style.css";
 import { useSelected } from "../../context/SelectedContext";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import RemoveParty from "./RemoveParty";
 import LinkParty from "./LinkParty";
 import { arraysEqual } from "../../utils/generic";
 import InfoSection from "./InfoSection";
+import PartyConnected from "./PartyConnected";
 
 const InfoBox: React.FC<{}> = ({}) => {
    const {
@@ -20,6 +21,14 @@ const InfoBox: React.FC<{}> = ({}) => {
       addPartyLink,
       removePartyLink,
    } = useSelected();
+
+   //for forced re-render
+   const [, updateState] = useState({});
+   const forceUpdate = useCallback(() => updateState({}), []);
+   useEffect(() => {
+      forceUpdate();
+   }, [parties, forceUpdate]);
+
    const selectedIds = useMemo(
       () => Object.keys(state).filter((id) => state[id].selected),
       [state]
@@ -85,6 +94,30 @@ const InfoBox: React.FC<{}> = ({}) => {
    // end LinkParty variables
    ///////////////////////////////////////////////////////
 
+   ///////////////////////////////////////////////////////
+   // start connect/disconnect handlers
+   ///////////////////////////////////////////////////////
+   const connectHandler = (party: string) => {
+      const newParties = [...parties];
+      const index = newParties.indexOf(party);
+      if (index !== -1) {
+         newParties[index] = party.substring(1);
+         setParties(newParties);
+      }
+   };
+
+   const disconnectHandler = (party: string) => {
+      const newParties = [...parties];
+      const index = newParties.indexOf(party);
+      if (index !== -1) {
+         newParties[index] = `_${party}`;
+         setParties(newParties);
+      }
+   };
+   ///////////////////////////////////////////////////////
+   // end connect/disconnect handlers
+   ///////////////////////////////////////////////////////
+
    const addPartyHandler = (name: string, size: number | undefined): void => {
       const newParty = `${name.trim()}(${size ? size : 1})`;
       setPartyName(""); // Clear the input after adding
@@ -92,7 +125,6 @@ const InfoBox: React.FC<{}> = ({}) => {
 
       var otherParty: Array<string> | undefined = undefined;
       const newParties = [...parties, newParty];
-      console.log(newParties);
       if (linkedArrayIndex !== -1) {
          otherParty = removePartyLink(parties, linkedArrayIndex);
          if (otherParty) {
@@ -213,8 +245,30 @@ const InfoBox: React.FC<{}> = ({}) => {
                                        removePartyHandler(party)
                                     }
                                  />
-                                 <div key={party} className="party">
-                                    {party}
+                                 {parties.length > 1 ? (
+                                    <PartyConnected
+                                       party={party}
+                                       connectHandler={() =>
+                                          connectHandler(party)
+                                       }
+                                       disconnectHandler={() =>
+                                          disconnectHandler(party)
+                                       }
+                                    />
+                                 ) : (
+                                    <></>
+                                 )}
+                                 <div
+                                    key={
+                                       party.startsWith("_")
+                                          ? party.substring(1)
+                                          : party
+                                    }
+                                    className="party"
+                                 >
+                                    {party.startsWith("_")
+                                       ? party.substring(1)
+                                       : party}
                                  </div>
                               </div>
                            ))}
