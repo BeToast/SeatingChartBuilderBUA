@@ -1,4 +1,4 @@
-import React from "react";
+import { forwardRef } from "react";
 import { useSelected } from "../../../../context/SelectedContext";
 import {
    getElementClass,
@@ -13,7 +13,7 @@ interface TableProps {
    id: number;
 }
 
-const Table: React.FC<TableProps> = ({ id }) => {
+const Table = forwardRef<HTMLDivElement, TableProps>(({ id }, ref) => {
    const {
       state,
       setSelected,
@@ -30,6 +30,7 @@ const Table: React.FC<TableProps> = ({ id }) => {
 
    return (
       <div
+         ref={ref}
          id={tableId}
          className={`table ${tableClass}`}
          onClick={() =>
@@ -50,6 +51,6 @@ const Table: React.FC<TableProps> = ({ id }) => {
          <div className="table-id no-select">{id}</div>
       </div>
    );
-};
+});
 
 export default Table;

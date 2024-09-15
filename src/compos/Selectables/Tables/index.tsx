@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import Table from "./Table";
 import "./style.css";
 import { useSelected } from "../../../context/SelectedContext";
@@ -9,19 +9,31 @@ const Tables = () => {
 
    const { setAssigned } = useSelected();
 
+   // Create refs for all tables
+   const kTableRefs = useRef(
+      kTables.map(() => React.createRef<HTMLDivElement>())
+   );
+   const bTableRefs = useRef(
+      bTables.map(() => React.createRef<HTMLDivElement>())
+   );
+
    useEffect(() => {
-      kTables.map((id) => setAssigned(`Table ${id}`, [], false));
-      bTables.map((id) => setAssigned(`Table ${id}`, [], false));
+      kTables.forEach((id, index) => {
+         setAssigned(`Table ${id}`, [], false, kTableRefs.current[index]);
+      });
+      bTables.forEach((id, index) => {
+         setAssigned(`Table ${id}`, [], false, bTableRefs.current[index]);
+      });
    }, []);
 
    return (
       <div className="table-col">
-         {kTables.map((num) => (
-            <Table key={num} id={num} />
+         {kTables.map((num, index) => (
+            <Table key={num} id={num} ref={kTableRefs.current[index]} />
          ))}
          <div className="table-row">
-            {bTables.map((num) => (
-               <Table key={num} id={num} />
+            {bTables.map((num, index) => (
+               <Table key={num} id={num} ref={bTableRefs.current[index]} />
             ))}
          </div>
       </div>

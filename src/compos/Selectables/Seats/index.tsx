@@ -1,68 +1,93 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import AddSeat from "./AddSeat";
 import Seat from "./Seat";
 import "./style.css";
 import { useSelected } from "../../../context/SelectedContext";
 
+const MAX_POSITIVE_K_SEATS = 16; // Default number of kitchen seats
+const MAX_NEGATIVE_K_SEATS = 15; // Maximum number of additional seats in negative direction
+const MAX_B_SEATS = 14; // Number of bar seats
+
 const Seats = () => {
    const [kSeats, setKSeats] = useState<Array<number>>(
-      Array.from({ length: 16 }, (_, i) => i + 1)
+      Array.from({ length: MAX_POSITIVE_K_SEATS }, (_, i) => i + 1)
    );
-   // const [bSeats, setBSeats] = useState<Array<number>>(
-   //    Array.from({ length: 14 }, (_, i) => 14 - i)
-   // );
-   const bSeats = Array.from({ length: 14 }, (_, i) => 14 - i);
+   const bSeats = Array.from(
+      { length: MAX_B_SEATS },
+      (_, i) => MAX_B_SEATS - i
+   );
+
+   const { state, setAssigned, renderNameAndLines, setExtraChairs } =
+      useSelected();
 
    const isFirstRender = useRef(true);
+
+   // Create refs for both positive and negative seat numbers
+   const kSeatRefs = useRef({
+      positive: Array.from({ length: MAX_POSITIVE_K_SEATS }, () =>
+         React.createRef<HTMLDivElement>()
+      ),
+      negative: Array.from({ length: MAX_NEGATIVE_K_SEATS }, () =>
+         React.createRef<HTMLDivElement>()
+      ),
+   });
+   const bSeatRefs = useRef(
+      Array.from({ length: MAX_B_SEATS }, () =>
+         React.createRef<HTMLDivElement>()
+      )
+   );
+
    useEffect(() => {
-      // instanciate all the seats on init render
       if (isFirstRender.current) {
-         kSeats.map((id) => setAssigned(`Seat k${id}`, [], false));
-         bSeats.map((id) => setAssigned(`Seat b${id}`, [], false));
+         kSeats.forEach((id) => {
+            setAssigned(
+               `Seat k${id}`,
+               [],
+               false,
+               kSeatRefs.current.positive[id - 1]
+            );
+         });
+         bSeats.forEach((id) => {
+            setAssigned(
+               `Seat b${id}`,
+               [],
+               false,
+               bSeatRefs.current[MAX_B_SEATS - id]
+            );
+         });
          isFirstRender.current = false;
+      } else {
+         kSeats.forEach((id) => {
+            const ref =
+               id > 0
+                  ? kSeatRefs.current.positive[id - 1]
+                  : kSeatRefs.current.negative[-id];
+            setAssigned(
+               `Seat k${id}`,
+               state[`Seat k${id}`]?.assigned || [],
+               state[`Seat k${id}`]?.selected || false,
+               ref
+            );
+         });
       }
 
       renderNameAndLines();
    }, [kSeats]);
 
-   const { state, setAssigned, renderNameAndLines, setExtraChairs } =
-      useSelected();
-
    const addKitchenSeatHandler = () => {
-      //incremente all assigned
-      kSeats.map((index) => {
-         //use this to iterate backwards in O(n) time
-         const currId = kSeats[kSeats.length - index];
-         const currKey = `Seat k${currId}`;
-         const assignedObj = {
-            id: `Seat k${currId + 1}`,
-            assigned: state[currKey].assigned,
-            selected: state[currKey].selected,
-         };
-         setAssigned(
-            assignedObj.id,
-            assignedObj.assigned,
-            assignedObj.selected
-            // `Seat k${currId + 1}`,
-            // state[currKey].assigned,
-            // state[currKey].colour,
-            // state[currKey].selected
-         );
-      });
-      setAssigned("Seat k1", []);
+      const newSeatId = Math.min(...kSeats) - 1;
+      if (-newSeatId < MAX_NEGATIVE_K_SEATS) {
+         setKSeats((prevSeats) => [newSeatId, ...prevSeats]);
 
-      //add a seat id, consequently re-rendering the seats
-      setKSeats([...kSeats, kSeats.length + 1]);
-
-      //toggle renderNameAndLines to re-render the lines and names
-      // for (let i = 0; i < 10; i++) {
-      //    window.setTimeout(renderNameAndLines, 50);
-      // }
+         // Assign the new seat
+         const newSeatRef = kSeatRefs.current.negative[-newSeatId];
+         setAssigned(`Seat k${newSeatId}`, [], false, newSeatRef);
+      }
    };
 
-   let extraChairs = kSeats.length - 15; //-15 bc decrement comes before boolean check
+   let extraChairs = kSeats.length - MAX_POSITIVE_K_SEATS;
    if (extraChairs > -1) {
-      setExtraChairs(extraChairs - 1);
+      setExtraChairs(extraChairs);
    }
 
    return (
@@ -71,14 +96,18 @@ const Seats = () => {
             <AddSeat addHandler={addKitchenSeatHandler} />
             <div style={{ height: "8px" }} />
             {kSeats.map((num) => {
-               extraChairs--; //decrement before return statement
+               const ref =
+                  num > 0
+                     ? kSeatRefs.current.positive[num - 1]
+                     : kSeatRefs.current.negative[-num];
                return (
                   <Seat
                      key={num}
                      id={`k${num}`}
-                     extraSeat={extraChairs > 0}
+                     extraSeat={num <= 0}
                      kSeats={kSeats}
                      setKSeats={setKSeats}
+                     ref={ref}
                   />
                );
             })}
@@ -87,6 +116,7 @@ const Seats = () => {
                invis={true}
                kSeats={kSeats}
                setKSeats={setKSeats}
+               ref={React.createRef<HTMLDivElement>()}
             />
             <div className="seat-row">
                <Seat
@@ -94,12 +124,14 @@ const Seats = () => {
                   invis={true}
                   kSeats={kSeats}
                   setKSeats={setKSeats}
+                  ref={React.createRef<HTMLDivElement>()}
                />
                <Seat
                   id={"nope"}
                   invis={true}
                   kSeats={kSeats}
                   setKSeats={setKSeats}
+                  ref={React.createRef<HTMLDivElement>()}
                />
                {bSeats.map((num) => (
                   <Seat
@@ -107,6 +139,7 @@ const Seats = () => {
                      id={`b${num}`}
                      kSeats={kSeats}
                      setKSeats={setKSeats}
+                     ref={bSeatRefs.current[MAX_B_SEATS - num]}
                   />
                ))}
             </div>

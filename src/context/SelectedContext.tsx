@@ -9,6 +9,7 @@ import { arraysEqual } from "../utils/generic";
 export interface recordValue {
    selected: boolean;
    assigned: Array<string>;
+   ref: React.RefObject<HTMLDivElement>;
 }
 
 interface SelectedContextType {
@@ -29,7 +30,8 @@ interface SelectedContextType {
    setAssigned: (
       id: string,
       assigned: Array<string>,
-      selected?: boolean
+      selected?: boolean,
+      ref?: React.RefObject<HTMLDivElement>
    ) => void;
    removeAssigned: (id: string, party: string) => void;
    addPartyLink: (thisParty: Array<string>, linkedParty: Array<string>) => void;
@@ -142,6 +144,7 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
             [id]: {
                selected: selected,
                assigned: prev[id].assigned,
+               ref: prev[id].ref,
             },
          };
       });
@@ -180,7 +183,12 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
 
    //sets the assigned value to the party array. and maybe a colour
    const setAssigned = useCallback(
-      (id: string, newAssigned: Array<string>, newSelected?: boolean) => {
+      (
+         id: string,
+         newAssigned: Array<string>,
+         newSelected?: boolean,
+         newRef?: React.RefObject<HTMLDivElement>
+      ) => {
          // const isAssigned: boolean = newAssigned.length > 0;
 
          setState((prev) => ({
@@ -189,6 +197,7 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
                selected:
                   newSelected !== undefined ? newSelected : prev[id].selected,
                assigned: [...newAssigned],
+               ref: newRef !== undefined ? newRef : prev[id].ref,
             },
          }));
       },
@@ -212,6 +221,7 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
             [id]: {
                selected: prev[id].selected,
                assigned: remainingAssigned,
+               ref: prev[id].ref,
             },
          };
       });

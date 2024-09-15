@@ -46,7 +46,7 @@ const InfoBox: React.FC<{}> = ({}) => {
       setPartySize(undefined); // Reset party count
       setParties([...parties, newParty]);
 
-      console.log(partySize);
+      // console.log(partySize);
    };
 
    // syncs infoBox state with SelectedContext state

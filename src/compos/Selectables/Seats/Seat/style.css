@@ -48,3 +48,16 @@
 .relative {
    position: relative;
 }
+
+@media print {
+   .seat.selected {
+      border: 1px dashed black;
+   }
+   .seat.vacant {
+      border: 1px dashed black;
+   }
+   .seat.vacant:hover {
+      border: 1px dashed black;
+      box-shadow: none;
+   }
+}

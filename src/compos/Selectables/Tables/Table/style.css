@@ -37,3 +37,16 @@
    left: -0.1in;
    font-size: 16px;
 }
+
+@media print {
+   .table.selected {
+      border: 2px dashed black;
+   }
+   .table.vacant {
+      border: 2px dashed black;
+   }
+   .table.vacant:hover {
+      border: 2px dashed black;
+      box-shadow: none;
+   }
+}
