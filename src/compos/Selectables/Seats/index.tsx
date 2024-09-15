@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import AddSeat from "./AddSeat";
 import Seat from "./Seat";
+import RemoveSeat from "./RemoveSeat";
 import "./style.css";
 import { useSelected } from "../../../context/SelectedContext";
 
 const MAX_POSITIVE_K_SEATS = 16; // Default number of kitchen seats
-const MAX_NEGATIVE_K_SEATS = 15; // Maximum number of additional seats in negative direction
+const MAX_NEGATIVE_K_SEATS = 15; // Maximum number of additional seats
 const MAX_B_SEATS = 14; // Number of bar seats
 
 const Seats = () => {
@@ -17,20 +18,16 @@ const Seats = () => {
       (_, i) => MAX_B_SEATS - i
    );
 
-   const { state, setAssigned, renderNameAndLines, setExtraChairs } =
-      useSelected();
+   const { state, setAssigned, setExtraChairs } = useSelected();
 
    const isFirstRender = useRef(true);
 
-   // Create refs for both positive and negative seat numbers
-   const kSeatRefs = useRef({
-      positive: Array.from({ length: MAX_POSITIVE_K_SEATS }, () =>
+   // Create refs for all possible seats
+   const kSeatRefs = useRef(
+      Array.from({ length: MAX_POSITIVE_K_SEATS + MAX_NEGATIVE_K_SEATS }, () =>
          React.createRef<HTMLDivElement>()
-      ),
-      negative: Array.from({ length: MAX_NEGATIVE_K_SEATS }, () =>
-         React.createRef<HTMLDivElement>()
-      ),
-   });
+      )
+   );
    const bSeatRefs = useRef(
       Array.from({ length: MAX_B_SEATS }, () =>
          React.createRef<HTMLDivElement>()
@@ -39,13 +36,8 @@ const Seats = () => {
 
    useEffect(() => {
       if (isFirstRender.current) {
-         kSeats.forEach((id) => {
-            setAssigned(
-               `Seat k${id}`,
-               [],
-               false,
-               kSeatRefs.current.positive[id - 1]
-            );
+         kSeats.forEach((id, index) => {
+            setAssigned(`Seat k${id}`, [], false, kSeatRefs.current[index]);
          });
          bSeats.forEach((id) => {
             setAssigned(
@@ -57,31 +49,22 @@ const Seats = () => {
          });
          isFirstRender.current = false;
       } else {
-         kSeats.forEach((id) => {
-            const ref =
-               id > 0
-                  ? kSeatRefs.current.positive[id - 1]
-                  : kSeatRefs.current.negative[-id];
+         kSeats.forEach((id, index) => {
             setAssigned(
                `Seat k${id}`,
                state[`Seat k${id}`]?.assigned || [],
                state[`Seat k${id}`]?.selected || false,
-               ref
+               kSeatRefs.current[index]
             );
          });
       }
-
-      renderNameAndLines();
    }, [kSeats]);
 
    const addKitchenSeatHandler = () => {
       const newSeatId = Math.min(...kSeats) - 1;
-      if (-newSeatId < MAX_NEGATIVE_K_SEATS) {
+      if (kSeats.length < MAX_POSITIVE_K_SEATS + MAX_NEGATIVE_K_SEATS) {
          setKSeats((prevSeats) => [newSeatId, ...prevSeats]);
-
-         // Assign the new seat
-         const newSeatRef = kSeatRefs.current.negative[-newSeatId];
-         setAssigned(`Seat k${newSeatId}`, [], false, newSeatRef);
+         setAssigned(`Seat k${newSeatId}`, [], false, kSeatRefs.current[0]);
       }
    };
 
@@ -95,24 +78,24 @@ const Seats = () => {
          <div className="seat-col">
             <AddSeat addHandler={addKitchenSeatHandler} />
             <div style={{ height: "8px" }} />
-            {kSeats.map((num) => {
-               const ref =
-                  num > 0
-                     ? kSeatRefs.current.positive[num - 1]
-                     : kSeatRefs.current.negative[-num];
-               return (
+            {kSeats.map((num, index) => (
+               <React.Fragment key={num}>
                   <Seat
-                     key={num}
                      id={`k${num}`}
+                     displayNumber={index + 1}
                      extraSeat={num <= 0}
                      kSeats={kSeats}
                      setKSeats={setKSeats}
-                     ref={ref}
+                     ref={kSeatRefs.current[index]}
                   />
-               );
-            })}
+                  {index === 0 && num <= 0 && (
+                     <RemoveSeat kSeats={kSeats} setKSeats={setKSeats} />
+                  )}
+               </React.Fragment>
+            ))}
             <Seat
                id={"nope"}
+               displayNumber={0}
                invis={true}
                kSeats={kSeats}
                setKSeats={setKSeats}
@@ -121,6 +104,7 @@ const Seats = () => {
             <div className="seat-row">
                <Seat
                   id={"nope"}
+                  displayNumber={0}
                   invis={true}
                   kSeats={kSeats}
                   setKSeats={setKSeats}
@@ -128,15 +112,17 @@ const Seats = () => {
                />
                <Seat
                   id={"nope"}
+                  displayNumber={0}
                   invis={true}
                   kSeats={kSeats}
                   setKSeats={setKSeats}
                   ref={React.createRef<HTMLDivElement>()}
                />
-               {bSeats.map((num) => (
+               {bSeats.map((num, index) => (
                   <Seat
                      key={num}
                      id={`b${num}`}
+                     displayNumber={MAX_B_SEATS - index}
                      kSeats={kSeats}
                      setKSeats={setKSeats}
                      ref={bSeatRefs.current[MAX_B_SEATS - num]}

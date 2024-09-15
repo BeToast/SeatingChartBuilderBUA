@@ -8,10 +8,10 @@ import {
    handleElementClick,
 } from "./../../utils";
 import "./style.css";
-import RemoveSeat from "../RemoveSeat";
 
 interface SeatProps {
    id: string;
+   displayNumber: number;
    extraSeat?: boolean;
    invis?: boolean;
    kSeats: number[];
@@ -19,7 +19,17 @@ interface SeatProps {
 }
 
 const Seat = forwardRef<HTMLDivElement, SeatProps>(
-   ({ id, extraSeat = false, invis = false, kSeats, setKSeats }, ref) => {
+   (
+      {
+         id,
+         displayNumber,
+         extraSeat = false,
+         invis = false,
+         kSeats,
+         setKSeats,
+      },
+      ref
+   ) => {
       const {
          state,
          setSelected,
@@ -55,13 +65,8 @@ const Seat = forwardRef<HTMLDivElement, SeatProps>(
                   )
                }
             >
-               <div className="seat-id no-select">{id.slice(1)}</div>
+               <div className="seat-id no-select">{displayNumber}</div>
             </div>
-            {extraSeat ? (
-               <RemoveSeat kSeats={kSeats} setKSeats={setKSeats} />
-            ) : (
-               <></>
-            )}
          </>
       );
    }

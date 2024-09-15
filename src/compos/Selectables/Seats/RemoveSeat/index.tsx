@@ -1,53 +1,40 @@
+import React from "react";
 import { useSelected } from "../../../../context/SelectedContext";
 import { xSvg } from "../../../../utils/svgs";
 import Tooltip from "../../../Tooltip";
 import "./style.css";
 
-const RemoveSeat: React.FC<{
+interface RemoveSeatProps {
    kSeats: number[];
    setKSeats: React.Dispatch<React.SetStateAction<number[]>>;
-}> = ({ kSeats, setKSeats }) => {
+}
+
+const RemoveSeat: React.FC<RemoveSeatProps> = ({ kSeats, setKSeats }) => {
    const { state, setAssigned } = useSelected();
 
    const removeSeatHandler = () => {
-      //add a seat id, consequently re-rendering the seats
-      setKSeats(kSeats.slice(0, -1));
+      if (kSeats.length <= 16) return; // Don't remove if we're at or below the initial seat count
 
-      //incremente all assigned
-      kSeats.map((index) => {
-         if (index >= kSeats.length - 1) return;
-         //use this to iterate backwards in O(n) time
-         const replaceKey = `Seat k${kSeats[index]}`;
-         const nextKey = `Seat k${kSeats[index] + 1}`;
-         const assignedObj = {
-            id: replaceKey,
-            assigned: state[nextKey].assigned,
-            selected: state[nextKey].selected,
-         };
-         setAssigned(
-            assignedObj.id,
-            assignedObj.assigned,
-            assignedObj.selected
-         );
-      });
-      // setAssigned(`Seat k${kSeats.length}`, []);
+      // Find the seat to remove (the one with the lowest number, which is at the start of the array)
+      const seatToRemove = kSeats[0];
 
-      //toggle renderNameAndLines to re-render the lines and names
-      // for (let i = 0; i < 20; i++) {
-      //    window.setTimeout(renderNameAndLines, 50);
-      // }
+      // Remove the seat from kSeats
+      setKSeats((prevSeats) => prevSeats.slice(1));
+
+      // Remove the assignment for the removed seat
+      setAssigned(`Seat k${seatToRemove}`, [], false);
+
+      // No need to shift assignments as seats are now numbered independently
    };
 
    return (
-      <>
-         <div className="relative">
-            <div onClick={removeSeatHandler} className="remove-wrapper">
-               <Tooltip content={"Remove Seat 🪑"}>
-                  <div className="remove-seat">{xSvg}</div>
-               </Tooltip>
-            </div>
+      <div className="relative">
+         <div onClick={removeSeatHandler} className="remove-wrapper">
+            <Tooltip content={"Remove Seat 🪑"}>
+               <div className="remove-seat">{xSvg}</div>
+            </Tooltip>
          </div>
-      </>
+      </div>
    );
 };
 

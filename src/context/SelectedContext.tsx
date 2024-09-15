@@ -16,7 +16,6 @@ interface SelectedContextType {
    state: Record<string, recordValue>;
    unlinkedPartiesArray: Array<Array<Array<string>>>;
    partyLinks: Array<Array<Array<string>>>;
-   nameAndLinesBool: boolean;
    parties: Array<string>;
    setParties: (parties: Array<string>) => void;
    partyOveride: boolean;
@@ -36,14 +35,12 @@ interface SelectedContextType {
    removeAssigned: (id: string, party: string) => void;
    addPartyLink: (thisParty: Array<string>, linkedParty: Array<string>) => void;
    removePartyLink: (thisParty: Array<string>, index: number) => void;
-   renderNameAndLines: () => void;
 }
 
 const SelectedContext = createContext<SelectedContextType>({
    state: {},
    unlinkedPartiesArray: [],
    partyLinks: [],
-   nameAndLinesBool: false,
    parties: [],
    setParties: () => {},
    partyOveride: true,
@@ -57,7 +54,6 @@ const SelectedContext = createContext<SelectedContextType>({
    removeAssigned: () => {},
    addPartyLink: () => {},
    removePartyLink: () => {},
-   renderNameAndLines: () => {},
 });
 
 interface SelectedProviderProps {
@@ -74,7 +70,6 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
    const [partyLinks, setPartyLinks] = useState<Array<Array<Array<string>>>>(
       []
    );
-   const [nameAndLinesBool, setNameAndLinesBool] = useState<boolean>(false);
 
    // the party list for this infoBox
    // updates the state onChange
@@ -292,15 +287,10 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
       });
    }, []);
 
-   const renderNameAndLines = () => {
-      setNameAndLinesBool((prev) => !prev);
-   };
-
    const value: SelectedContextType = {
       state,
       unlinkedPartiesArray,
       partyLinks,
-      nameAndLinesBool,
       parties,
       setParties,
       partyOveride,
@@ -314,7 +304,6 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
       removeAssigned,
       addPartyLink,
       removePartyLink,
-      renderNameAndLines,
    };
 
    return (
