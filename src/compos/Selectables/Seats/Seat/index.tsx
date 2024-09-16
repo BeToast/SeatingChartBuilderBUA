@@ -12,32 +12,21 @@ import "./style.css";
 interface SeatProps {
    id: string;
    displayNumber: number;
-   extraSeat?: boolean;
    invis?: boolean;
-   kSeats: number[];
-   setKSeats: React.Dispatch<React.SetStateAction<number[]>>;
 }
 
 const Seat = forwardRef<HTMLDivElement, SeatProps>(
-   (
-      {
-         id,
-         displayNumber,
-         extraSeat = false,
-         invis = false,
-         kSeats,
-         setKSeats,
-      },
-      ref
-   ) => {
+   ({ id, displayNumber, invis = false }, ref) => {
       const {
          state,
+         selectedIds,
          setSelected,
          selectGroup,
          setAssigned,
          deselectAll,
          setParties,
          setPartyOveride,
+         removePartyLink,
       } = useSelected();
       const seatId = `Seat ${id}`;
       const seatState = state[seatId];
@@ -54,6 +43,7 @@ const Seat = forwardRef<HTMLDivElement, SeatProps>(
                   handleElementClick(
                      getElementSelectState(seatState),
                      seatId,
+                     selectedIds,
                      getAssignments(seatId, state),
                      getOtherSelectedAssignments(state),
                      setSelected,
@@ -61,7 +51,8 @@ const Seat = forwardRef<HTMLDivElement, SeatProps>(
                      deselectAll,
                      setAssigned,
                      setParties,
-                     setPartyOveride
+                     setPartyOveride,
+                     removePartyLink
                   )
                }
             >

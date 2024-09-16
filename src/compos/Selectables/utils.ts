@@ -5,6 +5,9 @@ export const getElementClass = (
 ): string => {
    if (elementState) {
       if (elementState.selected) {
+         if (elementState.assigned.length > 0) {
+            return "selected ass";
+         }
          return "selected";
       } else if (elementState.assigned.length > 0) {
          return "assigned";
@@ -39,6 +42,7 @@ export const getElementSelectState = (
 export const handleElementClick = (
    elementSelectState: SelectState,
    id: string,
+   selectedIds: Array<string>,
    thisAssignments: string[],
    selectedAssignments: string[],
    setSelected: (id: string, selected: boolean) => void,
@@ -46,7 +50,11 @@ export const handleElementClick = (
    deselectAll: () => void,
    setAssigned: (id: string, party: Array<string>) => void,
    updateInfoBoxParties: (parties: Array<string>) => void,
-   setPartyOveride: (partyOveride: boolean) => void
+   setPartyOveride: (partyOveride: boolean) => void,
+   removePartyLink: (
+      thisParty: Array<string>,
+      index?: number
+   ) => Array<string> | undefined
 ) => {
    if (elementSelectState === SelectState.VACANT) {
       if (selectedAssignments.length > 0) {
@@ -68,8 +76,11 @@ export const handleElementClick = (
       updateInfoBoxParties(thisAssignments);
       selectGroup(id);
    } else if (elementSelectState === SelectState.SELECTEDASSIGNED) {
-      setSelected(id, false);
+      if (selectedIds.length < 2) {
+         removePartyLink(thisAssignments);
+      }
       setAssigned(id, []);
+      setSelected(id, false);
    }
 };
 

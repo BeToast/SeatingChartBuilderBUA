@@ -16,12 +16,14 @@ interface TableProps {
 const Table = forwardRef<HTMLDivElement, TableProps>(({ id }, ref) => {
    const {
       state,
+      selectedIds,
       setSelected,
       setAssigned,
       selectGroup,
       deselectAll,
       setParties,
       setPartyOveride,
+      removePartyLink,
    } = useSelected();
    const tableId = `Table ${id}`;
    const tableState = state[tableId];
@@ -37,6 +39,7 @@ const Table = forwardRef<HTMLDivElement, TableProps>(({ id }, ref) => {
             handleElementClick(
                getElementSelectState(tableState),
                tableId,
+               selectedIds,
                getAssignments(tableId, state),
                getOtherSelectedAssignments(state),
                setSelected,
@@ -44,7 +47,8 @@ const Table = forwardRef<HTMLDivElement, TableProps>(({ id }, ref) => {
                deselectAll,
                setAssigned,
                setParties,
-               setPartyOveride
+               setPartyOveride,
+               removePartyLink
             )
          }
       >

@@ -109,9 +109,11 @@ const NameAndLines: React.FC<{
          var outputJsx: Array<JSX.Element> = [];
 
          //for loop to iterate through both assignedLink and elementsLink array
-         for (let i = 0; i < assignedLink.length; i++) {
+         for (let i = 0; i < elementsLink.length; i++) {
             //this does not render the linked groups if there would be a undefined error
-            if (elementsLink[i] == undefined) {
+            if (elementsLink[i] === undefined) {
+               elementsLink.splice(i, 1);
+               i--; // Decrement i to account for the removed element
                continue;
             }
             //get hasKitchenSeats, hasBathroomSeats, and tableCount for this party.
@@ -231,7 +233,6 @@ const NameAndLines: React.FC<{
                   scrollTop={scrollTop}
                   paperRect={paperRect}
                   flexieMargin={flexieMargin}
-                  printLines={false}
                />
             );
          } else if (

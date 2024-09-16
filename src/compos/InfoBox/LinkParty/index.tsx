@@ -37,34 +37,46 @@ const LinkParty: React.FC<{
    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       setSearchTerm(event.target.value);
    };
-   //the array for this parties link
+
    const linkedArray: Array<Array<string>> =
       linkedArrayIndex !== -1 ? partyLinks[linkedArrayIndex] : [];
-   //array excluding the currently selected party[]
-   // const otherLinkedParties = linkedArray.filter(
-   //    (party) => !arraysEqual(party, currParties)
-   // );
 
-   // const useFilteredLinkOptions = (
-   //    LinkOptions: string[][],
-   //    linkedArray: string[][]
-   // ) => {
-   //    const filteredLinkOptions = useMemo(() => {
-   //       return LinkOptions.filter(
-   //          (option) => !isArrayInArrayOfArrays(option, linkedArray)
-   //       );
-   //    }, [LinkOptions, linkedArray]);
+   // Filter out subsets and individual parties that are part of a larger set
+   const filteredCombinedLinkOptions = useMemo(() => {
+      const flattenedLinkedArray = linkedArray.flat();
+      const allLinkedParties = partyLinks.flat(2); // Flatten all linked parties
 
-   //    return filteredLinkOptions;
-   // };
+      // Sort options by length (descending) to prioritize larger sets
+      const sortedOptions = [...otherCombinedLinkOptions].sort(
+         (a, b) => b[0].length - a[0].length
+      );
 
-   // const filteredLinkOptions = useFilteredLinkOptions(
-   //    unlinkedPartiesArray,
-   //    linkedArray
-   // );
+      return sortedOptions.filter((linkOption, index, self) => {
+         const flattenedLinkOption = linkOption.flat(1);
 
-   //filtered by the search field
-   const searchedLinkOptions = otherCombinedLinkOptions.filter((party) =>
+         // Check if this option is not a subset of any other option
+         const isNotSubset = !self.some(
+            (otherOption, otherIndex) =>
+               index !== otherIndex &&
+               otherOption.flat(1).length > flattenedLinkOption.length &&
+               flattenedLinkOption.every((party) =>
+                  otherOption.flat(1).includes(party)
+               )
+         );
+
+         // Check if the link option doesn't contain current parties or already linked parties
+         const doesNotContainCurrentOrLinked = !flattenedLinkOption.some(
+            (party) =>
+               currParties.includes(party) ||
+               flattenedLinkedArray.includes(party)
+         );
+
+         return isNotSubset && doesNotContainCurrentOrLinked;
+      });
+   }, [otherCombinedLinkOptions, currParties, linkedArray, partyLinks]);
+
+   // Filter by the search field
+   const searchedLinkOptions = filteredCombinedLinkOptions.filter((party) =>
       party.some((item) =>
          item.join().toLowerCase().includes(searchTerm.toLowerCase())
       )
@@ -72,7 +84,6 @@ const LinkParty: React.FC<{
 
    return (
       <div ref={dropdownRef}>
-         {/* <div className="linked-with">Linked Parties:</div> */}
          <div className="linked-party-wrapper">
             {linkedArray.map((currentParty: Array<string>, index) => (
                <div key={index} className="linked-party">
@@ -82,12 +93,10 @@ const LinkParty: React.FC<{
                         removePartyLink(currentParty, linkedArrayIndex)
                      }
                   />
-                  <span key={currentParty.join()}>
-                     {currentParty.join(", ")}
-                  </span>
+                  {removeUnderscore(currentParty)}
                </div>
             ))}
-            {otherCombinedLinkOptions.length > 0 && (
+            {filteredCombinedLinkOptions.length > 0 && (
                <input
                   type="text"
                   className="party-input"
@@ -111,7 +120,7 @@ const LinkParty: React.FC<{
                         onMouseDown={() => addPartyLink(currParties, party[0])}
                      >
                         <LinkIcon />
-                        {party.join(", ")}
+                        {removeUnderscore(party.flat())}
                      </div>
                   ))}
                </>
@@ -122,3 +131,8 @@ const LinkParty: React.FC<{
 };
 
 export default LinkParty;
+
+const removeUnderscore = (party: Array<string>) => {
+   const joinedParty = party.join(", ");
+   return joinedParty.startsWith("_") ? joinedParty.substring(1) : joinedParty;
+};

@@ -83,9 +83,6 @@ const Seats = () => {
                   <Seat
                      id={`k${num}`}
                      displayNumber={index + 1}
-                     extraSeat={num <= 0}
-                     kSeats={kSeats}
-                     setKSeats={setKSeats}
                      ref={kSeatRefs.current[index]}
                   />
                   {index === 0 && num <= 0 && (
@@ -97,8 +94,6 @@ const Seats = () => {
                id={"nope"}
                displayNumber={0}
                invis={true}
-               kSeats={kSeats}
-               setKSeats={setKSeats}
                ref={React.createRef<HTMLDivElement>()}
             />
             <div className="seat-row">
@@ -106,16 +101,12 @@ const Seats = () => {
                   id={"nope"}
                   displayNumber={0}
                   invis={true}
-                  kSeats={kSeats}
-                  setKSeats={setKSeats}
                   ref={React.createRef<HTMLDivElement>()}
                />
                <Seat
                   id={"nope"}
                   displayNumber={0}
                   invis={true}
-                  kSeats={kSeats}
-                  setKSeats={setKSeats}
                   ref={React.createRef<HTMLDivElement>()}
                />
                {bSeats.map((num, index) => (
@@ -123,8 +114,6 @@ const Seats = () => {
                      key={num}
                      id={`b${num}`}
                      displayNumber={MAX_B_SEATS - index}
-                     kSeats={kSeats}
-                     setKSeats={setKSeats}
                      ref={bSeatRefs.current[MAX_B_SEATS - num]}
                   />
                ))}

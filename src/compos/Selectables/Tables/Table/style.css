@@ -42,6 +42,9 @@
    .table.selected {
       border: 2px dashed black;
    }
+   .table.selected.ass {
+      border: 2px solid black;
+   }
    .table.vacant {
       border: 2px dashed black;
    }

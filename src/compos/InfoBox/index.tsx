@@ -33,6 +33,7 @@ const InfoBox: React.FC<{}> = ({}) => {
       () => Object.keys(state).filter((id) => state[id].selected),
       [state]
    );
+
    const selectedCount: number = useMemo(
       () => selectedIds.length,
       [selectedIds]
@@ -78,10 +79,14 @@ const InfoBox: React.FC<{}> = ({}) => {
    const otherCombinedLinkOptions = useMemo(() => {
       return combinedLinkOptions.filter((linkOption) => {
          // Flatten the linkOption to check if it contains any of the currParties
-         const flattenedLinkOption = linkOption.flat(2);
+         const flattenedLinkOption = linkOption.flat(1);
 
          // Check if none of the currParties are in the flattenedLinkOption
-         return !parties.some((party) => flattenedLinkOption.includes(party));
+         return !parties.some((party) =>
+            flattenedLinkOption.some((flattenedParty) =>
+               flattenedParty.includes(party)
+            )
+         );
       });
    }, [combinedLinkOptions, parties]);
 
@@ -217,17 +222,6 @@ const InfoBox: React.FC<{}> = ({}) => {
       </div>
    );
 
-   // const linkOptions = uniquePartiesArray.filter(
-   //    (party) => !arraysEqual(party, parties)
-   // );
-   // const linkOptions: Array<Array<Array<string>>> = Array.from(
-   //    new Set(
-   //       uniquePartiesArray
-   //          .filter((party) => !arraysEqual(party, parties))
-   //          .map((party) => JSON.stringify(party))
-   //    )
-   // ).map((party) => JSON.parse(party));
-
    return (
       <>
          <div className="info-wrap no-print">
@@ -237,7 +231,7 @@ const InfoBox: React.FC<{}> = ({}) => {
                   <InfoSection header="Parties">
                      {parties.length > 0 ? (
                         <div className="parties">
-                           {parties.map((party) => (
+                           {parties.map((party, index) => (
                               <div key={party} className="party-row">
                                  <RemoveParty
                                     party={party}
@@ -258,14 +252,7 @@ const InfoBox: React.FC<{}> = ({}) => {
                                  ) : (
                                     <></>
                                  )}
-                                 <div
-                                    key={
-                                       party.startsWith("_")
-                                          ? party.substring(1)
-                                          : party
-                                    }
-                                    className="party"
-                                 >
+                                 <div key={index} className="party">
                                     {party.startsWith("_")
                                        ? party.substring(1)
                                        : party}

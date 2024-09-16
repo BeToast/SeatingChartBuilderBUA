@@ -53,6 +53,9 @@
    .seat.selected {
       border: 1px dashed black;
    }
+   .seat.selected.ass {
+      border: 1px solid black;
+   }
    .seat.vacant {
       border: 1px dashed black;
    }

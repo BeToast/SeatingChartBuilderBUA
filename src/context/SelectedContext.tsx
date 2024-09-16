@@ -4,8 +4,9 @@ import React, {
    useState,
    useCallback,
    useEffect,
+   useMemo,
 } from "react";
-import { arraysEqual } from "../utils/generic";
+import { arraysEqual, isArrayInArrayOfArrays } from "../utils/generic";
 export interface recordValue {
    selected: boolean;
    assigned: Array<string>;
@@ -14,6 +15,7 @@ export interface recordValue {
 
 interface SelectedContextType {
    state: Record<string, recordValue>;
+   selectedIds: Array<string>;
    unlinkedPartiesArray: Array<Array<Array<string>>>;
    partyLinks: Array<Array<Array<string>>>;
    parties: Array<string>;
@@ -36,12 +38,13 @@ interface SelectedContextType {
    addPartyLink: (thisParty: Array<string>, linkedParty: Array<string>) => void;
    removePartyLink: (
       thisParty: Array<string>,
-      index: number
+      index?: number
    ) => Array<string> | undefined;
 }
 
 const SelectedContext = createContext<SelectedContextType>({
    state: {},
+   selectedIds: [],
    unlinkedPartiesArray: [],
    partyLinks: [],
    parties: [],
@@ -67,6 +70,15 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
    children,
 }) => {
    const [state, setState] = useState<Record<string, recordValue>>({});
+
+   const [selectedIds, setSelectedIds] = useState<Array<string>>([]);
+
+   useEffect(
+      () =>
+         setSelectedIds(Object.keys(state).filter((id) => state[id].selected)),
+      [state]
+   );
+
    const [unlinkedPartiesArray, setUnlinkedPartiesArray] = useState<
       Array<Array<Array<string>>>
    >([]);
@@ -84,21 +96,41 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
 
    const updateUnlinkedPartiesArray = useCallback(() => {
       // Flatten partyLinks into a single array of all linked parties
-      const linkedParties = new Set(partyLinks.flat(2));
+      const linkedParties = partyLinks.flat(2);
 
       // Get all unique parties from state
-      const allParties = new Set<string>();
+      const allParties: Array<Array<string>> = [];
+
       Object.values(state).forEach((record) => {
-         record.assigned.forEach((party) => allParties.add(party));
+         // Skip empty assigned arrays
+         if (record.assigned.length === 0) {
+            return;
+         }
+         // Check if this exact assigned array already exists in allParties
+         const existingParty = allParties.find(
+            (party) =>
+               party.length === record.assigned.length &&
+               party.every((item, index) => item === record.assigned[index])
+         );
+
+         // If it doesn't exist, add it to allParties
+         if (!existingParty) {
+            allParties.push([...record.assigned]);
+         }
       });
 
       // Filter out parties that are in linkedParties
-      const unlinkedParties = Array.from(allParties).filter(
-         (party) => !linkedParties.has(party)
+      const unlinkedParties = allParties.filter(
+         (party) =>
+            !linkedParties.some(
+               (linkedParty) =>
+                  party.length === linkedParty.length &&
+                  party.every((item, index) => item === linkedParty[index])
+            )
       );
 
       // Transform unlinkedParties into string[][][]
-      const newUnlinkedPartiesArray = unlinkedParties.map((party) => [[party]]);
+      const newUnlinkedPartiesArray = unlinkedParties.map((party) => [party]);
 
       // Update the state
       setUnlinkedPartiesArray(newUnlinkedPartiesArray);
@@ -203,37 +235,66 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
       (thisParty: string[], linkedParty: string[]) => {
          setPartyLinks((prev) => {
             const newLinks = [...prev];
-            const existingLinkIndex = newLinks.findIndex((link) =>
-               link.some(
-                  (party) =>
-                     party.every((item, index) => item === thisParty[index]) ||
-                     party.every((item, index) => item === linkedParty[index])
-               )
-            );
+            const relatedLinkIndices: number[] = [];
 
-            if (existingLinkIndex !== -1) {
-               // If a link with either party exists, add the other party to it
-               const existingLink = newLinks[existingLinkIndex];
+            // Find all related links
+            newLinks.forEach((link, index) => {
                if (
-                  !existingLink.some((party) =>
+                  link.some(
+                     (party) =>
+                        party.every(
+                           (item, index) => item === thisParty[index]
+                        ) ||
+                        party.every(
+                           (item, index) => item === linkedParty[index]
+                        )
+                  )
+               ) {
+                  relatedLinkIndices.push(index);
+               }
+            });
+
+            if (relatedLinkIndices.length > 0) {
+               // Merge all related links
+               const mergedLink = relatedLinkIndices.reduce((acc, index) => {
+                  return [...acc, ...newLinks[index]];
+               }, [] as string[][]);
+
+               // Add thisParty and linkedParty if they're not already in the mergedLink
+               if (
+                  !mergedLink.some((party) =>
                      party.every((item, index) => item === thisParty[index])
                   )
                ) {
-                  existingLink.push(thisParty);
+                  mergedLink.push(thisParty);
                }
                if (
-                  !existingLink.some((party) =>
+                  !mergedLink.some((party) =>
                      party.every((item, index) => item === linkedParty[index])
                   )
                ) {
-                  existingLink.push(linkedParty);
+                  mergedLink.push(linkedParty);
                }
+
+               // Remove duplicates
+               const uniqueMergedLink = mergedLink.filter(
+                  (party, index, self) =>
+                     index ===
+                     self.findIndex((t) =>
+                        t.every((item, i) => item === party[i])
+                     )
+               );
+
+               // Remove old links and add the merged link
+               relatedLinkIndices
+                  .sort((a, b) => b - a)
+                  .forEach((index) => newLinks.splice(index, 1));
+               newLinks.push(uniqueMergedLink);
             } else {
-               // If no existing link is found, create a new one
+               // If no related links found, create a new one
                newLinks.push([thisParty, linkedParty]);
             }
 
-            // console.log(newLinks);
             return newLinks;
          });
       },
@@ -242,9 +303,14 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
 
    //remove a specific party from the array of parties at index.
    const removePartyLink = useCallback(
-      (thisParty: string[], index: number): Array<string> | undefined => {
+      (thisParty: string[], index?: number): Array<string> | undefined => {
          var firstRemovedParty: Array<string> | undefined;
          setPartyLinks((prev) => {
+            if (index == undefined) {
+               index = prev.findIndex((link) =>
+                  isArrayInArrayOfArrays(thisParty, link)
+               );
+            }
             // Check if the index is valid
             if (index < 0 || index >= prev.length) {
                console.error("Invalid index");
@@ -275,6 +341,7 @@ export const SelectedProvider: React.FC<SelectedProviderProps> = ({
 
    const value: SelectedContextType = {
       state,
+      selectedIds,
       unlinkedPartiesArray,
       partyLinks,
       parties,
