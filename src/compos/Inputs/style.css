@@ -29,6 +29,7 @@
    font-size: 48px;
    font-weight: 300;
    padding: 8px;
+   padding-right: 0px;
 }
 .input.time {
    width: 120px;
