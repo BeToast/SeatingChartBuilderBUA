@@ -27,8 +27,8 @@
 
 .input.show {
    font-size: 48px;
-   font-weight: 400;
-   padding-bottom: 8px;
+   font-weight: 300;
+   padding: 8px;
 }
 .input.time {
    width: 120px;
